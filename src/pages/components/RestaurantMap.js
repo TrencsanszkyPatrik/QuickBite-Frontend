@@ -3,7 +3,7 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import '../components/css/homepage.css';
 
-// Miskolci éttermek adatai
+//Ehelyett majd Fetch lesz, a saját adatbázisból
 const miskolcRestaurants = [
     {
         name: "Anyukám Mondta",
@@ -27,7 +27,6 @@ const miskolcRestaurants = [
     }
 ];
 export default function RestaurantMap() {
-    // Miskolc középpont koordinátái
     const miskolcCenter = [48.1031, 20.7784];
 
     return (

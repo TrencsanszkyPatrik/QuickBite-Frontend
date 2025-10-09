@@ -1,0 +1,109 @@
+/* Modern, letisztult konyhatípus kártyák stílusa */
+.cuisine-list-section {
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+
+.cuisines-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1.5rem;
+}
+
+.cuisine-card {
+  background: white;
+  padding: 2rem 1.5rem;
+  border-radius: 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.cuisine-card:hover {
+  transform: translateY(-5px) scale(1.04);
+  box-shadow: 0 8px 25px rgba(59,51,85,0.13);
+  background: var(--bg-light);
+}
+
+.cuisine-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.cuisine-title {
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.cuisine-meta {
+  color: var(--text-light);
+  font-size: 0.9rem;
+}
+
+/* MODÁLIS ÉTLAP ablak stílus */
+.restaurant-menu-modal {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(59,51,85,0.25);
+  z-index: 3000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.restaurant-menu-content {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 8px 32px rgba(59,51,85,0.18);
+  padding: 2.5rem 2rem 2rem 2rem;
+  min-width: 320px;
+  max-width: 95vw;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  animation: modalIn 0.2s cubic-bezier(.4,2,.6,1) 1;
+}
+@keyframes modalIn {
+  from { transform: scale(0.95) translateY(40px); opacity: 0; }
+  to { transform: scale(1) translateY(0); opacity: 1; }
+}
+.close-menu-btn {
+  position: absolute;
+  top: 1.1rem;
+  right: 1.1rem;
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: var(--primary-dark);
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.close-menu-btn:hover {
+  color: var(--secondary);
+}
+.menu-list {
+  list-style: none;
+  padding: 0;
+  margin: 2rem 0 0 0;
+}
+.menu-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 1.1rem;
+}
+.menu-item:last-child {
+  border-bottom: none;
+}
+.menu-item .btn {
+  font-size: 0.95rem;
+  padding: 0.5rem 1.2rem;
+}

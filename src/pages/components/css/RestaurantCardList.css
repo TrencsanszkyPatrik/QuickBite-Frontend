@@ -1,0 +1,62 @@
+/* Étterem kártyák modern, letisztult stílusa */
+.restaurant-list-section {
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+
+.restaurant-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 2rem;
+}
+
+.restaurant-card {
+  background: white;
+  border-radius: 18px;
+  box-shadow: 0 2px 12px rgba(59,51,85,0.08);
+  overflow: hidden;
+  cursor: pointer;
+  transition: box-shadow 0.2s, transform 0.2s;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  outline: none;
+}
+
+.restaurant-card:hover, .restaurant-card:focus {
+  box-shadow: 0 8px 32px rgba(59,51,85,0.16);
+  transform: translateY(-4px) scale(1.03);
+}
+
+.restaurant-img {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  border-top-left-radius: 18px;
+  border-top-right-radius: 18px;
+}
+
+.restaurant-info {
+  padding: 1.2rem 1rem 1.5rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.restaurant-name {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 0.2rem;
+}
+
+.restaurant-cuisine {
+  color: var(--secondary);
+  font-size: 0.98rem;
+  font-weight: 500;
+}
+
+.restaurant-address {
+  color: var(--text-light);
+  font-size: 0.92rem;
+}
