@@ -14,7 +14,7 @@ export default function Footer() {
                 <div class="footer-links">
                     <a href="#">Főoldal</a>
                     <a href="#">Éttermek</a>
-                    <a href="rolunk.html">Rólunk</a>
+                    <a href="()">Rólunk</a>
                     <a href="#">Kapcsolat</a>
                 </div>
             </div>
