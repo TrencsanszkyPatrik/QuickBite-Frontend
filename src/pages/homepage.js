@@ -3,6 +3,10 @@ import Navbar from './components/navbar'
 import Footer from './components/footer'
 import '../pages//components/homepage.css'
 
+document.title = "QuickBite - Főoldal";
+
+
+
 export default function Homepage() {
   return (
     <>
