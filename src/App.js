@@ -1,13 +1,15 @@
-import logo from './logo.svg';
-import './App.css';
-import navbar from './pages/components/navbar';
-import homepage from './pages/homepage';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Homepage from './pages/homepage';
+import AboutUs from './pages/aboutus';
 
-function App() {
-
+export default function App() {
   return (
-    homepage()
+    <Router>
+      <Routes>
+        <Route path="/" element={<Homepage />} />
+        <Route path="/about" element={<AboutUs />} />
+      </Routes>
+    </Router>
   );
 }
-
-export default App;

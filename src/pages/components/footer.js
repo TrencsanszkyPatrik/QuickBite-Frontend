@@ -1,5 +1,6 @@
 import React from 'react'
 import '../components/css/footer.css'
+import { Link } from 'react-router-dom'
 
 export default function Footer() {
   return (
@@ -13,8 +14,8 @@ export default function Footer() {
                 <h3>Linkek</h3>
                 <div class="footer-links">
                     <a href="#">Főoldal</a>
-                    <a href="#">Éttermek</a>
-                    <a href="()">Rólunk</a>
+                    <a href="()">Éttermek</a>
+                    <Link to ="/about">Rólunk</Link>
                     <a href="#">Kapcsolat</a>
                 </div>
             </div>
