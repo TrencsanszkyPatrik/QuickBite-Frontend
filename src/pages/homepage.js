@@ -1,7 +1,7 @@
 import React from 'react'
 import Navbar from './components/navbar'
 import Footer from './components/footer'
-import '../pages//components/homepage.css'
+import '../pages//components/css/homepage.css'
 
 document.title = "QuickBite - Főoldal";
 
