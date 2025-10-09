@@ -1,64 +1,72 @@
 import React from 'react'
-import Navbar from './components/navbar'
+
 import Footer from './components/footer'
 import '../pages/components/css/aboutus.css'
 
+document.title = "QuickBite - Rólunk";
+
+function backToMainPage() {
+    window.location.href = "/";
+}
 
 export default function AboutUs() {
   return (
     <>
-    <Navbar />
+
+     <div className="back-link">
+        <button onClick={backToMainPage}>← Vissza a főoldalra!</button>
+    </div>
 
     <section className="about-section container">
-                <h1 className="section-title gradient-title">About QuickBite</h1>
-                <p className="subtitle">Your favorite restaurants, delivered to your doorstep</p>
-                <div className="story-container">
-                    <h2 className="section-subtitle">Our Story</h2>
-                    <p>QuickBite was founded with a simple mission: to connect food lovers with their favorite local restaurants. We believe that great food should be accessible to everyone—whether you're craving pizza on a relaxing night or need a quick lunch during a busy workday.</p>
-                    <p>What started as a small project has grown into a platform that serves thousands of customers daily. We’re proud to work with the best restaurants in town, bringing you diverse cuisines and exceptional dining experiences right to your door.</p>
-                    <p>Our commitment is to provide fast, reliable service while supporting local businesses. Every order you place helps restaurants thrive and communities grow stronger.</p>
-                </div>
-            </section>
+        <h1 className="section-title gradient-title">A QuickBite-ról</h1>
+        <p className="subtitle">Kedvenc éttermeid, házhoz szállítva</p>
+        <div className="story-container">
+            <h2 className="section-subtitle">Történetünk</h2>
+            <p>A QuickBite-ot azzal az egyszerű céllal alapítottuk, hogy összekössük az ínyenceket a kedvenc helyi éttermeikkel. Hiszünk abban, hogy a finom ételek mindenkinek elérhetőek kell legyenek – akár egy nyugodt estén pizzára vágysz, akár egy gyors ebédre a rohanó munkanap közben.</p>
+            <p>Ami egy kis projektként indult, mára olyan platformmá nőtte ki magát, amely naponta több ezer vásárlót szolgál ki. Büszkék vagyunk rá, hogy a város legjobb éttermeivel dolgozunk együtt, így változatos konyhákat és kiváló gasztronómiai élményeket juttatunk el közvetlenül az ajtódhoz.</p>
+            <p>Elkötelezettek vagyunk a gyors, megbízható szolgáltatás mellett, miközben támogatjuk a helyi vállalkozásokat. Minden rendeléseddel segíted az éttermeket a fejlődésben, és erősíted a közösséget.</p>
+        </div>
+    </section>
 
-            <section className="why-choose-section container">
-                <h2 className="section-title">Why Choose QuickBite</h2>
-                <div className="benefits">
-                    <div className="benefit-card">
-                        <div className="benefit-icon">⏱️</div>
-                        <h3>Fast Delivery</h3>
-                        <p>Get your food delivered hot and fresh in 30-45 minutes</p>
-                    </div>
-                    <div className="benefit-card">
-                        <div className="benefit-icon">🔒</div>
-                        <h3>Safe & Secure</h3>
-                        <p>Your payment information is protected with industry-leading security</p>
-                    </div>
-                    <div className="benefit-card">
-                        <div className="benefit-icon">🍽️</div>
-                        <h3>Quality Food</h3>
-                        <p>We partner with the best restaurants to bring you delicious meals</p>
-                    </div>
-                    <div className="benefit-card">
-                        <div className="benefit-icon">📦</div>
-                        <h3>Real-time Tracking</h3>
-                        <p>Track orders so you always know where your food is</p>
-                    </div>
-                </div>
-                <div className="stats-container">
-                    <div className="stat-item">
-                        <span className="stat-number">50+</span>
-                        <span className="stat-text">Partner Restaurants</span>
-                    </div>
-                    <div className="stat-item">
-                        <span className="stat-number">10k+</span>
-                        <span className="stat-text">Happy Customers</span>
-                    </div>
-                    <div className="stat-item">
-                        <span className="stat-number">4.8</span>
-                        <span className="stat-text">Average Rating</span>
-                    </div>
-                </div>
-            </section>
+    <section className="why-choose-section container">
+        <h2 className="section-title">Miért válaszd a QuickBite-ot?</h2>
+        <div className="benefits">
+            <div className="benefit-card">
+                <div className="benefit-icon">⏱️</div>
+                <h3>Villámgyors kiszállítás</h3>
+                <p>Forrón és frissen, 30-45 percen belül megkapod az ételedet</p>
+            </div>
+            <div className="benefit-card">
+                <div className="benefit-icon">🔒</div>
+                <h3>Biztonságos és védett</h3>
+                <p>Fizetési adataidat iparági szintű biztonság védi</p>
+            </div>
+            <div className="benefit-card">
+                <div className="benefit-icon">🍽️</div>
+                <h3>Minőségi ételek</h3>
+                <p>A legjobb éttermekkel dolgozunk együtt, hogy finom fogásokat kapj</p>
+            </div>
+            <div className="benefit-card">
+                <div className="benefit-icon">📦</div>
+                <h3>Valós idejű követés</h3>
+                <p>Rendelésedet élőben követheted, így mindig tudod, merre jár az étel</p>
+            </div>
+        </div>
+        <div className="stats-container">
+            <div className="stat-item">
+                <span className="stat-number">50+</span>
+                <span className="stat-text">Partner étterem</span>
+            </div>
+            <div className="stat-item">
+                <span className="stat-number">10 000+</span>
+                <span className="stat-text">Elégedett vásárló</span>
+            </div>
+            <div className="stat-item">
+                <span className="stat-number">4,8</span>
+                <span className="stat-text">Átlagos értékelés</span>
+            </div>
+        </div>
+    </section>
 
     <Footer />
     </>
