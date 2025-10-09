@@ -13,18 +13,18 @@ export default function Footer() {
             <div class="footer-section">
                 <h3>Linkek</h3>
                 <div class="footer-links">
-                    <a href="#">Főoldal</a>
-                    <a href="()">Éttermek</a>
+                    <Link to = "/">Főoldal</Link>
+                    <Link to = "/restaurants">Éttermek</Link>
                     <Link to ="/about">Rólunk</Link>
-                    <a href="#">Kapcsolat</a>
+                    <Link to = "/linkup">Kapcsolat</Link>
                 </div>
             </div>
             <div class="footer-section">
                 <h3>Jogi</h3>
                 <div class="footer-links">
-                    <a href="#">ÁSZF</a>
-                    <a href="#">Adatvédelem</a>
-                    <a href="#">Cookie-k</a>
+                    <Link to = "/aszf">ÁSZF</Link>
+                    <Link to = "/privacy">Adatvédelem</Link>
+                    <Link to = "/cookies">Cookie-k</Link>
                 </div>
             </div>
             <div class="footer-section">

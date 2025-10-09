@@ -1,0 +1,54 @@
+/* 404 oldal modern, színes kialakítása a QuickBite arculathoz illően */
+
+.page404-container {
+    min-height: 70vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--primary), var(--secondary) 80%);
+    color: white;
+    padding: 3rem 1rem;
+    border-radius: 32px;
+    margin: 4rem auto 2rem auto;
+    max-width: 600px;
+    box-shadow: 0 8px 32px rgba(59,51,85,0.18);
+}
+
+.page404-container h2 {
+    font-size: 3rem;
+    font-weight: 1000;
+    margin-bottom: 1.2rem;
+    letter-spacing: 2px;
+    background: linear-gradient(90deg, #fff, #BFCDE0 80%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-align: center;
+}
+
+.page404-container p {
+    font-size: 1.2rem;
+    margin-bottom: 2.5rem;
+    color: #f3f3f3;
+    text-align: center;
+}
+
+.page404-home-link {
+    display: inline-block;
+    background: linear-gradient(90deg, var(--primary-dark), var(--secondary));
+    color: #fff;
+    font-weight: 700;
+    padding: 0.9rem 2.2rem;
+    border-radius: 24px;
+    font-size: 1.1rem;
+    text-decoration: none;
+    box-shadow: 0 4px 18px rgba(59,51,85,0.13);
+    transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
+}
+
+.page404-home-link:hover {
+    background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+    box-shadow: 0 8px 32px rgba(59,51,85,0.22);
+    transform: translateY(-2px) scale(1.04);
+}
