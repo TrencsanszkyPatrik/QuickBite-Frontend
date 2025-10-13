@@ -3,6 +3,39 @@
   margin-top: 2rem;
   margin-bottom: 2rem;
 }
+
+.loading, .error {
+  text-align: center;
+  padding: 2rem;
+  font-size: 1.1rem;
+  margin: 2rem 0;
+}
+
+.loading {
+  color: #666;
+}
+
+.error {
+  color: #e74c3c;
+  background-color: #fdf2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+}
+
+.restaurant-details-extra {
+  margin-top: 1rem;
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.restaurant-details-extra span {
+  background-color: #f8f9fa;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  color: #666;
+}
 .back-btn {
   background: none;
   border: none;

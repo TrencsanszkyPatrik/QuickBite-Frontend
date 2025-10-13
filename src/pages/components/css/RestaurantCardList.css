@@ -60,3 +60,32 @@
   color: var(--text-light);
   font-size: 0.92rem;
 }
+
+.loading, .error {
+  text-align: center;
+  padding: 2rem;
+  font-size: 1.1rem;
+  margin: 2rem 0;
+}
+
+.loading {
+  color: #666;
+}
+
+.error {
+  color: #e74c3c;
+  background-color: #fdf2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+}
+
+.restaurant-meta {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.restaurant-meta span {
+  display: block;
+  margin-bottom: 0.2rem;
+}
