@@ -148,14 +148,14 @@ body {
 }
 
 /* Benefits */
-.benefits {
+.benefits-home {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 2rem;
     margin: 4rem 0;
 }
 
-.benefit-card {
+.benefit-card-home {
     background: white;
     padding: 2rem;
     border-radius: 16px;
@@ -163,12 +163,12 @@ body {
     transition: all 0.3s;
 }
 
-.benefit-card:hover {
+.benefit-card-home:hover {
     transform: translateY(-5px);
     box-shadow: 0 8px 30px rgba(0,0,0,0.12);
 }
 
-.benefit-icon {
+.benefit-icon-home {
     width: 60px;
     height: 60px;
     background: linear-gradient(135deg, var(--primary), var(--primary-dark));
@@ -180,13 +180,13 @@ body {
     margin-bottom: 1.5rem;
 }
 
-.benefit-card h3 {
+.benefit-card-home h3 {
     font-size: 1.25rem;
     margin-bottom: 0.75rem;
     color: var(--secondary);
 }
 
-.benefit-card p {
+.benefit-card-home p {
     color: var(--text-light);
     line-height: 1.7;
 }

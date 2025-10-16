@@ -8,10 +8,12 @@ export default function Navbar() {
     
     <header>
         <div class="header-content">
+            <Link to={"/"}>
             <div class="logo">
                 <img class="logo-img" src={logo} alt="QuickBite logó" />
                 <span>QuickBite</span>
             </div>
+            </Link>
             
             <div class="header-actions">
                 <Link to = "/about">Rólunk</Link>
