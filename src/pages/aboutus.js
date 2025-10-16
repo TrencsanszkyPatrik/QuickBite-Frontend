@@ -1,7 +1,7 @@
 import React from 'react'
-
 import Footer from './components/Footer'
 import '../pages/components/css/aboutus.css'
+import Navbar from './components/Navbar';
 
 document.title = "QuickBite - Rólunk";
 
@@ -14,9 +14,7 @@ export default function AboutUs() {
   return (
     <>
 
-     <div className="back-link">
-        <button onClick={backToMainPage}>← Vissza a főoldalra!</button>
-    </div>
+    <Navbar />
 
     <section className="about-section container">
         <h1 className="section-title gradient-title">A QuickBite-ról</h1>
