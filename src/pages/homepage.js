@@ -1,6 +1,6 @@
 import React from 'react'
-import Navbar from './components/navbar'
-import Footer from './components/footer'
+import Navbar from './components/Navbar'
+import Footer from './components/Footer'
 import '../pages//components/css/homepage.css'
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -10,7 +10,7 @@ import RestaurantCardList from './components/RestaurantCardList';
 
 document.title = "QuickBite - Főoldal";
 
-export default function Homepage() {
+export default function HomePage() {
     return (
         <>
             <Navbar />

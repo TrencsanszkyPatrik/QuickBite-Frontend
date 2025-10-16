@@ -1,12 +1,13 @@
 import React from 'react'
 
-import Footer from './components/footer'
+import Footer from './components/Footer'
 import '../pages/components/css/aboutus.css'
 
 document.title = "QuickBite - Rólunk";
 
 function backToMainPage() {
     window.location.href = "/";
+    document.title = "QuickBite - Főoldal";
 }
 
 export default function AboutUs() {
