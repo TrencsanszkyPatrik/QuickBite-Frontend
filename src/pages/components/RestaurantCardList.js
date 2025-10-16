@@ -38,7 +38,6 @@ export default function RestaurantCardList() {
   const navigate = useNavigate();
   return (
     <div className="restaurant-list-section container">
-      <h2 className="section-title">Éttermek</h2>
       <div className="restaurant-cards-grid">
         {restaurants.map((r) => (
           <div
