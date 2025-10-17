@@ -2,7 +2,6 @@ import React from 'react'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import '../pages//components/css/homepage.css'
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import RestaurantMap from './components/RestaurantMap';
 import '../../src/pages/components/css/CuisineList.css'
@@ -24,6 +23,7 @@ export default function HomePage() {
                         <input type="text" placeholder="📍 Add meg a címed" />
                         <input type="text" placeholder="🍕 Mit keresel?" />
                         <button className="btn btn-primary">Keresés</button>
+                        <RestaurantMap />
                     </div>
 
                     <div className="categories-pills">
@@ -36,9 +36,7 @@ export default function HomePage() {
                 </div>
             </section>
 
-            <div className="container">
-                <RestaurantMap />
-            </div>
+            
 
             <div className="container">
                 <div className="benefits-home">

@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import '../components/css/homepage.css';
+import '../components/css/restaurant-map.css';
 
 //Ehelyett majd Fetch lesz, a saját adatbázisból
 const miskolcRestaurants = [
@@ -27,31 +28,73 @@ const miskolcRestaurants = [
     }
 ];
 export default function RestaurantMap() {
+    const [isOpen, setIsOpen] = useState(false);
     const miskolcCenter = [48.1031, 20.7784];
 
+    const open = useCallback(() => setIsOpen(true), []);
+    const close = useCallback(() => setIsOpen(false), []);
+
+    useEffect(() => {
+        const onKeyDown = (e) => {
+            if (e.key === 'Escape') {
+                close();
+            }
+        };
+        if (isOpen) {
+            document.addEventListener('keydown', onKeyDown);
+        }
+        return () => document.removeEventListener('keydown', onKeyDown);
+    }, [isOpen, close]);
+
     return (
-        <div className="map-section">
-            <div className="map-header">📍 Közelben lévő éttermek</div>
-            <MapContainer
-                center={miskolcCenter}
-                zoom={13}
-                scrollWheelZoom={true}
-                style={{ height: '400px', width: '100%', borderRadius: '18px', margin: '0 auto' }}
-            >
-                <TileLayer
-                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                />
-                {miskolcRestaurants.map((restaurant, idx) => (
-                    <Marker key={idx} position={restaurant.position}>
-                        <Popup>
-                            <strong>{restaurant.name}</strong>
-                            <br />
-                            {restaurant.description}
-                        </Popup>
-                    </Marker>
-                ))}
-            </MapContainer>
-        </div>
+        <>
+            <button className="btn btn-secondary restaurant-map-open-btn" onClick={open} aria-haspopup="dialog">
+                Térkép
+            </button>
+
+            {isOpen && (
+                <div className="restaurant-map-modal-overlay" onClick={close}>
+                    <div
+                        className="restaurant-map-modal"
+                        role="dialog"
+                        aria-modal="true"
+                        aria-label="Étterem térkép és kereső"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <div className="restaurant-map-modal-header">
+                            <h2 className="restaurant-map-title">Keresés térképen</h2>
+                            <button className="btn restaurant-map-close-btn" onClick={close} aria-label="Térkép bezárása">✕</button>
+                        </div>
+                        <div className="restaurant-map-search">
+                            <input type="text" placeholder="📍 Cím vagy terület" aria-label="Cím vagy terület" />
+                            <input type="text" placeholder="🍕 Étel vagy étterem" aria-label="Étel vagy étterem" />
+                            <button className="btn btn-primary">Keresés</button>
+                        </div>
+                        <div className="restaurant-map-map-section">
+                            <MapContainer
+                                className="restaurant-map-leaflet"
+                                center={miskolcCenter}
+                                zoom={13}
+                                scrollWheelZoom={true}
+                            >
+                                <TileLayer
+                                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                                />
+                                {miskolcRestaurants.map((restaurant, idx) => (
+                                    <Marker key={idx} position={restaurant.position}>
+                                        <Popup>
+                                            <strong>{restaurant.name}</strong>
+                                            <br />
+                                            {restaurant.description}
+                                        </Popup>
+                                    </Marker>
+                                ))}
+                            </MapContainer>
+                        </div>
+                    </div>
+                </div>
+            )}
+        </>
     );
 }

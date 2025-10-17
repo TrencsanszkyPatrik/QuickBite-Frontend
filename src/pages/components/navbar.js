@@ -18,8 +18,8 @@ export default function Navbar() {
             <div class="header-actions">
                 <Link to = "/about">Rólunk</Link>
                 <Link to ="/restaurants">Éttermeink</Link>
-                <a href="kosar.html"><button class="btn btn-secondary">🛒 Kosár</button></a>
-                <a href="login.html"><button class="btn btn-primary">Bejelentkezés</button></a>
+                <Link to ="/basket"><button class="btn btn-secondary">Kosár</button></Link>
+                <Link to ="/login"><button class="btn btn-primary">Bejelentkezés</button></Link>
             </div>
         </div>
     </header>

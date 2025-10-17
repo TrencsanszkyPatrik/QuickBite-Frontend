@@ -1,10 +1,10 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import HomePage from './pages/HomePage';
-import AboutUs from './pages/AboutUs';
-import PageNotFound from './pages/404page';
-import AllRestaurantPage from './pages/AllRestaurantPage';
-import RestaurantDetails from './pages/RestaurantDetails';
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import HomePage from "./pages/HomePage";
+import AboutUs from "./pages/AboutUs";
+import PageNotFound from "./pages/404page";
+import AllRestaurantPage from "./pages/AllRestaurantPage";
+import RestaurantDetails from "./pages/RestaurantDetails";
 
 export default function App() {
   return (

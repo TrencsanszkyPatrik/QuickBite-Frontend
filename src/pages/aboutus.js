@@ -3,12 +3,7 @@ import Footer from './components/Footer'
 import '../pages/components/css/aboutus.css'
 import Navbar from './components/Navbar';
 
-document.title = "QuickBite - Rólunk";
-
-function backToMainPage() {
-    window.location.href = "/";
-    document.title = "QuickBite - Főoldal";
-}
+document.title = "QuickBite";
 
 export default function AboutUs() {
   return (

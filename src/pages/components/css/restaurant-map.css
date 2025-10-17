@@ -1,0 +1,72 @@
+.restaurant-map-open-btn {
+    margin-left: 8px;
+}
+
+.restaurant-map-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.restaurant-map-modal {
+    width: min(1000px, 92vw);
+    max-height: 90vh;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.restaurant-map-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border-bottom: 1px solid #eee;
+}
+
+.restaurant-map-title {
+    margin: 0;
+    font-size: 18px;
+    color: var(--primary);
+}
+
+.restaurant-map-close-btn {
+    padding: 6px 10px;
+}
+
+.restaurant-map-search {
+    padding: 12px 16px;
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 8px;
+}
+
+.restaurant-map-map-section {
+    padding: 12px 16px;
+}
+
+.restaurant-map-map-header {
+    margin-bottom: 8px;
+}
+
+.restaurant-map-leaflet {
+    height: 400px;
+    width: 100%;
+    border-radius: 18px;
+    margin: 0 auto;
+}
+
+@media (max-width: 600px) {
+    .restaurant-map-search {
+        grid-template-columns: 1fr;
+    }
+}
+
+
