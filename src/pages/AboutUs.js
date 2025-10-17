@@ -10,7 +10,7 @@ export default function AboutUs() {
     <>
 
     <Navbar />
-
+    
     <section className="about-section container">
         <h1 className="section-title gradient-title">A QuickBite-ról</h1>
         <p className="subtitle">Kedvenc éttermeid, házhoz szállítva</p>
@@ -61,7 +61,6 @@ export default function AboutUs() {
             </div>
         </div>
     </section>
-
     <Footer />
     </>
   )

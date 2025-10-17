@@ -482,12 +482,12 @@ footer {
     font-size: 1.1rem;
 }
 
-/* Why Choose Section */
 .why-choose-section {
     padding: 6rem 2rem;
     background: linear-gradient(180deg, #FEFCFD 0%, #BFCDE0 100%);
     position: relative;
-}
+    border-radius: 0 0 20px 20px;
+    }
 
 .why-choose-section::before {
     content: '';
