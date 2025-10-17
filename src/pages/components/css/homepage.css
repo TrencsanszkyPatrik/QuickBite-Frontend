@@ -281,6 +281,48 @@ body {
     font-size: 0.9rem;
 }
 
+.back-to-top {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    width: 48px;
+    height: 48px;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    color: #fff;
+    font-size: 20px;
+    line-height: 48px;
+    text-align: center;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    box-shadow: 0 10px 30px rgba(59,51,85,0.25);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease, visibility 0.2s ease;
+    opacity: 0;
+    visibility: hidden;
+    z-index: 2000;
+}
+
+.back-to-top.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.back-to-top:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 16px 40px rgba(59,51,85,0.35);
+}
+
+@media (max-width: 768px) {
+    .back-to-top {
+        right: 16px;
+        bottom: 16px;
+        width: 44px;
+        height: 44px;
+        font-size: 18px;
+        line-height: 44px;
+    }
+}
+
 /* Animációk */
 @keyframes slideInFromTop {
     0% {

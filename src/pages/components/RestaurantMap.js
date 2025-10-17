@@ -1,4 +1,5 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import '../components/css/homepage.css';
@@ -30,6 +31,7 @@ const miskolcRestaurants = [
 export default function RestaurantMap() {
     const [isOpen, setIsOpen] = useState(false);
     const miskolcCenter = [48.1031, 20.7784];
+    const mapRef = useRef(null);
 
     const open = useCallback(() => setIsOpen(true), []);
     const close = useCallback(() => setIsOpen(false), []);
@@ -42,6 +44,9 @@ export default function RestaurantMap() {
         };
         if (isOpen) {
             document.addEventListener('keydown', onKeyDown);
+            if (mapRef.current) {
+                setTimeout(() => mapRef.current.invalidateSize(), 50);
+            }
         }
         return () => document.removeEventListener('keydown', onKeyDown);
     }, [isOpen, close]);
@@ -52,48 +57,55 @@ export default function RestaurantMap() {
                 Térkép
             </button>
 
-            {isOpen && (
-                <div className="restaurant-map-modal-overlay" onClick={close}>
-                    <div
-                        className="restaurant-map-modal"
-                        role="dialog"
-                        aria-modal="true"
-                        aria-label="Étterem térkép és kereső"
-                        onClick={(e) => e.stopPropagation()}
-                    >
-                        <div className="restaurant-map-modal-header">
-                            <h2 className="restaurant-map-title">Keresés térképen</h2>
-                            <button className="btn restaurant-map-close-btn" onClick={close} aria-label="Térkép bezárása">✕</button>
-                        </div>
-                        <div className="restaurant-map-search">
-                            <input type="text" placeholder="📍 Cím vagy terület" aria-label="Cím vagy terület" />
-                            <input type="text" placeholder="🍕 Étel vagy étterem" aria-label="Étel vagy étterem" />
-                            <button className="btn btn-primary">Keresés</button>
-                        </div>
-                        <div className="restaurant-map-map-section">
-                            <MapContainer
-                                className="restaurant-map-leaflet"
-                                center={miskolcCenter}
-                                zoom={13}
-                                scrollWheelZoom={true}
-                            >
-                                <TileLayer
-                                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                                />
-                                {miskolcRestaurants.map((restaurant, idx) => (
-                                    <Marker key={idx} position={restaurant.position}>
-                                        <Popup>
-                                            <strong>{restaurant.name}</strong>
-                                            <br />
-                                            {restaurant.description}
-                                        </Popup>
-                                    </Marker>
-                                ))}
-                            </MapContainer>
+            {isOpen && createPortal(
+                (
+                    <div className="restaurant-map-modal-overlay" onClick={close}>
+                        <div
+                            className="restaurant-map-modal"
+                            role="dialog"
+                            aria-modal="true"
+                            aria-label="Étterem térkép és kereső"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <div className="restaurant-map-modal-header">
+                                <h2 className="restaurant-map-title">Keresés térképen</h2>
+                                <button className="btn restaurant-map-close-btn" onClick={close} aria-label="Térkép bezárása">✕</button>
+                            </div>
+                            <div className="restaurant-map-search">
+                                <input type="text" placeholder="📍 Cím vagy terület" aria-label="Cím vagy terület" />
+                                <input type="text" placeholder="🍕 Étel vagy étterem" aria-label="Étel vagy étterem" />
+                                <button className="btn btn-primary">Keresés</button>
+                            </div>
+                            <div className="restaurant-map-map-section">
+                                <MapContainer
+                                    whenCreated={(map) => {
+                                        mapRef.current = map;
+                                        setTimeout(() => map.invalidateSize(), 50);
+                                    }}
+                                    className="restaurant-map-leaflet"
+                                    center={miskolcCenter}
+                                    zoom={13}
+                                    scrollWheelZoom={true}
+                                >
+                                    <TileLayer
+                                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                                    />
+                                    {miskolcRestaurants.map((restaurant, idx) => (
+                                        <Marker key={idx} position={restaurant.position}>
+                                            <Popup>
+                                                <strong>{restaurant.name}</strong>
+                                                <br />
+                                                {restaurant.description}
+                                            </Popup>
+                                        </Marker>
+                                    ))}
+                                </MapContainer>
+                            </div>
                         </div>
                     </div>
-                </div>
+                ),
+                document.body
             )}
         </>
     );

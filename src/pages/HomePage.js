@@ -8,6 +8,7 @@ import '../../src/pages/components/css/CuisineList.css'
 import RestaurantCardList from './components/RestaurantCardList';
 import Benefits from './components/Benefits';
 import Cousines from './components/Cousines';
+import BackToTopButton from './components/BackToTopButton.js';
 
 document.title = "QuickBite - Főoldal";
 
@@ -37,12 +38,12 @@ export default function HomePage() {
                     </div>
                 </div>
             </section>
+
             <Cousines />
             <RestaurantCardList />
-
             <Benefits />
-
             <Footer />
+            <BackToTopButton />
         </>
     )
 }

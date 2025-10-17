@@ -9,7 +9,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 1000;
+    z-index: 3000;
+    isolation: isolate;
 }
 
 .restaurant-map-modal {
@@ -46,6 +47,12 @@
     display: grid;
     grid-template-columns: 1fr 1fr auto;
     gap: 8px;
+}
+
+.restaurant-map-search input {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
 }
 
 .restaurant-map-map-section {
