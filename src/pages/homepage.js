@@ -6,6 +6,7 @@ import 'leaflet/dist/leaflet.css';
 import RestaurantMap from './components/RestaurantMap';
 import '../../src/pages/components/css/CuisineList.css'
 import RestaurantCardList from './components/RestaurantCardList';
+import Benefits from './components/Benefits';
 
 document.title = "QuickBite - Főoldal";
 
@@ -37,26 +38,8 @@ export default function HomePage() {
             </section>
 
             
-
-            <div className="container">
-                <div className="benefits-home">
-                    <div className="benefit-card-home">
-                        <div className="benefit-icon-home">⭐</div>
-                        <h3>Legjobb éttermek</h3>
-                        <p>Csak ellenőrzött, magas minőségű éttermekkel dolgozunk. Minden vendéglátóhely megfelel a legszigorúbb követelményeknek.</p>
-                    </div>
-                    <div className="benefit-card-home">
-                        <div className="benefit-icon-home">⚡</div>
-                        <h3>Villámgyors szállítás</h3>
-                        <p>30 percen belül kiszállítjuk az ételedet. Valós idejű követéssel mindig tudod, hol jár a futár.</p>
-                    </div>
-                    <div className="benefit-card-home">
-                        <div className="benefit-icon-home">💳</div>
-                        <h3>Biztonságos fizetés</h3>
-                        <p>Fizetés készpénzzel, bankkártyával vagy online. Minden tranzakció biztonságos és védett.</p>
-                    </div>
-                </div>
-            </div>
+            
+            
 
             <div className="container">
                 <h2 className="section-title">Böngéssz konyhatípus szerint</h2>
@@ -95,6 +78,8 @@ export default function HomePage() {
             </div>
 
             <RestaurantCardList />
+
+            <Benefits />
 
             <Footer />
         </>
