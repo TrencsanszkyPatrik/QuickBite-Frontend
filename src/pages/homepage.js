@@ -7,6 +7,7 @@ import RestaurantMap from './components/RestaurantMap';
 import '../../src/pages/components/css/CuisineList.css'
 import RestaurantCardList from './components/RestaurantCardList';
 import Benefits from './components/Benefits';
+import Cousines from './components/Cousines';
 
 document.title = "QuickBite - Főoldal";
 
@@ -36,47 +37,7 @@ export default function HomePage() {
                     </div>
                 </div>
             </section>
-
-            
-            
-            
-
-            <div className="container">
-                <h2 className="section-title">Böngéssz konyhatípus szerint</h2>
-                <div className="cuisines-grid">
-                    <div className="cuisine-card">
-                        <div className="cuisine-icon">🍝</div>
-                        <span className="cuisine-title">Olasz</span>
-                        <span className="cuisine-meta">23 étterem</span>
-                    </div>
-                    <div className="cuisine-card">
-                        <div className="cuisine-icon">🍜</div>
-                        <span className="cuisine-title">Ázsiai</span>
-                        <span className="cuisine-meta">31 étterem</span>
-                    </div>
-                    <div className="cuisine-card">
-                        <div className="cuisine-icon">🌮</div>
-                        <span className="cuisine-title">Mexikói</span>
-                        <span className="cuisine-meta">18 étterem</span>
-                    </div>
-                    <div className="cuisine-card">
-                        <div className="cuisine-icon">🍔</div>
-                        <span className="cuisine-title">Amerikai</span>
-                        <span className="cuisine-meta">27 étterem</span>
-                    </div>
-                    <div className="cuisine-card">
-                        <div className="cuisine-icon">🍛</div>
-                        <span className="cuisine-title">Indiai</span>
-                        <span className="cuisine-meta">15 étterem</span>
-                    </div>
-                    <div className="cuisine-card">
-                        <div className="cuisine-icon">🥙</div>
-                        <span className="cuisine-title">Mediterrán</span>
-                        <span className="cuisine-meta">12 étterem</span>
-                    </div>
-                </div>
-            </div>
-
+            <Cousines />
             <RestaurantCardList />
 
             <Benefits />
