@@ -1,0 +1,200 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    /* Szín paletta integráció */
+    --primary: #3B3355;           /* (59,51,85) */
+    --primary-dark: #2D2742;      /* sötétebb változat */
+    --secondary: #5D5D81;         /* (93,93,129) */
+    --text: #000505;              /* (0,5,5) nagyon sötét */
+    --text-light: #5D5D81;        /* halványított szöveg az akcentusból */
+    --bg: #FEFCFD;                /* (254,252,253) közel fehér */
+    --bg-light: #BFCDE0;          /* (191,205,224) világos kékesszürke */
+    --border: #D4DCE8;            /* border a világos kékből */
+    --success: #00B894;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    color: var(--text);
+    line-height: 1.6;
+    background: var(--bg-light);
+}
+
+/* Container */
+.container-contact {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 4rem 2rem;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(59, 51, 85, 0.1);
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Főcím */
+.h1-contact {
+    color: var(--primary);
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 2rem;
+    text-align: center;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+/* Form */
+.form-contact {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* Input mezők */
+.input-contact {
+    padding: 1rem 1.5rem;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.9);
+    color: var(--text);
+}
+
+.input-contact:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(59, 51, 85, 0.15);
+    transform: translateY(-2px);
+}
+
+.input-contact::placeholder {
+    color: var(--text-light);
+    opacity: 0.7;
+}
+
+/* Textarea */
+.textarea-contact {
+    padding: 1rem 1.5rem;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.9);
+    color: var(--text);
+    min-height: 120px;
+    resize: vertical;
+    font-family: inherit;
+}
+
+.textarea-contact:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(59, 51, 85, 0.15);
+    transform: translateY(-2px);
+}
+
+.textarea-contact::placeholder {
+    color: var(--text-light);
+    opacity: 0.7;
+}
+
+/* Submit gomb */
+.button-contact {
+    padding: 1rem 2rem;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(59, 51, 85, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.button-contact::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.button-contact:hover::before {
+    left: 100%;
+}
+
+.button-contact:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(59, 51, 85, 0.4);
+    background: linear-gradient(135deg, var(--primary-dark), var(--secondary));
+}
+
+.button-contact:active {
+    transform: translateY(-1px) scale(0.98);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .container-contact {
+        padding: 2rem 1rem;
+        margin: 1rem;
+        border-radius: 15px;
+    }
+    
+    .h1-contact {
+        font-size: 2rem;
+    }
+    
+    .form-contact {
+        gap: 1.2rem;
+    }
+    
+    .input-contact,
+    .textarea-contact {
+        padding: 0.8rem 1.2rem;
+        font-size: 0.95rem;
+    }
+    
+    .button-contact {
+        padding: 0.8rem 1.5rem;
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .container-contact {
+        padding: 1.5rem 0.8rem;
+    }
+    
+    .h1-contact {
+        font-size: 1.8rem;
+    }
+    
+    .input-contact,
+    .textarea-contact {
+        padding: 0.7rem 1rem;
+        font-size: 0.9rem;
+    }
+    
+    .button-contact {
+        padding: 0.7rem 1.2rem;
+        font-size: 0.95rem;
+    }
+}

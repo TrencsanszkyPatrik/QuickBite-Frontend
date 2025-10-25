@@ -16,7 +16,7 @@ export default function Footer() {
                     <Link to = "/">Főoldal</Link>
                     <Link to = "/restaurants">Éttermek</Link>
                     <Link to ="/about">Rólunk</Link>
-                    <Link to = "/linkup">Kapcsolat</Link>
+                    <Link to = "/contact">Kapcsolat</Link>
                 </div>
             </div>
             <div class="footer-section">
