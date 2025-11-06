@@ -1,0 +1,39 @@
+import React from 'react'
+import Navbar from './components/Navbar'
+import Footer from './components/Footer'
+import "../pages/components/css/login.css"
+import { Link } from 'react-router-dom'
+
+export default function Register() {
+  return (
+    <div>
+        <Navbar/>
+    <div className="container-login">
+        <h1>QuickBite</h1>
+        <p>Regisztrálj, hogy máris rendelhess!</p>
+        <div className="buttons-login">
+           <Link to ="/login"> <a><button className="login-login">Bejelentkezés</button></a></Link>
+            <button className="register-login active">Regisztráció</button>
+        </div>
+        <div className="form-group-login">
+            <label htmlFor="fullName">Teljes Név:</label>
+            <input type="text" id="fullName" placeholder="Nagy Zoltán"/>
+        </div>
+        <div className="form-group-login">
+            <label htmlFor="email">Email:</label>
+            <input type="email" id="email" placeholder="NagyZoltan@gmail.com"/>
+        </div>
+        <div className="form-group-login">
+            <label htmlFor="password">Jelszó:</label>
+            <input type="password" id="password" placeholder="Jelszó"/>
+        </div>
+        <div className="form-group-login">
+            <label htmlFor="confirmPassword">Jelszó Megerősítése:</label>
+            <input type="password" id="confirmPassword" placeholder="Jelszó Megerősítése"/>
+        </div>
+        <button className="create-account-login">Regisztrálás!</button>
+    </div>
+    <Footer/>
+</div>
+  )
+}
