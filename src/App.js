@@ -7,6 +7,7 @@ import AllRestaurantPage from "./pages/AllRestaurantPage";
 import RestaurantDetails from "./pages/RestaurantDetails";
 import Aszf from "./pages/footerpages/Aszf";
 import Contact from "./pages/footerpages/Contact";
+import Cart from "./pages/Cart";
 
 export default function App() {
   return (
@@ -19,7 +20,9 @@ export default function App() {
         <Route path="/restaurants" element={<AllRestaurantPage />} />
         <Route path="/restaurant/:id" element={<RestaurantDetails />} />
         <Route path="*" element={<PageNotFound />} />
+        <Route path="/cart" element={<Cart/>}></Route>
       </Routes>
     </Router>
   );
 }
+
