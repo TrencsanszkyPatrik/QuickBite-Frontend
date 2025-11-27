@@ -34,7 +34,7 @@ const cousines = [
     },
     {
         name: 'Magyar',
-        icon: '🍕',
+        icon: '🫕',
         count: 10
     }
 ]

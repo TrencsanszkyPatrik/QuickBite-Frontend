@@ -40,6 +40,7 @@ export default function HomePage() {
             </section>
 
             <Cousines />
+            <h1 className="section-title">Válassz kiemelkedő éttermeink közül!</h1>
             <RestaurantCardList />
             <Benefits />
             <Footer />
