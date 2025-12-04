@@ -1,56 +1,68 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import '../components/css/CuisineList.css'
 
-const cousines = [
-    {
-        name: 'Olasz',
-        icon: '🍝',
-        count: 23
-    },
-    {
-        name: 'Ázsiai',
-        icon: '🍜',
-        count: 31
-    },
-    {
-        name: 'Mexikói',
-        icon: '🌮',
-        count: 18
-    },
-    {
-        name: 'Amerikai',
-        icon: '🍔',
-        count: 27
-    },
-    {
-        name: 'Indiai',
-        icon: '🍛',
-        count: 15
-    },
-    {
-        name: 'Mediterrán',
-        icon: '🥙',
-        count: 12
-    },
-    {
-        name: 'Magyar',
-        icon: '🫕',
-        count: 10
-    }
-]
-
 export default function Cousines() {
+    const [categories, setCategories] = useState([])
+    const [isLoading, setIsLoading] = useState(true)
+    const [error, setError] = useState(null)
+
+    useEffect(() => {
+        const fetchCategoriesAndCounts = async () => {
+            try {
+                // Kategóriák + éttermek párhuzamos betöltése
+                const [categoriesRes, restaurantsRes] = await Promise.all([
+                    fetch('https://localhost:7236/api/Categories'),
+                    fetch('https://localhost:7236/api/Restaurants')
+                ])
+
+                if (!categoriesRes.ok || !restaurantsRes.ok) {
+                    throw new Error('Nem sikerült betölteni a kategóriákat vagy éttermeket.')
+                }
+
+                const [categoriesData, restaurantsData] = await Promise.all([
+                    categoriesRes.json(),
+                    restaurantsRes.json()
+                ])
+
+                const mapped = categoriesData.map((c) => {
+                    const count = restaurantsData.filter(
+                        (r) => r.cuisine_id === c.id
+                    ).length
+
+                    return {
+                        id: c.id,
+                        name: c.name,
+                        icon: c.icon,
+                        count
+                    }
+                })
+
+                setCategories(mapped)
+            } catch (err) {
+                console.error(err)
+                setError('Hiba történt a kategóriák betöltése közben.')
+            } finally {
+                setIsLoading(false)
+            }
+        }
+
+        fetchCategoriesAndCounts()
+    }, [])
+
     return (
         <>
             <div className="container">
                 <h2 className="section-title">Böngéssz konyhatípus szerint</h2>
                 <div className="cuisines-grid">
-                    
-                    {cousines.map((cousine) => (
-                        <div className="cuisine-card">
-                            <div className="cuisine-icon">{cousine.icon}</div>
-                            <span className="cuisine-title">{cousine.name}</span>
-                            <span className="cuisine-meta">{cousine.count} étterem</span>
+                    {isLoading && <p>Kategóriák betöltése...</p>}
+                    {error && !isLoading && <p>{error}</p>}
+                    {!isLoading && !error && categories.map((category) => (
+                        <div className="cuisine-card" key={category.id}>
+                            <div className="cuisine-icon">{category.icon}</div>
+                            <span className="cuisine-title">{category.name}</span>
+                            <span className="cuisine-meta">
+                                {category.count} étterem
+                            </span>
                         </div>
                     ))}
 
