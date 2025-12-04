@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import '../pages//components/css/homepage.css'
@@ -13,6 +13,12 @@ import BackToTopButton from './components/BackToTopButton.js';
 document.title = "QuickBite - Főoldal";
 
 export default function HomePage() {
+    const [selectedCuisineId, setSelectedCuisineId] = useState(null)
+
+    const handleSelectCuisine = (id) => {
+        setSelectedCuisineId((current) => (current === id ? null : id))
+    }
+
     return (
         <>
             <Navbar />
@@ -39,9 +45,12 @@ export default function HomePage() {
                 </div>
             </section>
 
-            <Cousines />
+            <Cousines
+                selectedCuisineId={selectedCuisineId}
+                onSelectCuisine={handleSelectCuisine}
+            />
             <h1 className="section-title">Válassz kiemelkedő éttermeink közül!</h1>
-            <RestaurantCardList />
+            <RestaurantCardList selectedCuisineId={selectedCuisineId} />
             <Benefits />
             <Footer />
             <BackToTopButton />

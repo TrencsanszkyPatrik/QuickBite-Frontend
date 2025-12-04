@@ -4,7 +4,8 @@ import { useNavigate } from 'react-router-dom';
 
 export default function RestaurantCardList({
   showDiscountOnly = false,
-  showFreeDeliveryOnly = false
+  showFreeDeliveryOnly = false,
+  selectedCuisineId = null
 }) {
   const navigate = useNavigate();
   const [restaurants, setRestaurants] = useState([]);
@@ -60,6 +61,9 @@ export default function RestaurantCardList({
   }
 
   const filteredRestaurants = restaurants.filter((restaurant) => {
+    if (selectedCuisineId && restaurant.cuisine_id !== selectedCuisineId) {
+      return false;
+    }
     if (showDiscountOnly && restaurant.discount <= 0) {
       return false;
     }

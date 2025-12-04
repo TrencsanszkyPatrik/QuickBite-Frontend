@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import '../components/css/CuisineList.css'
 
-export default function Cousines() {
+export default function Cousines({ selectedCuisineId, onSelectCuisine = () => {} }) {
     const [categories, setCategories] = useState([])
     const [isLoading, setIsLoading] = useState(true)
     const [error, setError] = useState(null)
@@ -56,15 +56,21 @@ export default function Cousines() {
                 <div className="cuisines-grid">
                     {isLoading && <p>Kategóriák betöltése...</p>}
                     {error && !isLoading && <p>{error}</p>}
-                    {!isLoading && !error && categories.map((category) => (
-                        <div className="cuisine-card" key={category.id}>
+                    {!isLoading && !error && categories.map((category) => {
+                        const isSelected = selectedCuisineId === category.id
+                        return (
+                        <div
+                            className={`cuisine-card ${isSelected ? 'selected' : ''}`}
+                            key={category.id}
+                            onClick={() => onSelectCuisine(category.id)}
+                        >
                             <div className="cuisine-icon">{category.icon}</div>
                             <span className="cuisine-title">{category.name}</span>
                             <span className="cuisine-meta">
                                 {category.count} étterem
                             </span>
                         </div>
-                    ))}
+                    )})}
 
                 </div>
             </div>
