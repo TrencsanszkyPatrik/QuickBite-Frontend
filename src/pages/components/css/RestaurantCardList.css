@@ -5,9 +5,10 @@
 }
 
 .restaurant-cards-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
   gap: 2rem;
+  justify-content: center;
 }
 
 .restaurant-card {
@@ -21,6 +22,7 @@
   flex-direction: column;
   align-items: stretch;
   outline: none;
+  width: 260px;
 }
 
 .restaurant-card:hover, .restaurant-card:focus {

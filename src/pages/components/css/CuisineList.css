@@ -5,9 +5,10 @@
 }
 
 .cuisines-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
   gap: 1.5rem;
+  justify-content: center; /* hogy középen maradjanak akkor is, ha kevés van */
 }
 
 .cuisine-card {
@@ -22,6 +23,12 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 200px;           /* fix szélesség, nem fog szétcsúszni */
+}
+
+.cuisine-card.selected {
+  border: 2px solid var(--primary);
+  box-shadow: 0 8px 25px rgba(59,51,85,0.18);
 }
 
 .cuisine-card:hover {
