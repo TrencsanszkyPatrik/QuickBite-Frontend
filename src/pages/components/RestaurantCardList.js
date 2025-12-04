@@ -1,55 +1,64 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './css/RestaurantCardList.css';
 import { useNavigate } from 'react-router-dom';
-
-const restaurants = [
-  {
-    name: 'Anyukám Mondta',
-    cuisine: 'Olasz',
-    address: 'Encs, Petőfi Sándor út 57.',
-    img: require('../../img/etteremkepek/Lángoló Rostély - Grill & BBQ.png'),
-    discount: 20,
-    freeDelivery: false,
-    acceptCards: true,
-    id: 1
-  },
-  {
-    name: 'Végállomás Bistorant',
-    cuisine: 'Magyar',  
-    address: 'Miskolc, Dorottya u. 1.',
-    img: require('../../img/etteremkepek/Lángoló Rostély - Grill & BBQ.png'),
-    discount: 10,
-    freeDelivery: true,
-    acceptCards: true,
-    id: 2
-  },
-  {
-    name: "Zip's Brewhouse",
-    cuisine: 'Pub',
-    address: 'Miskolc, Arany János tér 1.',
-    img: require('../../img/etteremkepek/Lángoló Rostély - Grill & BBQ.png'),
-    discount: 0,
-    freeDelivery: true,
-    acceptCards: true,
-    id: 3
-  },
-  {
-    name: 'Calypso Kisvendéglő',
-    cuisine: 'Magyar',
-    address: 'Miskolc, Görgey Artúr u. 23.',
-    img: require('../../img/etteremkepek/Lángoló Rostély - Grill & BBQ.png'),
-    discount: 0,
-    freeDelivery: true,
-    acceptCards: true,
-    id: 4
-  }
-];
 
 export default function RestaurantCardList({
   showDiscountOnly = false,
   showFreeDeliveryOnly = false
 }) {
   const navigate = useNavigate();
+  const [restaurants, setRestaurants] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchRestaurants = async () => {
+      try {
+        const response = await fetch('https://localhost:7236/api/Restaurants');
+        if (!response.ok) {
+          throw new Error('Nem sikerült betölteni az éttermeket.');
+        }
+        const data = await response.json();
+
+        
+        const mapped = data.map((r) => ({
+          ...r,
+          
+          address: `${r.city}, ${r.address}`,
+          img: r.image_url,
+          freeDelivery: r.free_delivery,
+          acceptCards: r.accept_cards,
+          
+        }));
+
+        setRestaurants(mapped);
+      } catch (err) {
+        console.error(err);
+        setError('Hiba történt az éttermek betöltése közben.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchRestaurants();
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div className="restaurant-list-section container">
+        <p>Étterem lista betöltése...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="restaurant-list-section container">
+        <p>{error}</p>
+      </div>
+    );
+  }
+
   const filteredRestaurants = restaurants.filter((restaurant) => {
     if (showDiscountOnly && restaurant.discount <= 0) {
       return false;
