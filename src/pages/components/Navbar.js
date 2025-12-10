@@ -16,10 +16,12 @@ export default function Navbar() {
             </Link>
             
             <div class="header-actions">
-                <Link to = "/about">Rólunk</Link>
-                <Link to ="/restaurants">Éttermeink</Link>
-                <Link to ="/cart"><button class="btn btn-secondary">Kosár</button></Link>
-                <Link to ="/login"><button class="btn btn-primary">Bejelentkezés</button></Link>
+                <Link to = "/kapcsolat">Kapcsolat</Link>
+                <Link to = "/rolunk">Rólunk</Link>
+                <Link to ="/ettermek">Éttermeink</Link>
+                <Link to ="/velemenyek">Vásárlók véleményei</Link>
+                <Link to ="/kosar"><button class="btn btn-secondary">Kosár</button></Link>
+                <Link to ="/bejelentkezes"><button class="btn btn-primary">Bejelentkezés</button></Link>
             </div>
         </div>
     </header>

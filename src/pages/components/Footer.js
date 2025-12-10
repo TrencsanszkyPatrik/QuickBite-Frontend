@@ -14,9 +14,9 @@ export default function Footer() {
                 <h3>Linkek</h3>
                 <div class="footer-links">
                     <Link to = "/">Főoldal</Link>
-                    <Link to = "/restaurants">Éttermek</Link>
-                    <Link to ="/about">Rólunk</Link>
-                    <Link to = "/contact">Kapcsolat</Link>
+                    <Link to = "/ettermek">Éttermek</Link>
+                    <Link to ="/rolunk">Rólunk</Link>
+                    <Link to = "/kapcsolat">Kapcsolat</Link>
                 </div>
             </div>
             <div class="footer-section">
@@ -30,9 +30,9 @@ export default function Footer() {
             <div class="footer-section">
                 <h3>Közösségi média</h3>
                 <div class="footer-links">
-                    <a href="www.facebook.com">Facebook</a>
-                    <a href="www.instagram.com">Instagram</a>
-                    <a href="www.x.com">Twitter</a>
+                    <a href="www.facebook.com"><i class="bi bi-facebook"></i> Facebook</a>
+                   <a href="www.instagram.com"> <i class="bi bi-instagram"></i> Instagram</a>
+                    <a href="www.x.com"> <i class="bi bi-twitter-x"></i> Twitter</a>
                 </div>
             </div>
         </div>

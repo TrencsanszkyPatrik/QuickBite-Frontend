@@ -9,21 +9,28 @@ import Contact from "./pages/footerpages/Contact";
 import Cart from "./pages/Cart";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import Opinions from "./pages/Opinions";
+
+
+
 
 export default function App() {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route path="/about" element={<AboutUs />} />
+        <Route path="/rolunk" element={<AboutUs />} />
         <Route path="/aszf" element={<Aszf />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/restaurants" element={<AllRestaurantPage />} />
+        <Route path="/kapcsolat" element={<Contact />} />
+        <Route path="/ettermek" element={<AllRestaurantPage />} />
         <Route path="/restaurant/:id" element={<RestaurantDetails />} />
         <Route path="*" element={<PageNotFound />} />
-        <Route path="/cart" element={<Cart/>}></Route>
-        <Route path="/login" element={<Login/>}></Route>
-        <Route path="/register" element={<Register/>}></Route>
+        <Route path="/kosar" element={<Cart/>}></Route>
+        <Route path="/bejelentkezes" element={<Login/>}></Route>
+        <Route path="/regisztracio" element={<Register/>}></Route>
+        <Route path="/velemenyek" element={<Opinions/>}></Route>
+        
+        
       </Routes>
     </Router>
   );
