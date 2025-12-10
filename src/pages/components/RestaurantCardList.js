@@ -5,7 +5,8 @@ import { useNavigate } from 'react-router-dom';
 export default function RestaurantCardList({
   showDiscountOnly = false,
   showFreeDeliveryOnly = false,
-  selectedCuisineId = null
+  selectedCuisineId = null,
+  searchQuery = "" // <-- HOZZÁADVA
 }) {
   const navigate = useNavigate();
   const [restaurants, setRestaurants] = useState([]);
@@ -21,15 +22,12 @@ export default function RestaurantCardList({
         }
         const data = await response.json();
 
-        
         const mapped = data.map((r) => ({
           ...r,
-          
           address: `${r.city}, ${r.address}`,
           img: r.image_url,
           freeDelivery: r.free_delivery,
           acceptCards: r.accept_cards,
-          
         }));
 
         setRestaurants(mapped);
@@ -61,6 +59,18 @@ export default function RestaurantCardList({
   }
 
   const filteredRestaurants = restaurants.filter((restaurant) => {
+
+    // ---- KERESÉS ----
+    if (searchQuery.trim() !== "") {
+      const q = searchQuery.toLowerCase();
+
+      const matchesName = restaurant.name.toLowerCase().includes(q);
+      const matchesAddress = restaurant.address?.toLowerCase().includes(q);
+      const matchesCuisine = restaurant.cuisine?.toLowerCase().includes(q);
+
+      if (!matchesName && !matchesAddress && !matchesCuisine) return false;
+    }
+
     if (selectedCuisineId && restaurant.cuisine_id !== selectedCuisineId) {
       return false;
     }
@@ -91,6 +101,10 @@ export default function RestaurantCardList({
             </div>
           </div>
         ))}
+
+        {filteredRestaurants.length === 0 && (
+          <p>Nincs találat a megadott keresésre.</p>
+        )}
       </div>
     </div>
   );
