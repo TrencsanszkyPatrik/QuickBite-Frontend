@@ -12,13 +12,25 @@ import Register from "./pages/Register";
 import Opinions from "./pages/Opinions";
 
 
-
-
 export default function App() {
+
+  const [opinions, setOpinions] = useState([])
+
+  useEffect(() => {
+    
+  fetch("https://localhost:7236/api/quickbite_reviews")
+  .then(function (response) {
+     return response.json()
+  })
+  .then(function(data) {
+     setOpinions(data)
+  })
+  }, [])
+
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<HomePage />} />
+        <Route path="/" element={<HomePage opinions={opinions}/>} />
         <Route path="/rolunk" element={<AboutUs />} />
         <Route path="/aszf" element={<Aszf />} />
         <Route path="/kapcsolat" element={<Contact />} />
