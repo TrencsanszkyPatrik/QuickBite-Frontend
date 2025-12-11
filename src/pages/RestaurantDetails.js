@@ -12,9 +12,9 @@ const restaurants = [
     address: 'Encs, Petőfi Sándor út 57.',
     img: '/img/etteremkepek/langolo-rostely.png',
     menu: [
-      { name: 'Margherita pizza', price: 2490, img: '/img/etteremkepek/langolo-rostely.png', desc: 'Paradicsomos, mozzarellás klasszikus.' },
-      { name: 'Carbonara spagetti', price: 2890, img: '/img/etteremkepek/langolo-rostely.png', desc: 'Krémes, szalonnás tészta.' },
-      { name: 'Tiramisu', price: 1690, img: '/img/etteremkepek/langolo-rostely.png', desc: 'Olasz desszert, kávéval és mascarponéval.' },
+      { name: 'Margherita pizza', price: 2490, img: '/img/EtelKepek/MargaretaPizza.png', desc: 'Paradicsomos, mozzarellás klasszikus.' },
+      { name: 'Carbonara spagetti', price: 2890, img: '/img/EtelKepek/CarbonaraSpagetti.png', desc: 'Krémes, szalonnás tészta.' },
+      { name: 'Tiramisu', price: 1690, img: '/img/EtelKepek/Tiramisu.png', desc: 'Olasz desszert, kávéval és mascarponéval.' },
     ],
   },
   {
@@ -24,9 +24,9 @@ const restaurants = [
     address: 'Miskolc, Dorottya u. 1.',
     img: '/img/etteremkepek/langolo-rostely.png',
     menu: [
-      { name: 'Rántott hús', price: 2990, img: '/img/etteremkepek/langolo-rostely.png', desc: 'Ropogós panír, friss köret.' },
-      { name: 'Gulyásleves', price: 1990, img: '/img/etteremkepek/langolo-rostely.png', desc: 'Hagyományos magyar leves.' },
-      { name: 'Somlói galuska', price: 1490, img: '/img/etteremkepek/langolo-rostely.png', desc: 'Kedvelt magyar desszert.' },
+      { name: 'Rántott hús', price: 2990, img: '/img/EtelKepek/Rantotthus.png', desc: 'Ropogós panír, friss köret.' },
+      { name: 'Gulyásleves', price: 1990, img: '/img/EtelKepek/Gulyasleves.png', desc: 'Hagyományos magyar leves.' },
+      { name: 'Somlói galuska', price: 1490, img: '/img/EtelKepek/SomloiGaluska.png', desc: 'Kedvelt magyar desszert.' },
     ],
   },
   {
@@ -36,9 +36,9 @@ const restaurants = [
     address: 'Miskolc, Arany János tér 1.',
     img: '/img/etteremkepek/langolo-rostely.png',
     menu: [
-      { name: 'BBQ burger', price: 3190, img: '/img/etteremkepek/langolo-rostely.png', desc: 'Füstös BBQ szósz, szaftos hús.' },
-      { name: 'Sült krumpli', price: 990, img: '/img/etteremkepek/langolo-rostely.png', desc: 'Ropogós, aranybarna.' },
-      { name: 'Kézműves sör', price: 1290, img: '/img/etteremkepek/langolo-rostely.png', desc: 'Helyben főzött sör.' },
+      { name: 'BBQ burger', price: 3190, img: '/img/EtelKepek/BbqBurger.png', desc: 'Füstös BBQ szósz, szaftos hús.' },
+      { name: 'Sült krumpli', price: 990, img: '/img/EtelKepek/Sultkrumpli.png', desc: 'Ropogós, aranybarna.' },
+      { name: 'Kézműves sör', price: 1290, img: '/img/EtelKepek/KezmuvesSor.png', desc: 'Helyben főzött sör.' },
     ],
   },
   {
@@ -48,8 +48,8 @@ const restaurants = [
     address: 'Miskolc, Görgey Artúr u. 23.',
     img: '/img/etteremkepek/langolo-rostely.png',
     menu: [
-      { name: 'Húsleves', price: 1790, img: '/img/etteremkepek/langolo-rostely.png', desc: 'Házi, gazdag húsleves.' },    
-      { name: 'Palacsinta', price: 990, img: '/img/etteremkepek/langolo-rostely.png', desc: 'Töltött, édes palacsinta.' },
+      { name: 'Húsleves', price: 1790, img: '/img/EtelKepek/Husleves.png', desc: 'Házi, gazdag húsleves.' },    
+      { name: 'Palacsinta', price: 990, img: '/img/EtelKepek/Palacsinta.png', desc: 'Töltött, édes palacsinta.' },
     ],
   },
 ];
