@@ -10,7 +10,7 @@ const restaurants = [
     name: 'Anyukám Mondta',
     cuisine: 'Olasz',
     address: 'Encs, Petőfi Sándor út 57.',
-    img: '/img/etteremkepek/langolo-rostely.png',
+    img: '/img/etteremkepek/anyukam.jpg',
     menu: [
       { name: 'Margherita pizza', price: 2490, img: '/img/EtelKepek/MargaretaPizza.png', desc: 'Paradicsomos, mozzarellás klasszikus.' },
       { name: 'Carbonara spagetti', price: 2890, img: '/img/EtelKepek/CarbonaraSpagetti.png', desc: 'Krémes, szalonnás tészta.' },
@@ -22,7 +22,7 @@ const restaurants = [
     name: 'Végállomás Bistorant',
     cuisine: 'Magyar',
     address: 'Miskolc, Dorottya u. 1.',
-    img: '/img/etteremkepek/langolo-rostely.png',
+    img: '/img/etteremkepek/vegallomas.jpg',
     menu: [
       { name: 'Rántott hús', price: 2990, img: '/img/EtelKepek/Rantotthus.png', desc: 'Ropogós panír, friss köret.' },
       { name: 'Gulyásleves', price: 1990, img: '/img/EtelKepek/Gulyasleves.png', desc: 'Hagyományos magyar leves.' },
@@ -34,7 +34,7 @@ const restaurants = [
     name: "Zip's Brewhouse",
     cuisine: 'Pub',
     address: 'Miskolc, Arany János tér 1.',
-    img: '/img/etteremkepek/langolo-rostely.png',
+    img: '/img/etteremkepek/zip.jpg',
     menu: [
       { name: 'BBQ burger', price: 3190, img: '/img/EtelKepek/BbqBurger.png', desc: 'Füstös BBQ szósz, szaftos hús.' },
       { name: 'Sült krumpli', price: 990, img: '/img/EtelKepek/Sultkrumpli.png', desc: 'Ropogós, aranybarna.' },
@@ -46,7 +46,7 @@ const restaurants = [
     name: 'Calypso Kisvendéglő',
     cuisine: 'Magyar',
     address: 'Miskolc, Görgey Artúr u. 23.',
-    img: '/img/etteremkepek/langolo-rostely.png',
+    img: '/img/etteremkepek/calypso.jpg',
     menu: [
       { name: 'Húsleves', price: 1790, img: '/img/EtelKepek/Husleves.png', desc: 'Házi, gazdag húsleves.' },    
       { name: 'Palacsinta', price: 990, img: '/img/EtelKepek/Palacsinta.png', desc: 'Töltött, édes palacsinta.' },
