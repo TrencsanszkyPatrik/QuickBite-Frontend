@@ -18,14 +18,28 @@ export default function App() {
   const [opinions, setOpinions] = useState([])
 
   useEffect(() => {
-    
-  fetch("https://localhost:7236/api/quickbite_reviews")
-  .then(function (response) {
-     return response.json()
-  })
-  .then(function(data) {
-     setOpinions(data)
-  })
+    const fetchOpinions = async () => {
+      try {
+        const response = await fetch("https://localhost:7236/api/quickbite_reviews")
+        if (!response.ok) {
+          throw new Error(`Failed to load opinions: ${response.status}`)
+        }
+
+        const text = await response.text()
+        if (!text) {
+          setOpinions([])
+          return
+        }
+
+        const data = JSON.parse(text)
+        setOpinions(Array.isArray(data) ? data : [])
+      } catch (err) {
+        console.error("Hiba a vélemények betöltésekor:", err)
+        setOpinions([])
+      }
+    }
+
+    fetchOpinions()
   }, [])
 
   return (
