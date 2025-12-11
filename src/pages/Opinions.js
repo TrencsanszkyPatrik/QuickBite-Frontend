@@ -11,23 +11,34 @@ export default function Opinions() {
 
   // Új vélemény állapotok
   const [newName, setNewName] = useState('');
+  const [newUsername, setNewUsername] = useState('');
   const [newText, setNewText] = useState('');
   const [newStars, setNewStars] = useState(5);
 
-  // Vélemények betöltése az API-ból
   useEffect(() => {
     fetchReviews();
   }, []);
 
+  const safeJson = async (response) => {
+    const text = await response.text();
+    if (!text) return null;
+    try {
+      return JSON.parse(text);
+    } catch (err) {
+      console.error('Hibás JSON válasz:', text);
+      throw new Error('Hibás szerver válasz');
+    }
+  };
+
   const fetchReviews = async () => {
     try {
       setLoading(true);
-      const response = await fetch('http://localhost:5000/api/QuickbiteReviews');
+      const response = await fetch('https://localhost:7236/api/QuickbiteReviews');
       if (!response.ok) {
         throw new Error('Nem sikerült betölteni a véleményeket');
       }
-      const data = await response.json();
-      setReviews(data);
+      const data = await safeJson(response);
+      setReviews(data || []);
       setError(null);
     } catch (err) {
       setError(err.message);
@@ -41,17 +52,17 @@ export default function Opinions() {
 
   // Vélemény hozzáadása
   const addReview = async () => {
-    if (newName.trim() === '' || newText.trim() === '') return; // Név és szöveg kötelező
+    if (newName.trim() === '' || newUsername.trim() === '' || newText.trim() === '') return; // Kötelező mezők
     
     const newReview = {
-      username: newName.toLowerCase().replace(/\s/g, '.'),
       name: newName,
-      text: newText,
+      username: newUsername,
+      review: newText,
       stars: newStars
     };
 
     try {
-      const response = await fetch('http://localhost:5000/api/QuickbiteReviews', {
+      const response = await fetch('https://localhost:7236/api/QuickbiteReviews', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -63,9 +74,12 @@ export default function Opinions() {
         throw new Error('Nem sikerült hozzáadni a véleményt');
       }
 
-      const addedReview = await response.json();
-      setReviews([addedReview, ...reviews]); // Új vélemény felülre kerül
+      const addedReview = await safeJson(response);
+      if (addedReview) {
+        setReviews([addedReview, ...reviews]);
+      }
       setNewName('');
+      setNewUsername('');
       setNewText('');
       setNewStars(5);
     } catch (err) {
@@ -89,6 +103,12 @@ export default function Opinions() {
             placeholder="Neved" 
             value={newName} 
             onChange={(e) => setNewName(e.target.value)} 
+          />
+          <input 
+            type="text" 
+            placeholder="Felhasználónév (username)" 
+            value={newUsername} 
+            onChange={(e) => setNewUsername(e.target.value)} 
           />
           <textarea 
             placeholder="Írd meg a véleményed..." 
@@ -116,7 +136,7 @@ export default function Opinions() {
                 <h3>{r.name}</h3>
                 <span className="username">@{r.username}</span>
               </div>
-              <p className="opinion-text">"{r.text}"</p>
+              <p className="opinion-text">"{r.review || r.text}"</p>
               <div className="stars">{renderStars(r.stars)}</div>
               {r.createdAt && (
                 <div className="opinion-date">
