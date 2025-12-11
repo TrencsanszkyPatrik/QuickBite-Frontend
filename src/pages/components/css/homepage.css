@@ -31,6 +31,11 @@ body {
     padding: 4rem 2rem;
     position: relative;
     overflow: hidden;
+    min-height: 420px;
+    max-height: 520px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .hero::before {
@@ -49,6 +54,7 @@ body {
     margin: 0 auto;
     position: relative;
     z-index: 1;
+    width: 100%;
 }
 
 .hero h1 {
@@ -99,10 +105,19 @@ body {
 }
 
 .categories-pills {
+    position: absolute;
+    transform: translateX(-50%);
+    top: 220px; /* fix távolság a hero-search alatt, igazítsd ha kell */
+    width: max-content;
+    background: #5D5D81;
+    box-shadow: 0 4px 24px rgba(59,51,85,0.08);
+    border-radius: 40px;
+    padding: 0.5rem 2rem;
+    z-index: 10;
     display: flex;
     gap: 1rem;
-    margin-top: 2rem;
     flex-wrap: wrap;
+    justify-content: center;
     animation: slideInFromRight 1.6s ease-out 1s, fadeIn 1.6s ease-out 1s;
     animation-fill-mode: both;
 }
@@ -123,6 +138,105 @@ body {
 .pill:hover {
     background: rgba(255,255,255,0.3);
     transform: translateY(-2px);
+}
+
+/* FloatingOpinions styles */
+.floating-opinion {
+    min-width: 320px;
+    max-width: 400px;
+    margin-left: 10rem;
+    margin-top: -8rem;
+    margin-right: 0;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-end;
+    animation: floatingOpinionIn 1.2s cubic-bezier(0.4,0,0.2,1);
+}
+
+.floating-opinion-card {
+    background: rgba(255,255,255,0.95);
+    border-radius: 18px;
+    box-shadow: 0 8px 32px rgba(59,51,85,0.13);
+    padding: 2rem 1.5rem 1.5rem 1.5rem;
+    position: relative;
+    min-width: 0;
+    transition: box-shadow 0.3s;
+    border: 1px solid var(--border);
+    font-size: 1.1rem;
+    opacity: 0.98;
+    max-width: 380px;
+    min-height: 120px;
+    max-height: 160px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.floating-opinion-card:hover {
+    box-shadow: 0 16px 40px rgba(59,51,85,0.22);
+}
+
+.floating-opinion-stars {
+    color: #FFD700;
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+    text-align: left;
+}
+
+.floating-opinion-text {
+    font-style: italic;
+    color: var(--secondary);
+    margin-bottom: 0.7rem;
+    line-height: 1.5;
+    animation: floatingOpinionTextFade 1.2s;
+}
+
+.floating-opinion-name {
+    color: var(--primary);
+    font-weight: 700;
+    font-size: 1rem;
+    text-align: right;
+}
+
+@keyframes floatingOpinionIn {
+    0% { opacity: 0; transform: translateY(40px) scale(0.95); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes floatingOpinionTextFade {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+@media (max-width: 900px) {
+    .floating-opinion {
+        max-width: 100%;
+        min-width: 0;
+        margin: 1rem 0 0 0;
+        justify-content: center;
+    }
+    .floating-opinion-card {
+        padding: 1.2rem 1rem;
+        font-size: 1rem;
+        max-width: 100%;
+        min-height: 100px;
+        max-height: 180px;
+    }
+    .categories-pills {
+        position: static;
+        left: unset;
+        transform: unset;
+        width: 100%;
+        justify-content: center;
+        margin-top: 1.5rem;
+        padding: 0.5rem 0.5rem;
+    }
+    .hero {
+        min-height: 340px;
+        max-height: 600px;
+        padding: 2rem 0.5rem;
+    }
 }
 
 /* Container */

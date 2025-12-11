@@ -9,6 +9,7 @@ import RestaurantCardList from './components/RestaurantCardList';
 import Benefits from './components/Benefits';
 import Cousines from './components/Cousines';
 import BackToTopButton from './components/BackToTopButton.js';
+import FloatingOpinions from './components/FloatingOpinions';
 
 document.title = "QuickBite - Főoldal";
 
@@ -28,13 +29,16 @@ export default function HomePage() {
                     <h1>Éhes vagy? Rendelj most! 🚀</h1>
                     <p>Fedezd fel a környék legjobb éttermeit és élvezd a gyors kiszállítást.</p>
 
-                    <div className="hero-search">
-                        <input type="text" placeholder="📍 Add meg a címed" />
-                        <input type="text" placeholder="🍕 Mit keresel?" />
-                        <button className="btn btn-primary">Keresés</button>
-                        <RestaurantMap />
+                    <div style={{display: 'flex', gap: '2rem', alignItems: 'flex-start', flexWrap: 'wrap'}}>
+                        <div className="hero-search">
+                            <input type="text" placeholder="📍 Add meg a címed" />
+                            <input type="text" placeholder="🍕 Mit keresel?" />
+                            <button className="btn btn-primary">Keresés</button>
+                            <RestaurantMap />
+                        </div>
+                        <FloatingOpinions />
                     </div>
-
+                    
                     <div className="categories-pills">
                         <div className="pill">🍕 Pizza</div>
                         <div className="pill">🍔 Burger</div>
