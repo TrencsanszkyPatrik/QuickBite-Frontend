@@ -1,15 +1,15 @@
-import React, { useState } from 'react'
-import Navbar from './components/Navbar'
-import Footer from './components/Footer'
-import '../pages/components/css/homepage.css'
-import RestaurantCardList from './components/RestaurantCardList'
-import '../../src/pages/components/css/CuisineList.css'
-import '../../src/pages/components/css/AllRestaurantPage.css'
+import React, { useState } from 'react';
+import Navbar from './components/Navbar';
+import Footer from './components/Footer';
+import '../pages/components/css/homepage.css';
+import RestaurantCardList from './components/RestaurantCardList';
+import '../../src/pages/components/css/CuisineList.css';
+import '../../src/pages/components/css/AllRestaurantPage.css';
 
-export default function AllRestaurantPage() {
+export default function AllRestaurantPage({ favorites = [], onToggleFavorite }) {
   const [showDiscountOnly, setShowDiscountOnly] = useState(false);
   const [showFreeDeliveryOnly, setShowFreeDeliveryOnly] = useState(false);
-  const [searchQuery, setSearchQuery] = useState(""); // <-- ÚJ
+  const [searchQuery, setSearchQuery] = useState(""); 
 
   return (
     <>
@@ -25,7 +25,7 @@ export default function AllRestaurantPage() {
             className="restaurant-search"
             placeholder="🔍 Étterem neve, cím, konyha..."
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)} // <-- KERESÉS
+            onChange={(e) => setSearchQuery(e.target.value)} 
           />
 
           <div className="filter-options">
@@ -64,6 +64,8 @@ export default function AllRestaurantPage() {
             showDiscountOnly={showDiscountOnly}
             showFreeDeliveryOnly={showFreeDeliveryOnly}
             searchQuery={searchQuery} // <-- ÁTADJUK
+            favorites={favorites}
+            onToggleFavorite={onToggleFavorite}
           />
         </div>
       </div>

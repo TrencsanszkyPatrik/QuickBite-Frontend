@@ -54,10 +54,13 @@ const restaurants = [
   },
 ];
 
-export default function RestaurantDetails() {
+export default function RestaurantDetails({ favorites = [], onToggleFavorite }) {
   const { id } = useParams();
   const navigate = useNavigate();
   const restaurant = restaurants.find(r => r.id === id);
+  const isFavorite = restaurant
+    ? favorites.some((fav) => String(fav.id) === String(restaurant.id))
+    : false;
 
   if (!restaurant) return (
     <div className="container"><h2>Étterem nem található</h2></div>
@@ -69,7 +72,17 @@ export default function RestaurantDetails() {
       <div className="restaurant-details-header">
         <img src={restaurant.img} alt={restaurant.name} className="restaurant-details-img" />
         <div className="restaurant-details-info">
-          <h1>{restaurant.name}</h1>
+          <div className="restaurant-title-row">
+            <h1>{restaurant.name}</h1>
+            <button
+              className={`favorite-btn favorite-btn--details ${
+                isFavorite ? "favorite-btn--active" : ""
+              }`}
+              onClick={() => onToggleFavorite && onToggleFavorite(restaurant)}
+            >
+              {isFavorite ? "♥ Kedvenc" : "♡ Kedvencekhez"}
+            </button>
+          </div>
           <div className="restaurant-details-meta">
             <span className="cuisine">{restaurant.cuisine}</span> • <span className="address">{restaurant.address}</span>
           </div>

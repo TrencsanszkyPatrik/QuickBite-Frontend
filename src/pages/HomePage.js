@@ -13,7 +13,7 @@ import FloatingOpinions from './components/FloatingOpinions';
 
 document.title = "QuickBite - Főoldal";
 
-export default function HomePage() {
+export default function HomePage({ favorites = [], onToggleFavorite }) {
     const [selectedCuisineId, setSelectedCuisineId] = useState(null)
 
     const handleSelectCuisine = (id) => {
@@ -54,7 +54,11 @@ export default function HomePage() {
                 onSelectCuisine={handleSelectCuisine}
             />
             <h1 className="section-title">Válassz kiemelkedő éttermeink közül!</h1>
-            <RestaurantCardList selectedCuisineId={selectedCuisineId} />
+            <RestaurantCardList
+                selectedCuisineId={selectedCuisineId}
+                favorites={favorites}
+                onToggleFavorite={onToggleFavorite}
+            />
             <Benefits />
             <Footer />
             <BackToTopButton />

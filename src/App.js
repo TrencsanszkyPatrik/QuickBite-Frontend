@@ -11,11 +11,13 @@ import Cart from "./pages/Cart";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Opinions from "./pages/Opinions";
+import FavoritesPage from "./pages/FavoritesPage";
 
 
 export default function App() {
 
-  const [opinions, setOpinions] = useState([])
+  const [opinions, setOpinions] = useState([]);
+  const [favorites, setFavorites] = useState([]);
 
   useEffect(() => {
     const fetchOpinions = async () => {
@@ -39,18 +41,96 @@ export default function App() {
       }
     }
 
-    fetchOpinions()
-  }, [])
+    fetchOpinions();
+  }, []);
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem("quickbite_favorites");
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed)) {
+          setFavorites(parsed);
+        }
+      }
+    } catch (err) {
+      console.error("Nem sikerült beolvasni a kedvenceket:", err);
+    }
+  }, []);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem("quickbite_favorites", JSON.stringify(favorites));
+    } catch (err) {
+      console.error("Nem sikerült menteni a kedvenceket:", err);
+    }
+  }, [favorites]);
+
+  const handleToggleFavorite = (restaurant) => {
+    if (!restaurant || !restaurant.id) return;
+
+    const id = String(restaurant.id);
+
+    setFavorites((prev) => {
+      const exists = prev.find((r) => r.id === id);
+      if (exists) {
+        return prev.filter((r) => r.id !== id);
+      }
+
+      const simplified = {
+        id,
+        name: restaurant.name,
+        address: restaurant.address,
+        img: restaurant.img,
+      };
+
+      return [...prev, simplified];
+    });
+  };
 
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<HomePage opinions={opinions}/>} />
+        <Route
+          path="/"
+          element={
+            <HomePage
+              opinions={opinions}
+              favorites={favorites}
+              onToggleFavorite={handleToggleFavorite}
+            />
+          }
+        />
         <Route path="/rolunk" element={<AboutUs />} />
         <Route path="/aszf" element={<Aszf />} />
         <Route path="/kapcsolat" element={<Contact />} />
-        <Route path="/ettermek" element={<AllRestaurantPage />} />
-        <Route path="/restaurant/:id" element={<RestaurantDetails />} />
+        <Route
+          path="/ettermek"
+          element={
+            <AllRestaurantPage
+              favorites={favorites}
+              onToggleFavorite={handleToggleFavorite}
+            />
+          }
+        />
+        <Route
+          path="/restaurant/:id"
+          element={
+            <RestaurantDetails
+              favorites={favorites}
+              onToggleFavorite={handleToggleFavorite}
+            />
+          }
+        />
+        <Route
+          path="/kedvencek"
+          element={
+            <FavoritesPage
+              favorites={favorites}
+              onToggleFavorite={handleToggleFavorite}
+            />
+          }
+        />
         <Route path="*" element={<PageNotFound />} />
         <Route path="/kosar" element={<Cart/>}></Route>
         <Route path="/bejelentkezes" element={<Login/>}></Route>

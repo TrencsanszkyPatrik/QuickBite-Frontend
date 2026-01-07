@@ -19,6 +19,7 @@ export default function Navbar() {
                 <Link to = "/kapcsolat">Kapcsolat</Link>
                 <Link to = "/rolunk">Rólunk</Link>
                 <Link to ="/ettermek">Éttermeink</Link>
+                <Link to ="/kedvencek">Kedvencek</Link>
                 <Link to ="/velemenyek">Vásárlók véleményei</Link>
                 <Link to ="/kosar"><button class="btn btn-secondary">Kosár</button></Link>
                 <Link to ="/bejelentkezes"><button class="btn btn-primary">Bejelentkezés</button></Link>

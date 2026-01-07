@@ -107,7 +107,7 @@ body {
 .categories-pills {
     position: absolute;
     transform: translateX(-50%);
-    top: 220px; /* fix távolság a hero-search alatt, igazítsd ha kell */
+    top: 220px; 
     width: max-content;
     background: #5D5D81;
     box-shadow: 0 4px 24px rgba(59,51,85,0.08);
@@ -150,7 +150,7 @@ body {
     display: flex;
     align-items: flex-start;
     justify-content: flex-end;
-    animation: floatingOpinionIn 1.2s cubic-bezier(0.4,0,0.2,1);
+    animation: floatingOpinionInRight 1.2s cubic-bezier(0.4,0,0.2,1);
 }
 
 .floating-opinion-card {
@@ -199,9 +199,15 @@ body {
     text-align: right;
 }
 
-@keyframes floatingOpinionIn {
-    0% { opacity: 0; transform: translateY(40px) scale(0.95); }
-    100% { opacity: 1; transform: translateY(0) scale(1); }
+@keyframes floatingOpinionInRight {
+    0% {
+        opacity: 0;
+        transform: translateX(120px) scale(0.95);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+    }
 }
 
 @keyframes floatingOpinionTextFade {
@@ -520,4 +526,5 @@ body {
         transform: scale(1);
     }
 }
+
 

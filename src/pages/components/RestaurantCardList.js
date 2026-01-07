@@ -6,7 +6,9 @@ export default function RestaurantCardList({
   showDiscountOnly = false,
   showFreeDeliveryOnly = false,
   selectedCuisineId = null,
-  searchQuery = "" // <-- HOZZÁADVA
+  searchQuery = "", 
+  favorites = [],
+  onToggleFavorite,
 }) {
   const navigate = useNavigate();
   const [restaurants, setRestaurants] = useState([]);
@@ -24,6 +26,7 @@ export default function RestaurantCardList({
 
         const mapped = data.map((r) => ({
           ...r,
+          id: String(r.id),
           address: `${r.city}, ${r.address}`,
           img: r.image_url,
           freeDelivery: r.free_delivery,
@@ -60,7 +63,6 @@ export default function RestaurantCardList({
 
   const filteredRestaurants = restaurants.filter((restaurant) => {
 
-    // ---- KERESÉS ----
     if (searchQuery.trim() !== "") {
       const q = searchQuery.toLowerCase();
 
@@ -93,6 +95,26 @@ export default function RestaurantCardList({
             tabIndex={0}
             onClick={() => navigate(`/restaurant/${r.id}`)}
           >
+            <button
+              className={`favorite-btn ${
+                favorites.some((fav) => String(fav.id) === String(r.id))
+                  ? "favorite-btn--active"
+                  : ""
+              }`}
+              onClick={(e) => {
+                e.stopPropagation();
+                if (onToggleFavorite) {
+                  onToggleFavorite(r);
+                }
+              }}
+              aria-label={
+                favorites.some((fav) => String(fav.id) === String(r.id))
+                  ? "Eltávolítás a kedvencek közül"
+                  : "Hozzáadás a kedvencekhez"
+              }
+            >
+              {favorites.some((fav) => String(fav.id) === String(r.id)) ? "♥" : "♡"}
+            </button>
             <img src={r.img} alt={r.name} className="restaurant-img" />
             <div className="restaurant-info">
               <h3 className="restaurant-name">{r.name}</h3>
