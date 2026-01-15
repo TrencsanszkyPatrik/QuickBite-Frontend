@@ -628,7 +628,7 @@ footer {
 .stat-number {
     font-size: 3rem;
     font-weight: 800;
-    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    background: linear-gradient(135deg, #caa70e, var(--secondary));
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;

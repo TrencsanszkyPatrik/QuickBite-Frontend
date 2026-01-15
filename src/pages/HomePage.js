@@ -38,15 +38,27 @@ export default function HomePage({ favorites = [], onToggleFavorite }) {
                         </div>
                         <FloatingOpinions />
                     </div>
-                    
-                    <div className="categories-pills">
-                        <div className="pill">🍕 Pizza</div>
-                        <div className="pill">🍔 Burger</div>
-                        <div className="pill">🍣 Sushi</div>
-                        <div className="pill">🌮 Mexikói</div>
-                        <div className="pill">🍝 Tészta</div>
-                    </div>
+                    <div className="stats-container">
+            <div className="stat-item">
+                <span className="stat-number">50+</span>
+                <span className="stat-text">Partner étterem</span>
+            </div>
+            <div className="stat-item">
+                <span className="stat-number">10 000+</span>
+                <span className="stat-text">Elégedett vásárló</span>
+            </div>
+            <div className="stat-item">
+                <span className="stat-number">1 000 000+</span>
+                <span className="stat-text">Kiszállított rendelés</span>
+            </div>
+            <div className="stat-item">
+                <span className="stat-number">4,8</span>
+                <span className="stat-text">Átlagos értékelés</span>
+            </div>
+            
+        </div>
                 </div>
+                
             </section>
 
             <Cousines
