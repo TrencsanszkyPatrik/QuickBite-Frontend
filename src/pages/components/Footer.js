@@ -37,7 +37,7 @@ export default function Footer() {
             </div>
         </div>
         <div class="footer-bottom">
-            © 2025 QuickBite. Minden jog fenntartva.
+            © 2026 QuickBite. Minden jog fenntartva.
         </div>
     </footer>
 
