@@ -16,7 +16,7 @@ export default function FloatingOpinions() {
     if (opinions.length === 0) return;
     const interval = setInterval(() => {
       setCurrent((prev) => (prev + 1) % opinions.length);
-    }, 3500);
+    }, 4000);
     return () => clearInterval(interval);
   }, [opinions]);
 
@@ -27,6 +27,7 @@ export default function FloatingOpinions() {
   const opinion = opinions[current];
 
   return (
+  <>
     <div className="floating-opinion" key={current}>
       <div className="floating-opinion-card">
         <div className="floating-opinion-stars">
@@ -36,5 +37,6 @@ export default function FloatingOpinions() {
         <div className="floating-opinion-name">- {opinion.name}</div>
       </div>
     </div>
+  </>
   );
 }

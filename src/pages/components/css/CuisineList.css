@@ -1,7 +1,8 @@
-/* Modern, letisztult konyhatípus kártyák stílusa */
+
 .cuisine-list-section {
-  margin-top: 2rem;
+  margin-top: 0;
   margin-bottom: 2rem;
+  padding-top: 0;
 }
 
 .cuisines-grid {

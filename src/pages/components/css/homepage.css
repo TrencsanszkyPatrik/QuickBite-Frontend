@@ -28,14 +28,27 @@ body {
 .hero {
     background: linear-gradient(135deg, #3B3355 0%, #5D5D81 100%);
     color: white;
-    padding: 4rem 2rem;
-    position: relative;
+    padding: 8rem 2rem;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
     overflow: hidden;
-    min-height: 420px;
-    max-height: 520px;
+    height: 100vh;
+    min-height: 100vh;
+    max-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
+    z-index: 100;
+    transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform, opacity;
+}
+
+.hero-scrolled {
+    opacity: 0;
+    transform: translateY(-100%);
+    pointer-events: none;
 }
 
 .hero::before {
@@ -55,23 +68,62 @@ body {
     position: relative;
     z-index: 1;
     width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 3rem;
+    padding-top: 1%;
+}
+
+.hero-layout {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 0rem;
+    width: 100%;
+    align-items: start;
+    padding: 1rem 0;
+}
+
+.hero-left {
+    display: flex;
+    flex-direction: column;
+    gap: 0rem;
+    justify-content: flex-start;
+}
+
+.hero-right {
+    display: flex;
+    flex-direction: column;
+    gap: 0rem;
+    align-items: flex-end;
+    justify-content: flex-start;
+}
+
+.hero-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0rem;
 }
 
 .hero h1 {
-    font-size: 3.5rem;
+    font-size: 4.5rem;
     font-weight: 800;
-    margin-bottom: 1rem;
+    margin-bottom: 0;
     line-height: 1.2;
-    animation: slideInFromTop 1s ease-out, fadeIn 1s ease-out, bounceIn 1.5s ease-out 0.3s;
+    animation: slideInFromLeft 1s ease-out, fadeIn 1s ease-out, bounceIn 1.5s ease-out 0.3s;
     animation-fill-mode: both;
+    text-align: left;
 }
 
 .hero p {
     font-size: 1.5rem;
-    margin-bottom: 2rem;
+    margin-bottom: 0;
     opacity: 0.95;
     animation: slideInFromLeft 1.2s ease-out 0.5s, fadeIn 1.2s ease-out 0.5s;
     animation-fill-mode: both;
+    text-align: left;
 }
 
 .hero-search {
@@ -80,10 +132,21 @@ body {
     border-radius: 10px;
     display: flex;
     gap: 1rem;
-    max-width: 800px;
+    flex-wrap: wrap;
+    max-width: 100%;
     box-shadow: 0 20px 40px rgba(0,0,0,0.2);
     animation: slideInFromBottom 1.4s ease-out 0.8s, fadeIn 1.4s ease-out 0.8s;
     animation-fill-mode: both;
+}
+
+.hero-search input {
+    flex: 1;
+    min-width: 200px;
+    padding: 1rem;
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    font-size: 1rem;
+    background-color: #ffffff59;
 }
 
 .hero-search input {
@@ -98,17 +161,26 @@ body {
 .hero-search input:focus {
     outline: none;
     border-color: var(--primary);
+    background-color: rgba(255, 255, 255, 0.8);
 }
 
 .hero-search .btn {
     padding: 1rem 2rem;
+    white-space: nowrap;
+}
+
+.hero-search .restaurant-map-open-btn {
+    margin-left: 0;
+    white-space: nowrap;
 }
 
 .categories-pills {
     position: absolute;
+    left: 50%;
     transform: translateX(-50%);
-    top: 220px; 
+    bottom: 2rem;
     width: max-content;
+    max-width: 90%;
     background: #5D5D81;
     box-shadow: 0 4px 24px rgba(59,51,85,0.08);
     border-radius: 40px;
@@ -143,10 +215,9 @@ body {
 /* FloatingOpinions styles */
 .floating-opinion {
     min-width: 320px;
-    max-width: 400px;
-    margin-left: 10rem;
-    margin-top: -8rem;
-    margin-right: 0;
+    max-width: 1000px;
+    width: 160%;
+    margin: 0;
     display: flex;
     align-items: flex-start;
     justify-content: flex-end;
@@ -157,16 +228,16 @@ body {
     background: rgba(255,255,255,0.95);
     border-radius: 18px;
     box-shadow: 0 8px 32px rgba(59,51,85,0.13);
-    padding: 2rem 1.5rem 1.5rem 1.5rem;
+    padding: 3rem 2.5rem 2.5rem 2.5rem;
     position: relative;
     min-width: 0;
     transition: box-shadow 0.3s;
     border: 1px solid var(--border);
-    font-size: 1.1rem;
+    font-size: 1.4rem;
     opacity: 0.98;
-    max-width: 380px;
-    min-height: 120px;
-    max-height: 160px;
+    max-width: 500px;
+    min-height: 180px;
+    max-height: 220px;
     overflow: hidden;
     display: flex;
     flex-direction: column;
@@ -179,23 +250,24 @@ body {
 
 .floating-opinion-stars {
     color: #FFD700;
-    font-size: 1.3rem;
-    margin-bottom: 0.5rem;
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
     text-align: left;
 }
 
 .floating-opinion-text {
     font-style: italic;
     color: var(--secondary);
-    margin-bottom: 0.7rem;
-    line-height: 1.5;
+    margin-bottom: 1rem;
+    line-height: 1.6;
     animation: floatingOpinionTextFade 1.2s;
+    font-size: 1.4rem;
 }
 
 .floating-opinion-name {
     color: var(--primary);
     font-weight: 700;
-    font-size: 1rem;
+    font-size: 1.2rem;
     text-align: right;
 }
 
@@ -215,33 +287,95 @@ body {
     100% { opacity: 1; }
 }
 
+@media (max-width: 1200px) {
+    .hero-layout {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+    
+    .hero-right {
+        align-items: center;
+    }
+    
+    .hero h1,
+    .hero p {
+        text-align: center;
+    }
+    
+    .stats-container {
+        max-width: 100%;
+        gap: 1rem;
+    }
+    
+    .stat-item {
+        min-width: 150px;
+        max-width: 200px;
+    }
+    
+    .floating-opinion {
+        max-width: 100%;
+        justify-content: center;
+    }
+}
+
 @media (max-width: 900px) {
     .floating-opinion {
         max-width: 100%;
         min-width: 0;
-        margin: 1rem 0 0 0;
+        margin: 0;
         justify-content: center;
     }
     .floating-opinion-card {
-        padding: 1.2rem 1rem;
-        font-size: 1rem;
+        padding: 2rem 1.5rem;
+        font-size: 1.2rem;
         max-width: 100%;
-        min-height: 100px;
-        max-height: 180px;
+        min-height: 150px;
+        max-height: 200px;
+    }
+    
+    .floating-opinion-stars {
+        font-size: 1.5rem;
+    }
+    
+    .floating-opinion-text {
+        font-size: 1.2rem;
+    }
+    
+    .floating-opinion-name {
+        font-size: 1.1rem;
     }
     .categories-pills {
-        position: static;
-        left: unset;
-        transform: unset;
-        width: 100%;
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        bottom: 1rem;
+        width: 90%;
+        max-width: 90%;
         justify-content: center;
-        margin-top: 1.5rem;
-        padding: 0.5rem 0.5rem;
+        padding: 0.5rem 1rem;
     }
     .hero {
-        min-height: 340px;
-        max-height: 600px;
+        height: 100vh;
+        min-height: 100vh;
+        max-height: 100vh;
         padding: 2rem 0.5rem;
+    }
+    
+    .hero-layout {
+        padding: 1rem 0;
+    }
+    
+    .hero h1 {
+        font-size: 2.5rem;
+    }
+    
+    .hero p {
+        font-size: 1.2rem;
+    }
+    
+    .stats-container {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
     }
 }
 
@@ -524,6 +658,56 @@ body {
     }
     100% {
         transform: scale(1);
+    }
+}
+
+.main-content {
+    position: relative;
+    z-index: 1;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.3s, 
+                transform 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.3s;
+    background: var(--bg-light);
+}
+
+.main-content > .container:first-child {
+    padding-top: 0;
+    margin-top: -85vh;
+}
+
+.main-content-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+
+@media (max-width: 768px) {
+    .hero-content {
+        gap: 2rem;
+    }
+    
+    .stats-container {
+        gap: 0.75rem;
+        padding: 0 1rem;
+    }
+    
+    .stat-item {
+        padding: 1rem 1rem;
+        min-width: 140px;
+        max-width: 160px;
+    }
+    
+    .stat-number {
+        font-size: 1.5rem;
+    }
+    
+    .stat-text {
+        font-size: 0.8rem;
     }
 }
 
