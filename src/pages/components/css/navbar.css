@@ -75,6 +75,9 @@ header {
     transition: all 0.3s;
     border: none;
     font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
 .btn-primary {

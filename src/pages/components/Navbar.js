@@ -21,8 +21,8 @@ export default function Navbar() {
                 <Link to ="/ettermek">Éttermeink</Link>
                 <Link to ="/kedvencek">Kedvencek</Link>
                 <Link to ="/velemenyek">Vásárlók véleményei</Link>
-                <Link to ="/kosar"><button class="btn btn-secondary">Kosár</button></Link>
-                <Link to ="/bejelentkezes"><button class="btn btn-primary">Bejelentkezés</button></Link>
+                <Link to ="/kosar"><button class="btn btn-secondary"><i class="bi bi-basket2-fill"></i>Kosár</button></Link>
+                <Link to ="/bejelentkezes"><button class="btn btn-primary"><i class="bi bi-person-circle"></i>Bejelentkezés</button></Link>
             </div>
         </div>
     </header>
