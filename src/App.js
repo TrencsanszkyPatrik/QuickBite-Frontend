@@ -9,7 +9,6 @@ import Aszf from "./pages/footerpages/Aszf";
 import Contact from "./pages/footerpages/Contact";
 import Cart from "./pages/Cart";
 import Login from "./pages/Login";
-import Register from "./pages/Register";
 import Opinions from "./pages/Opinions";
 import FavoritesPage from "./pages/FavoritesPage";
 
@@ -134,7 +133,6 @@ export default function App() {
         <Route path="*" element={<PageNotFound />} />
         <Route path="/kosar" element={<Cart/>}></Route>
         <Route path="/bejelentkezes" element={<Login/>}></Route>
-        <Route path="/regisztracio" element={<Register/>}></Route>
         <Route path="/velemenyek" element={<Opinions/>}></Route>
         
         
