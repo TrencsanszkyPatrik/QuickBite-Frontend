@@ -7,7 +7,7 @@ export default function Login() {
   const [isLogin, setIsLogin] = useState(true)
 
   return (
-    <div>
+    <div className="login-page">
         <Navbar/>
     <div className="container-login">
         <h1>QuickBite</h1>
@@ -28,7 +28,7 @@ export default function Login() {
         </div>
         
         {isLogin ? (
-          <>
+          <div key="login-form">
             <div className="form-group-login">
               <label htmlFor="email">Email:</label>
               <input type="email" id="email" placeholder="NagyZoltan@gmail.com"/>
@@ -38,9 +38,9 @@ export default function Login() {
               <input type="password" id="password" placeholder="Jelszó"/>
             </div>
             <button className="create-account-login">Bejelentkezés!</button>
-          </>
+          </div>
         ) : (
-          <>
+          <div key="register-form">
             <div className="form-group-login">
               <label htmlFor="fullName">Teljes Név:</label>
               <input type="text" id="fullName" placeholder="Nagy Zoltán"/>
@@ -57,8 +57,8 @@ export default function Login() {
               <label htmlFor="confirmPassword">Jelszó Megerősítése:</label>
               <input type="password" id="confirmPassword" placeholder="Jelszó Megerősítése"/>
             </div>
-            <button className="create-account-login">Regisztrálás!</button>
-          </>
+            <button className="create-account-login">Regisztrálok!</button>
+          </div>
         )}
     </div>
     <Footer/>
