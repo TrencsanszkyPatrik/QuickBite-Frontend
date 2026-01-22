@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import '../../src/pages//components//css/RestaurantDetails.css';
+import Navbar from './components/Navbar';
 
 export default function RestaurantDetails({ favorites = [], onToggleFavorite }) {
   const { id } = useParams();
@@ -82,13 +83,20 @@ export default function RestaurantDetails({ favorites = [], onToggleFavorite }) 
   }
 
   return (
+    <>
+    <Navbar/>
     <div className="restaurant-details-page container">
-      <button className="back-btn" onClick={() => navigate(-1)}>← Vissza</button>
+      
       <div className="restaurant-details-header">
         <img src={restaurant.img} alt={restaurant.name} className="restaurant-details-img" />
         <div className="restaurant-details-info">
           <div className="restaurant-title-row">
-            <h1>{restaurant.name}</h1>
+            <div className="restaurant-title-section">
+              <h1>{restaurant.name}</h1>
+              {restaurant.discount > 0 && (
+                <span className="discount-badge">-{restaurant.discount}%</span>
+              )}
+            </div>
             <button
               className={`favorite-btn favorite-btn--details ${
                 isFavorite ? "favorite-btn--active" : ""
@@ -101,28 +109,67 @@ export default function RestaurantDetails({ favorites = [], onToggleFavorite }) 
           <div className="restaurant-details-meta">
             <span className="cuisine">{restaurant.cuisine}</span> • <span className="address">{restaurant.address}</span>
           </div>
+          {restaurant.description_long && (
+            <p className="restaurant-description">{restaurant.description_long}</p>
+          )}
+          <div className="restaurant-features">
+            {restaurant.free_delivery && (
+              <div className="feature-badge feature-badge--delivery">
+                <i className="bi bi-truck"></i>
+                <span>Ingyenes kiszállítás</span>
+              </div>
+            )}
+            {restaurant.accept_cards && (
+              <div className="feature-badge feature-badge--card">
+                <i className="bi bi-credit-card"></i>
+                <span>Kártyás fizetés</span>
+              </div>
+            )}
+          </div>
         </div>
       </div>
       <h2 className="menu-title">Étlap</h2>
       {menuItems.length === 0 ? (
         <p>Jelenleg nincs elérhető menü elem.</p>
       ) : (
-        <div className="menu-grid">
-          {menuItems.map((item, idx) => (
-            <div className="menu-card" key={idx}>
-              <img src={item.img} alt={item.name} className="menu-img" />
-              <div className="menu-info">
-                <h3>{item.name}</h3>
-                {item.desc && <p className="menu-desc">{item.desc}</p>}
-                <div className="menu-bottom">
-                  <span className="menu-price">{item.price} Ft</span>
-                  <button className="btn btn-primary">Kosárba</button>
-                </div>
+        <div className="menu-container">
+          {Object.entries(
+            menuItems.reduce((acc, item) => {
+              const category = item.category || 'Egyéb';
+              if (!acc[category]) acc[category] = [];
+              acc[category].push(item);
+              return acc;
+            }, {})
+          ).map(([category, items], categoryIdx) => (
+            <div className="menu-category-section" key={category}>
+              <h3 className="category-title">{category}</h3>
+              <div className={`menu-grid menu-grid--${categoryIdx % 2 === 0 ? 'alternate' : 'standard'}`}>
+                {items.map((item, idx) => (
+                  <div 
+                    className={`menu-card menu-card--${idx % 3 === 0 ? 'featured' : idx % 3 === 1 ? 'medium' : 'compact'}`}
+                    key={`${category}-${idx}`}
+                  >
+                    <div className="menu-card-image-wrapper">
+                      <img src={item.img} alt={item.name} className="menu-img" />
+                      <div className="menu-card-overlay">
+                        <button className="btn btn-primary btn-overlay">Kosárba</button>
+                      </div>
+                    </div>
+                    <div className="menu-info">
+                      <div className="menu-header">
+                        <h3>{item.name}</h3>
+                        <span className="menu-price">{item.price} Ft</span>
+                      </div>
+                      {item.desc && <p className="menu-desc">{item.desc}</p>}
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           ))}
         </div>
       )}
     </div>
+    </>
   );
 }
