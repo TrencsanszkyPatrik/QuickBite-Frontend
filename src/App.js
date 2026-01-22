@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import HomePage from "./pages/HomePage";
 import AboutUs from "./pages/AboutUs";
 import PageNotFound from "./pages/404page";
@@ -134,9 +136,19 @@ export default function App() {
         <Route path="/kosar" element={<Cart/>}></Route>
         <Route path="/bejelentkezes" element={<Login/>}></Route>
         <Route path="/velemenyek" element={<Opinions/>}></Route>
-        
-        
       </Routes>
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
     </Router>
   );
 }

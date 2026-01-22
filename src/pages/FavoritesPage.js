@@ -1,12 +1,22 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import { showToast } from '../utils/toast';
 import '../pages/components/css/homepage.css';
 import '../pages/components/css/RestaurantCardList.css';
 
 export default function FavoritesPage({ favorites = [], onToggleFavorite }) {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (favorites.length === 0) {
+      showToast.info('Még nincsenek kedvenc éttermeid. Átirányítunk a főoldalra.');
+      setTimeout(() => {
+        navigate('/');
+      }, 2000);
+    }
+  }, [favorites.length, navigate]);
 
   return (
     <>
@@ -17,16 +27,7 @@ export default function FavoritesPage({ favorites = [], onToggleFavorite }) {
         </h1>
 
         {favorites.length === 0 ? (
-          <p style={{ marginTop: "1rem" }}>
-            Még nincsenek kedvenc éttermeid. Böngéssz az{" "}
-            <span
-              style={{ cursor: "pointer", color: "#3B3355", fontWeight: 600 }}
-              onClick={() => navigate("/ettermek")}
-            >
-              éttermeink között
-            </span>
-            , és jelöld őket kedvencként!
-          </p>
+          <></>
         ) : (
           <div className="restaurant-list-section container">
             <div className="restaurant-cards-grid">

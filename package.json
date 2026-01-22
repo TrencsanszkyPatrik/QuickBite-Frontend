@@ -13,7 +13,8 @@
     "react-dom": "^19.0.0-rc.1",
     "react-leaflet": "^5.0.0-rc.2",
     "react-router-dom": "^7.9.4",
-    "react-scripts": "5.0.1"
+    "react-scripts": "5.0.1",
+    "react-toastify": "^11.0.5"
   },
   "scripts": {
     "start": "react-scripts start",
