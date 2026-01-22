@@ -592,7 +592,7 @@ footer {
     display: flex;
     justify-content: center;
     gap: 5rem;
-    margin-top: -2rem;
+    margin-top: -3.5rem;
     position: relative;
     z-index: 1;
 }
