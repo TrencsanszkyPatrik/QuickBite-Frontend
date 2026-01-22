@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './css/homepage.css';
+import { Link } from 'react-router-dom';
 
 export default function FloatingOpinions() {
   const [opinions, setOpinions] = useState([]);
@@ -26,9 +27,10 @@ export default function FloatingOpinions() {
 
   const opinion = opinions[current];
 
-  return (
+  return ( 
   <>
     <div className="floating-opinion" key={current}>
+  <Link to={`/kedvencek`}>
       <div className="floating-opinion-card">
         <div className="floating-opinion-stars">
           {'★'.repeat(opinion.stars)}{'☆'.repeat(5 - opinion.stars)}
@@ -36,7 +38,8 @@ export default function FloatingOpinions() {
         <div className="floating-opinion-text">"{opinion.text}"</div>
         <div className="floating-opinion-name">- {opinion.name}</div>
       </div>
+  </Link>
     </div>
-  </>
+  </>	
   );
 }
