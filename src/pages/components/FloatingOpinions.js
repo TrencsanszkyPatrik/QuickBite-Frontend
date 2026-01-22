@@ -30,7 +30,7 @@ export default function FloatingOpinions() {
   return ( 
   <>
     <div className="floating-opinion" key={current}>
-  <Link to={`/kedvencek`}>
+  <Link to={`/velemenyek`}>
       <div className="floating-opinion-card">
         <div className="floating-opinion-stars">
           {'★'.repeat(opinion.stars)}{'☆'.repeat(5 - opinion.stars)}
