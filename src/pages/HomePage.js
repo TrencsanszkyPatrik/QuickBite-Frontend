@@ -21,11 +21,9 @@ export default function HomePage({ favorites = [], onToggleFavorite }) {
         const handleScroll = () => {
             const currentScrollY = window.scrollY
             const heroHeight = window.innerHeight
-            // Ha görgetünk legalább 5%-ot a hero magasságából, akkor animáljuk
             setIsScrolled(currentScrollY > heroHeight * 0.05)
         }
 
-        // Kezdeti állapot ellenőrzése
         handleScroll()
         
         window.addEventListener('scroll', handleScroll, { passive: true })
