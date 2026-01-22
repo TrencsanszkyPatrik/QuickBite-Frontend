@@ -30,9 +30,9 @@ export default function Footer() {
             <div class="footer-section">
                 <h3>Közösségi média</h3>
                 <div class="footer-links">
-                    <a href="www.facebook.com"><i class="bi bi-facebook"></i> Facebook</a>
-                   <a href="www.instagram.com"> <i class="bi bi-instagram"></i> Instagram</a>
-                    <a href="www.x.com"> <i class="bi bi-twitter-x"></i> Twitter</a>
+                    <a href="https://www.facebook.com" target='_blank' rel="noopener noreferrer"><i class="bi bi-facebook"></i> Facebook</a>
+                    <a href="https://www.instagram.com" target='_blank' rel="noopener noreferrer"><i class="bi bi-instagram"></i> Instagram</a>
+                    <a href="https://x.com" target='_blank' rel="noopener noreferrer"><i class="bi bi-twitter-x"></i> Twitter</a>
                 </div>
             </div>
         </div>
