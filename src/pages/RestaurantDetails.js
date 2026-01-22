@@ -1,70 +1,85 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import '../../src/pages//components//css/RestaurantDetails.css';
-
-
-// Dummy étterem adatok (képek, cím, konyha, menü, menü képek)
-const restaurants = [
-  {
-    id: '1',
-    name: 'Anyukám Mondta',
-    cuisine: 'Olasz',
-    address: 'Encs, Petőfi Sándor út 57.',
-    img: '/img/etteremkepek/anyukam.jpg',
-    menu: [
-      { name: 'Margherita pizza', price: 2490, img: '/img/EtelKepek/MargaretaPizza.png', desc: 'Paradicsomos, mozzarellás klasszikus.' },
-      { name: 'Carbonara spagetti', price: 2890, img: '/img/EtelKepek/CarbonaraSpagetti.png', desc: 'Krémes, szalonnás tészta.' },
-      { name: 'Tiramisu', price: 1690, img: '/img/EtelKepek/Tiramisu.png', desc: 'Olasz desszert, kávéval és mascarponéval.' },
-    ],
-  },
-  {
-    id: '2',
-    name: 'Végállomás Bistorant',
-    cuisine: 'Magyar',
-    address: 'Miskolc, Dorottya u. 1.',
-    img: '/img/etteremkepek/vegallomas.jpg',
-    menu: [
-      { name: 'Rántott hús', price: 2990, img: '/img/EtelKepek/Rantotthus.png', desc: 'Ropogós panír, friss köret.' },
-      { name: 'Gulyásleves', price: 1990, img: '/img/EtelKepek/Gulyasleves.png', desc: 'Hagyományos magyar leves.' },
-      { name: 'Somlói galuska', price: 1490, img: '/img/EtelKepek/SomloiGaluska.png', desc: 'Kedvelt magyar desszert.' },
-    ],
-  },
-  {
-    id: '3',
-    name: "Zip's Brewhouse",
-    cuisine: 'Pub',
-    address: 'Miskolc, Arany János tér 1.',
-    img: '/img/etteremkepek/zip.jpg',
-    menu: [
-      { name: 'BBQ burger', price: 3190, img: '/img/EtelKepek/BbqBurger.png', desc: 'Füstös BBQ szósz, szaftos hús.' },
-      { name: 'Sült krumpli', price: 990, img: '/img/EtelKepek/Sultkrumpli.png', desc: 'Ropogós, aranybarna.' },
-      { name: 'Kézműves sör', price: 1290, img: '/img/EtelKepek/KezmuvesSor.png', desc: 'Helyben főzött sör.' },
-    ],
-  },
-  {
-    id: '4',
-    name: 'Calypso Kisvendéglő',
-    cuisine: 'Magyar',
-    address: 'Miskolc, Görgey Artúr u. 23.',
-    img: '/img/etteremkepek/calypso.jpg',
-    menu: [
-      { name: 'Húsleves', price: 1790, img: '/img/EtelKepek/Husleves.png', desc: 'Házi, gazdag húsleves.' },    
-      { name: 'Palacsinta', price: 990, img: '/img/EtelKepek/Palacsinta.png', desc: 'Töltött, édes palacsinta.' },
-    ],
-  },
-];
 
 export default function RestaurantDetails({ favorites = [], onToggleFavorite }) {
   const { id } = useParams();
   const navigate = useNavigate();
-  const restaurant = restaurants.find(r => r.id === id);
+  const [restaurant, setRestaurant] = useState(null);
+  const [menuItems, setMenuItems] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchRestaurantAndMenu = async () => {
+      try {
+        setIsLoading(true);
+        const [restaurantRes, menuRes] = await Promise.all([
+          fetch(`https://localhost:7236/api/Restaurants/${id}`),
+          fetch(`https://localhost:7236/api/MenuItems/restaurant/${id}`)
+        ]);
+
+        if (!restaurantRes.ok) {
+          throw new Error('Nem sikerült betölteni az étterem adatait.');
+        }
+
+        const restaurantData = await restaurantRes.json();
+        
+        const categoriesRes = await fetch('https://localhost:7236/api/Categories');
+        const categories = await categoriesRes.json();
+        const cuisine = categories.find(c => c.id === restaurantData.cuisine_id);
+
+        const mappedRestaurant = {
+          ...restaurantData,
+          id: String(restaurantData.id),
+          address: `${restaurantData.city}, ${restaurantData.address}`,
+          img: restaurantData.image_url,
+          cuisine: cuisine?.name || 'Ismeretlen'
+        };
+
+        setRestaurant(mappedRestaurant);
+
+        if (menuRes.ok) {
+          const menuData = await menuRes.json();
+          const mappedMenu = menuData.map(item => ({
+            name: item.name,
+            price: item.price,
+            img: item.image_url || '/img/EtelKepek/default.png',
+            desc: item.description || '',
+            category: item.category
+          }));
+          setMenuItems(mappedMenu);
+        }
+      } catch (err) {
+        console.error(err);
+        setError(err.message || 'Hiba történt az adatok betöltése közben.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchRestaurantAndMenu();
+  }, [id]);
+
   const isFavorite = restaurant
     ? favorites.some((fav) => String(fav.id) === String(restaurant.id))
     : false;
 
-  if (!restaurant) return (
-    <div className="container"><h2>Étterem nem található</h2></div>
-  );
+  if (isLoading) {
+    return (
+      <div className="container">
+        <p>Betöltés...</p>
+      </div>
+    );
+  }
+
+  if (error || !restaurant) {
+    return (
+      <div className="container">
+        <h2>{error || 'Étterem nem található'}</h2>
+      </div>
+    );
+  }
 
   return (
     <div className="restaurant-details-page container">
@@ -89,21 +104,25 @@ export default function RestaurantDetails({ favorites = [], onToggleFavorite }) 
         </div>
       </div>
       <h2 className="menu-title">Étlap</h2>
-      <div className="menu-grid">
-        {restaurant.menu.map((item, idx) => (
-          <div className="menu-card" key={idx}>
-            <img src={item.img} alt={item.name} className="menu-img" />
-            <div className="menu-info">
-              <h3>{item.name}</h3>
-              <p className="menu-desc">{item.desc}</p>
-              <div className="menu-bottom">
-                <span className="menu-price">{item.price} Ft</span>
-                <button className="btn btn-primary">Kosárba</button>
+      {menuItems.length === 0 ? (
+        <p>Jelenleg nincs elérhető menü elem.</p>
+      ) : (
+        <div className="menu-grid">
+          {menuItems.map((item, idx) => (
+            <div className="menu-card" key={idx}>
+              <img src={item.img} alt={item.name} className="menu-img" />
+              <div className="menu-info">
+                <h3>{item.name}</h3>
+                {item.desc && <p className="menu-desc">{item.desc}</p>}
+                <div className="menu-bottom">
+                  <span className="menu-price">{item.price} Ft</span>
+                  <button className="btn btn-primary">Kosárba</button>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
