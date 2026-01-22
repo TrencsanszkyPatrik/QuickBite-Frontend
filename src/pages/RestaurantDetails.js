@@ -35,7 +35,8 @@ export default function RestaurantDetails({ favorites = [], onToggleFavorite }) 
           id: String(restaurantData.id),
           address: `${restaurantData.city}, ${restaurantData.address}`,
           img: restaurantData.image_url,
-          cuisine: cuisine?.name || 'Ismeretlen'
+          cuisine: cuisine?.name || 'Ismeretlen',
+          phone: restaurantData.phonenumber
         };
 
         setRestaurant(mappedRestaurant);
@@ -82,6 +83,8 @@ export default function RestaurantDetails({ favorites = [], onToggleFavorite }) 
     );
   }
 
+  console.log(restaurant);
+
   return (
     <>
     <Navbar/>
@@ -109,6 +112,12 @@ export default function RestaurantDetails({ favorites = [], onToggleFavorite }) 
           <div className="restaurant-details-meta">
             <span className="cuisine">{restaurant.cuisine}</span> • <span className="address">{restaurant.address}</span>
           </div>
+          {restaurant.phone && (
+            <div className="restaurant-phone">
+              <strong>Telefonszám: </strong>
+              <a href={`tel:${restaurant.phone}`}>{restaurant.phone}</a>
+            </div>
+          )}
           {restaurant.description_long && (
             <p className="restaurant-description">{restaurant.description_long}</p>
           )}
