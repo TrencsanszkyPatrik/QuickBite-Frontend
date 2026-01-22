@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import "../pages/components/css/opinions.css";
+import { showToast } from '../utils/toast';
 
 export default function Opinions() {
   // Vélemények állapot
@@ -48,11 +49,22 @@ export default function Opinions() {
     }
   };
 
-  const renderStars = (count) => "⭐".repeat(count);
+  const renderStars = (count) => {
+    const stars = [];
+    for (let i = 1; i <= 5; i++) {
+      stars.push(
+        <span key={i} className={`star ${i <= count ? 'filled' : ''}`} aria-hidden="true">★</span>
+      );
+    }
+    return stars;
+  };
 
   // Vélemény hozzáadása
   const addReview = async () => {
-    if (newName.trim() === '' || newUsername.trim() === '' || newText.trim() === '') return; // Kötelező mezők
+    if (newName.trim() === '' || newUsername.trim() === '' || newText.trim() === '') {
+      showToast.error('Minden mező kitöltése kötelező!');
+      return;
+    }
     
     const newReview = {
       name: newName,
@@ -77,6 +89,7 @@ export default function Opinions() {
       const addedReview = await safeJson(response);
       if (addedReview) {
         setReviews([addedReview, ...reviews]);
+        showToast.success('Sikeresen hozzáadva!');
       }
       setNewName('');
       setNewUsername('');
@@ -84,7 +97,7 @@ export default function Opinions() {
       setNewStars(5);
     } catch (err) {
       console.error('Hiba a vélemény hozzáadásakor:', err);
-      alert('Hiba történt a vélemény hozzáadásakor. Kérjük, próbálja újra.');
+      showToast.error('Hiba történt a vélemény hozzáadásakor. Kérjük, próbálja újra.');
     }
   };
 
@@ -115,9 +128,22 @@ export default function Opinions() {
             value={newText} 
             onChange={(e) => setNewText(e.target.value)} 
           />
-          <select value={newStars} onChange={(e) => setNewStars(Number(e.target.value))}>
-            {[5,4,3,2,1].map(n => <option key={n} value={n}>{n}⭐</option>)}
-          </select>
+          <div className="stars new-stars">
+            {[1,2,3,4,5].map((n) => (
+              <span
+                key={n}
+                className={`star ${n <= newStars ? 'filled' : ''}`}
+                aria-label={`${n} csillag`}
+                role="button"
+                tabIndex={0}
+                onClick={() => setNewStars(n)}
+                onKeyDown={e => (e.key === 'Enter' || e.key === ' ') && setNewStars(n)}
+                style={{cursor: 'pointer'}}
+              >
+                ★
+              </span>
+            ))}
+          </div>
           <button onClick={addReview}>Hozzáadás</button>
         </div>
 

@@ -61,6 +61,37 @@
     font-size: 20px;
     color: #f4b400;
   }
+
+  /* Star styling: unfilled (default) and filled (colored) */
+  .stars .star {
+    color: #dcdcdc; /* light grey for unfilled */
+    margin-right: 4px;
+    font-size: 44px;
+    line-height: 1;
+    transition: color 0.15s ease;
+    text-shadow: 0 0 2px #000, 0 1px 0 #000, 1px 0 0 #000, -1px 0 0 #000, 0 -1px 0 #000;
+  }
+
+  .stars .star.filled {
+    color: #f4b400; /* colored star for filled */
+  }
+
+  .stars .star:hover,
+  .stars .star:focus {
+    color: #ffd700;
+    outline: none;
+  }
+
+  .new-stars .star {
+    color: #dcdcdc;
+    font-size: 44px;
+    text-shadow: 0 0 2px #000, 0 1px 0 #000, 1px 0 0 #000, -1px 0 0 #000, 0 -1px 0 #000;
+  }
+
+  .new-stars .star.filled {
+    color: #f4b400;
+  }
+
   .new-opinion {
     margin-bottom: 30px;
     display: flex;
@@ -78,6 +109,13 @@
     width: 100%;
     box-sizing: border-box;
   }
+
+  /* Make the select show star characters clearly */
+  .new-opinion select {
+    font-family: inherit;
+    font-size: 18px;
+    letter-spacing: 2px;
+  }
   
   .new-opinion button {
     padding: 10px 15px;
@@ -93,4 +131,3 @@
   .new-opinion button:hover {
     background-color: #e0a800;
   }
-  
