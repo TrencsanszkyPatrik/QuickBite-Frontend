@@ -1,42 +1,11 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-:root {
-    /* Szín paletta integráció */
-    --primary: #3B3355;           /* (59,51,85) */
-    --primary-dark: #2D2742;      /* sötétebb változat */
-    --secondary: #5D5D81;         /* (93,93,129) */
-    --text: #000505;              /* (0,5,5) nagyon sötét */
-    --text-light: #5D5D81;        /* halványított szöveg az akcentusból */
-    --bg: #FEFCFD;                /* (254,252,253) közel fehér */
-    --bg-light: #BFCDE0;          /* (191,205,224) világos kékesszürke */
-    --border: #D4DCE8;            /* border a világos kékből */
-    --success: #00B894;
-}
-
-body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    color: var(--text);
-    line-height: 1.6;
-    background: var(--bg-light);
-}
-
-/* Header */
+/* Header - csak az aboutus oldal specifikus stílusai */
 header {
     background: white;
     box-shadow: 0 2px 8px rgba(0,0,0,0.08);
     position: sticky;
     top: 0;
-    z-index: 2000; /* legyen a Leaflet rétegek fölött */
-    isolation: isolate; /* külön rétegezési kontextus a biztonság kedvéért */
-}
-
-a{
-    text-decoration: none;
-    color: #3B3355;
+    z-index: 2000;
+    isolation: isolate;
 }
 
 .header-content {
@@ -58,7 +27,13 @@ a{
     color: var(--primary);
 }
 
-.logo-img { width: 150px; height: 100px; object-fit: cover; border-radius: 8px; display: block; }
+.logo-img { 
+    width: 150px; 
+    height: 100px; 
+    object-fit: cover; 
+    border-radius: 8px; 
+    display: block; 
+}
 
 .search-container {
     flex: 1;
@@ -68,6 +43,7 @@ a{
 .search-box {
     position: relative;
 }
+
 .search-box,
 .search-box input {
     width: 100%;
@@ -98,130 +74,7 @@ a{
     align-items: center;
 }
 
-.btn {
-    padding: 0.75rem 1.5rem;
-    border-radius: 10px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s;
-    border: none;
-    font-size: 0.95rem;
-}
-
-.btn-primary {
-    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-    color: white;
-    box-shadow: 0 4px 12px rgba(59, 51, 85, 0.3);
-}
-
-.btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(59, 51, 85, 0.4);
-}
-
-.btn-secondary {
-    background: white;
-    color: var(--text);
-    border: 2px solid var(--border);
-}
-
-.btn-secondary:hover {
-    border-color: var(--primary);
-    color: var(--primary);
-}
-
-/* Hero Section */
-.hero {
-    background: linear-gradient(135deg, #3B3355 0%, #5D5D81 100%);
-    color: white;
-    padding: 4rem 2rem;
-    position: relative;
-    overflow: hidden;
-}
-
-.hero::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="2" fill="white" opacity="0.1"/></svg>');
-    background-size: 50px 50px;
-}
-
-.hero-content {
-    max-width: 1600px;
-    margin: 0 auto;
-    position: relative;
-    z-index: 1;
-}
-
-.hero h1 {
-    font-size: 3.5rem;
-    font-weight: 800;
-    margin-bottom: 1rem;
-    line-height: 1.2;
-}
-
-.hero p {
-    font-size: 1.5rem;
-    margin-bottom: 2rem;
-    opacity: 0.95;
-}
-
-.hero-search {
-    background: rgba(171, 171, 171, 0.744);
-    padding: 1rem;
-    border-radius: 10px;
-    display: flex;
-    gap: 1rem;
-    max-width: 800px;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-}
-
-.hero-search input {
-    flex: 1;
-    padding: 1rem;
-    border: 2px solid var(--border);
-    border-radius: 10px;
-    font-size: 1rem;
-    background-color: #ffffff59;
-}
-
-.hero-search input:focus {
-    outline: none;
-    border-color: var(--primary);
-}
-
-.hero-search .btn {
-    padding: 1rem 2rem;
-}
-
-.categories-pills {
-    display: flex;
-    gap: 1rem;
-    margin-top: 2rem;
-    flex-wrap: wrap;
-}
-
-.pill {
-    background: rgba(255,255,255,0.2);
-    backdrop-filter: blur(10px);
-    padding: 0.75rem 1.5rem;
-    border-radius: 50px;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    cursor: pointer;
-    border: 1px solid rgba(255,255,255,0.3);
-    transition: all 0.3s;
-}
-
-.pill:hover {
-    background: rgba(255,255,255,0.3);
-    transform: translateY(-2px);
-}
+/* Button styles már az index.css-ben vannak */
 
 /* Container */
 .container {
@@ -261,50 +114,9 @@ a{
     margin: 4rem 0;
 }
 
-.benefit-card {
-    background: white;
-    padding: 2rem;
-    border-radius: 16px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
-    transition: all 0.3s;
-}
+/* Benefit card styles már az index.css-ben vannak (az első példány) */
 
-.benefit-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 30px rgba(0,0,0,0.12);
-}
-
-.benefit-icon {
-    width: 60px;
-    height: 60px;
-    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-    border-radius: 14px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.75rem;
-    margin-bottom: 1.5rem;
-}
-
-.benefit-card h3 {
-    font-size: 1.25rem;
-    margin-bottom: 0.75rem;
-    color: var(--secondary);
-}
-
-.benefit-card p {
-    color: var(--text-light);
-    line-height: 1.7;
-}
-
-/* Cuisines */
-.section-title {
-    font-size: 2rem;
-    font-weight: 700;
-    margin-bottom: 2rem;
-    color: var(--secondary);
-    text-align: center;
-}
+/* Cuisines - section-title már az index.css-ben van */
 
 .cuisines-grid {
     display: grid;
