@@ -143,26 +143,16 @@
 .categories-pills {
     display: flex;
     gap: 1rem;
-    margin-top: 2rem;
+    margin: 2rem auto;
     flex-wrap: wrap;
-}
-
-
-.categories-pills {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    bottom: 2rem;
-    width: max-content;
-    max-width: 90%;
+    position: static;
+    width: 100%;
+    max-width: 1200px;
     background: #5D5D81;
     box-shadow: 0 4px 24px rgba(59,51,85,0.08);
     border-radius: 40px;
     padding: 0.5rem 2rem;
     z-index: 10;
-    display: flex;
-    gap: 1rem;
-    flex-wrap: wrap;
     justify-content: center;
     animation: slideInFromRight 1.6s ease-out 1s, fadeIn 1.6s ease-out 1s;
     animation-fill-mode: both;
@@ -463,6 +453,7 @@
 /* Cuisines - section-title már az index.css-ben van */
 
 .cuisines-grid {
+    margin-top: 48rem;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
     gap: 1.5rem;
