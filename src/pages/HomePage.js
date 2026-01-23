@@ -10,10 +10,10 @@ import Benefits from './components/Benefits';
 import Cousines from './components/Cousines';
 import BackToTopButton from './components/BackToTopButton.js';
 import FloatingOpinions from './components/FloatingOpinions';
-
-document.title = "QuickBite - Főoldal";
+import { usePageTitle } from '../utils/usePageTitle';
 
 export default function HomePage({ favorites = [], onToggleFavorite }) {
+    usePageTitle("QuickBite - Főoldal");
     const [selectedCuisineId, setSelectedCuisineId] = useState(null)
     const [isScrolled, setIsScrolled] = useState(false)
 

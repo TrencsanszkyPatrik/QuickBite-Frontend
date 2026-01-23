@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import '../../src/pages//components//css/RestaurantDetails.css';
 import Navbar from './components/Navbar';
+import { usePageTitle } from '../utils/usePageTitle';
 
 export default function RestaurantDetails({ favorites = [], onToggleFavorite }) {
   const { id } = useParams();
@@ -62,6 +63,9 @@ export default function RestaurantDetails({ favorites = [], onToggleFavorite }) 
 
     fetchRestaurantAndMenu();
   }, [id]);
+
+  // Dinamikus title az étterem nevével
+  usePageTitle(restaurant ? `${restaurant.name} - QuickBite` : "Étterem részletek - QuickBite");
 
   const isFavorite = restaurant
     ? favorites.some((fav) => String(fav.id) === String(restaurant.id))

@@ -2,10 +2,10 @@ import React from 'react'
 import Footer from './components/Footer'
 import '../pages/components/css/aboutus.css'
 import Navbar from './components/Navbar';
-
-document.title = "QuickBite";
+import { usePageTitle } from '../utils/usePageTitle';
 
 export default function AboutUs() {
+  usePageTitle("QuickBite - Rólunk");
   return (
     <>
 

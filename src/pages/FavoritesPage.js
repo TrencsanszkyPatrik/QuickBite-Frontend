@@ -5,8 +5,10 @@ import Footer from './components/Footer';
 import { showToast } from '../utils/toast';
 import '../pages/components/css/homepage.css';
 import '../pages/components/css/RestaurantCardList.css';
+import { usePageTitle } from '../utils/usePageTitle';
 
 export default function FavoritesPage({ favorites = [], onToggleFavorite }) {
+  usePageTitle("QuickBite - Kedvencek");
   const navigate = useNavigate();
 
   useEffect(() => {

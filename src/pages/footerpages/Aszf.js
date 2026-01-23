@@ -2,8 +2,10 @@ import React from 'react'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import '../components/css/aszf.css'
+import { usePageTitle } from '../../utils/usePageTitle';
 
 export default function Aszf() {
+    usePageTitle("QuickBite - Általános Szerződési Feltételek");
     return (
         <>
             <Navbar />

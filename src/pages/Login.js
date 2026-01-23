@@ -2,8 +2,10 @@ import React, { useState } from 'react'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import "../pages/components/css/login.css"
+import { usePageTitle } from '../utils/usePageTitle';
 
 export default function Login() {
+  usePageTitle("QuickBite - Bejelentkezés");
   const [isLogin, setIsLogin] = useState(true)
 
   return (

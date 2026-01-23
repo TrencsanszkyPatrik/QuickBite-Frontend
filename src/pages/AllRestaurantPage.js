@@ -5,8 +5,10 @@ import '../pages/components/css/homepage.css';
 import RestaurantCardList from './components/RestaurantCardList';
 import '../../src/pages/components/css/CuisineList.css';
 import '../../src/pages/components/css/AllRestaurantPage.css';
+import { usePageTitle } from '../utils/usePageTitle';
 
 export default function AllRestaurantPage({ favorites = [], onToggleFavorite }) {
+  usePageTitle("QuickBite - Éttermeink");
   const [showDiscountOnly, setShowDiscountOnly] = useState(false);
   const [showFreeDeliveryOnly, setShowFreeDeliveryOnly] = useState(false);
   const [searchQuery, setSearchQuery] = useState(""); 

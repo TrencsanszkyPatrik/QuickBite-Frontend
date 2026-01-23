@@ -2,8 +2,10 @@ import React from 'react'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import '../components/css/contact.css'
+import { usePageTitle } from '../../utils/usePageTitle';
 
 export default function Contact() {
+    usePageTitle("QuickBite - Kapcsolat");
     return (
         <>
             <Navbar />

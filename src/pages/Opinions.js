@@ -3,8 +3,10 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import "../pages/components/css/opinions.css";
 import { showToast } from '../utils/toast';
+import { usePageTitle } from '../utils/usePageTitle';
 
 export default function Opinions() {
+  usePageTitle("QuickBite - Vásárlói vélemények");
   // Vélemények állapot
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);

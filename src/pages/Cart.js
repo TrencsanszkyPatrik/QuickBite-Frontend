@@ -2,8 +2,10 @@ import React from 'react'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import "../pages/components/css/cart.css"
+import { usePageTitle } from '../utils/usePageTitle';
 
-export default function kosar() {
+export default function Cart() {
+  usePageTitle("QuickBite - Kosár");
   return (
     <>
     
