@@ -5,17 +5,22 @@
   box-sizing: border-box;
 }
 
-/* CSS Variables */
+/* CSS Variables - Természetes, földi színpaletta */
 :root {
-  --primary: #3B3355;
-  --primary-dark: #2D2742;
-  --secondary: #5D5D81;
-  --text: #000505;
-  --text-light: #5D5D81;
-  --bg: #FEFCFD;
-  --bg-light: #BFCDE0;
-  --border: #D4DCE8;
-  --success: #00B894;
+  --primary: #3C3D37;           /* Sötétszürke/zöldes - fő szín */
+  --primary-dark: #181C14;      /* Legsötétebb zöldes/fekete */
+  --secondary: #697565;        /* Középszürke/zöldes - másodlagos szín */
+  --accent: #8B7A6B;           /* Meleg barnás/bézs akcentus szín */
+  --text: #181C14;             /* Sötét szöveg */
+  --text-light: #697565;       /* Világosabb szöveg */
+  --bg: #ECDFCC;               /* Bézs/krém háttér */
+  --bg-light: #F5EDE0;         /* Világosabb háttér */
+  --bg-warm: #E8D9C8;          /* Melegebb háttér árnyalat */
+  --border: #697565;           /* Border szín */
+  --border-light: rgba(139, 122, 107, 0.3); /* Világosabb border */
+  --success: #697565;          /* Success szín */
+  --glass-bg: rgba(236, 223, 204, 0.85);  /* Üveghatás háttér */
+  --glass-border: rgba(105, 117, 101, 0.3); /* Üveghatás border */
 }
 
 /* Body Styles */
@@ -28,7 +33,8 @@ body {
   -moz-osx-font-smoothing: grayscale;
   color: var(--text);
   line-height: 1.6;
-  background: var(--bg-light);
+  background: linear-gradient(135deg, var(--bg-light) 0%, var(--bg-warm) 50%, var(--bg) 100%);
+  background-attachment: fixed;
 }
 
 code {
@@ -65,17 +71,17 @@ a {
 
 .btn-primary {
   background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-  color: white;
-  box-shadow: 0 4px 12px rgba(59, 51, 85, 0.3);
+  color: var(--bg);
+  box-shadow: 0 4px 12px rgba(24, 28, 20, 0.3);
 }
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(59, 51, 85, 0.4);
+  box-shadow: 0 6px 16px rgba(24, 28, 20, 0.4);
 }
 
 .btn-secondary {
-  background: white;
+  background: var(--bg);
   color: var(--text);
   border: 2px solid var(--border);
 }
@@ -96,28 +102,32 @@ a {
 
 /* Benefit Card - Common Styles */
 .benefit-card {
-  background: white;
+  background: linear-gradient(135deg, var(--bg) 0%, var(--bg-warm) 100%);
   padding: 2rem;
   border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 4px 20px rgba(24, 28, 20, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.4);
   transition: all 0.3s;
+  border: 1px solid rgba(139, 122, 107, 0.25);
 }
 
 .benefit-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 8px 30px rgba(24, 28, 20, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  border-color: var(--accent);
+  background: linear-gradient(135deg, var(--bg-light) 0%, var(--bg) 100%);
 }
 
 .benefit-icon {
   width: 60px;
   height: 60px;
-  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 50%, var(--primary-dark) 100%);
   border-radius: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1.75rem;
   margin-bottom: 1.5rem;
+  box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.2);
 }
 
 .benefit-card h3 {

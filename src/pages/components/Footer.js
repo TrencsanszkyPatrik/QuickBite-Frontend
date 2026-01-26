@@ -23,8 +23,8 @@ export default function Footer() {
                 <h3>Jogi</h3>
                 <div class="footer-links">
                     <Link to = "/aszf">ÁSZF</Link>
-                    <Link to = "/privacy">Adatvédelem</Link>
-                    <Link to = "/cookies">Cookie-k</Link>
+                    <Link to = "/adatvedelem">Adatvédelem</Link>
+                    <Link to = "/sütik">Cookie-k</Link>
                 </div>
             </div>
             <div class="footer-section">

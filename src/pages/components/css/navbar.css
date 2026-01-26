@@ -1,11 +1,12 @@
 
 header {
-    background: white;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    background: linear-gradient(135deg, var(--bg) 0%, var(--bg-warm) 100%);
+    box-shadow: 0 2px 8px rgba(24, 28, 20, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.4);
     position: sticky;
     top: 0;
     z-index: 2000; /* legyen a Leaflet rétegek fölött */
     isolation: isolate; /* külön rétegezési kontextus a biztonság kedvéért */
+    border-bottom: 1px solid rgba(139, 122, 107, 0.25);
 }
 
 .header-content {
@@ -50,7 +51,7 @@ header {
 .search-box input:focus {
     outline: none;
     border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(59, 51, 85, 0.15);
+    box-shadow: 0 0 0 3px rgba(24, 28, 20, 0.15);
 }
 
 .search-icon {
@@ -82,9 +83,10 @@ header {
     position: absolute;
     top: calc(100% + 0.5rem);
     right: 0;
-    background: white;
+    background: linear-gradient(135deg, var(--bg) 0%, var(--bg-warm) 100%);
     border-radius: 10px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 4px 16px rgba(24, 28, 20, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    border: 1px solid rgba(139, 122, 107, 0.25);
     min-width: 200px;
     padding: 0.5rem 0;
     z-index: 1000;
@@ -112,6 +114,6 @@ header {
 }
 
 .dropdown-menu a:hover {
-    background: var(--primary);
-    color: white;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+    color: var(--bg);
 }

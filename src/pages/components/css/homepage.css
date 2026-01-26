@@ -2,8 +2,8 @@
 
 
 .hero {
-    background: linear-gradient(135deg, #3B3355 0%, #5D5D81 100%);
-    color: white;
+    background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 50%, var(--secondary) 100%);
+    color: var(--bg);
     padding: 8rem 2rem;
     position: fixed;
     top: 0;
@@ -31,7 +31,7 @@
     content: '';
     position: absolute;
     inset: 0;
-    background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="2" fill="white" opacity="0.1"/></svg>');
+    background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="2" fill="%23ECDFCC" opacity="0.15"/></svg>');
     background-size: 50px 50px;
     pointer-events: none;
 }
@@ -121,13 +121,13 @@
     border: 2px solid var(--border);
     border-radius: 10px;
     font-size: 1rem;
-    background-color: #ffffff59;
+    background: linear-gradient(135deg, rgba(245, 237, 224, 0.8) 0%, rgba(236, 223, 204, 0.7) 100%);
 }
 
 .hero-search input:focus {
     outline: none;
     border-color: var(--primary);
-    background-color: rgba(255, 255, 255, 0.8);
+    background: linear-gradient(135deg, rgba(245, 237, 224, 0.95) 0%, rgba(236, 223, 204, 0.9) 100%);
 }
 
 .hero-search .btn {
@@ -148,8 +148,8 @@
     position: static;
     width: 100%;
     max-width: 1200px;
-    background: #5D5D81;
-    box-shadow: 0 4px 24px rgba(59,51,85,0.08);
+    background: var(--secondary);
+    box-shadow: 0 4px 24px rgba(24, 28, 20, 0.12);
     border-radius: 40px;
     padding: 0.5rem 2rem;
     z-index: 10;
@@ -173,14 +173,14 @@
 }
 
 .floating-opinion-card {
-    background: rgba(255,255,255,0.95);
+    background: linear-gradient(135deg, rgba(245, 237, 224, 0.98) 0%, rgba(236, 223, 204, 0.95) 100%);
     border-radius: 18px;
-    box-shadow: 0 8px 32px rgba(59,51,85,0.13);
+    box-shadow: 0 8px 32px rgba(24, 28, 20, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.5);
     padding: 3rem 2.5rem 2.5rem 2.5rem;
     position: relative;
     min-width: 0;
     transition: box-shadow 0.3s;
-    border: 1px solid var(--border);
+    border: 1px solid rgba(139, 122, 107, 0.3);
     font-size: 1.4rem;
     opacity: 0.98;
     max-width: 500px;
@@ -193,7 +193,7 @@
 }
 
 .floating-opinion-card:hover {
-    box-shadow: 0 16px 40px rgba(59,51,85,0.22);
+    box-shadow: 0 16px 40px rgba(24, 28, 20, 0.25);
 }
 
 .floating-opinion-stars {
@@ -366,13 +366,13 @@
 }
 
 .benefit-card-home {
-    background: rgba(255, 255, 255, 0.9);
+    background: linear-gradient(135deg, rgba(236, 223, 204, 0.98) 0%, rgba(232, 217, 200, 0.95) 100%);
     backdrop-filter: blur(20px);
     padding: 2.5rem;
     border-radius: 20px;
-    box-shadow: 0 10px 40px rgba(59, 51, 85, 0.1);
+    box-shadow: 0 10px 40px rgba(24, 28, 20, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.5);
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    border: 1px solid rgba(139, 122, 107, 0.25);
     position: relative;
     overflow: hidden;
 }
@@ -395,28 +395,29 @@
 
 .benefit-card-home:hover {
     transform: translateY(-8px) scale(1.02);
-    box-shadow: 0 20px 60px rgba(59, 51, 85, 0.2);
-    border-color: rgba(59, 51, 85, 0.2);
+    box-shadow: 0 20px 60px rgba(24, 28, 20, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    border-color: rgba(139, 122, 107, 0.4);
+    background: linear-gradient(135deg, rgba(245, 237, 224, 0.98) 0%, rgba(236, 223, 204, 0.95) 100%);
 }
 
 .benefit-icon-home {
     width: 80px;
     height: 80px;
-    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 50%, var(--secondary) 100%);
     border-radius: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 2rem;
     margin: 0 auto 1.5rem;
-    color: white;
-    box-shadow: 0 8px 25px rgba(59, 51, 85, 0.3);
+    color: var(--bg);
+    box-shadow: 0 8px 25px rgba(24, 28, 20, 0.3), inset 0 2px 4px rgba(255, 255, 255, 0.2);
     transition: all 0.3s ease;
 }
 
 .benefit-card-home:hover .benefit-icon-home {
     transform: scale(1.1) rotate(5deg);
-    box-shadow: 0 12px 35px rgba(59, 51, 85, 0.4);
+    box-shadow: 0 12px 35px rgba(24, 28, 20, 0.4);
 }
 
 .benefit-card-home h3 {
@@ -491,7 +492,7 @@
     line-height: 48px;
     text-align: center;
     background: linear-gradient(135deg, var(--primary), var(--secondary));
-    box-shadow: 0 10px 30px rgba(59,51,85,0.25);
+    box-shadow: 0 10px 30px rgba(24, 28, 20, 0.25);
     transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease, visibility 0.2s ease;
     opacity: 0;
     visibility: hidden;
@@ -505,7 +506,7 @@
 
 .back-to-top:hover {
     transform: translateY(-3px) scale(1.05);
-    box-shadow: 0 16px 40px rgba(59,51,85,0.35);
+    box-shadow: 0 16px 40px rgba(24, 28, 20, 0.35);
 }
 
 @media (max-width: 768px) {
@@ -610,7 +611,8 @@
     transform: translateY(30px);
     transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.3s, 
                 transform 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.3s;
-    background: var(--bg-light);
+    background: linear-gradient(135deg, var(--bg-light) 0%, var(--bg-warm) 50%, var(--bg) 100%);
+    background-attachment: fixed;
 }
 
 .main-content > .container:first-child {

@@ -7,8 +7,8 @@
     background-repeat: no-repeat;
     background-size: cover;
     background-blend-mode: multiply;
-    background-color: #5D5D81;
-    color: white;
+    background-color: var(--primary-dark);
+    color: var(--bg);
     padding: 3rem 2rem;
     margin-top: 4rem;
 }
@@ -38,9 +38,9 @@
 }
 
 .footer-links a {
-    color: white;
+    color: var(--bg);
     text-decoration: none;
-    opacity: 0.8;
+    opacity: 0.9;
     transition: opacity 0.3s;
 }
 

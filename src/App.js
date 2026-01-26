@@ -14,6 +14,7 @@ import Login from "./pages/Login";
 import Opinions from "./pages/Opinions";
 import FavoritesPage from "./pages/FavoritesPage";
 import Profile from "./pages/Profile";
+import DataProtection from "./pages/footerpages/DataProtection";
 
 
 export default function App() {
@@ -138,6 +139,7 @@ export default function App() {
         <Route path="/bejelentkezes" element={<Login/>}></Route>
         <Route path="/velemenyek" element={<Opinions/>}></Route>
         <Route path="/profilom" element={<Profile/>}></Route>
+        <Route path="/adatvedelem" element={<DataProtection/>}></Route>
       </Routes>
       <ToastContainer
         position="top-right"
