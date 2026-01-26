@@ -624,6 +624,29 @@
     transform: translateY(0);
 }
 
+.view-all-restaurants-container {
+    display: flex;
+    justify-content: center;
+    margin: 3rem 0;
+    padding: 0 2rem;
+}
+
+.view-all-btn {
+    padding: 1rem 2.5rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.view-all-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(24, 28, 20, 0.3);
+}
+
 html {
     scroll-behavior: smooth;
 }

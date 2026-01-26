@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import '../pages//components/css/homepage.css'
@@ -72,23 +73,25 @@ export default function HomePage({ favorites = [], onToggleFavorite }) {
                         </div>
                         <div className="stat-item">
                             <span className="stat-number">4,8</span>
-                            <span className="stat-text">Átlagos értékelés</span>
+                            <span className="stat-text">Átlagos értékélés</span>
                         </div>
                     </div>
                 </div>
             </section>
 
             <div className={`main-content ${isScrolled ? 'main-content-visible' : ''}`}>
-                <Cousines
-                    selectedCuisineId={selectedCuisineId}
-                    onSelectCuisine={handleSelectCuisine}
-                />
                 <h1 className="section-title">Válassz kiemelkedő éttermeink közül!</h1>
                 <RestaurantCardList
                     selectedCuisineId={selectedCuisineId}
                     favorites={favorites}
                     onToggleFavorite={onToggleFavorite}
+                    limit={5}
                 />
+                <div className="view-all-restaurants-container">
+                    <Link to="/ettermek" className="btn btn-primary view-all-btn">
+                        Összes étterem megtekintése
+                    </Link>
+                </div>
                 <Benefits />
                 <Footer />
             </div>

@@ -9,6 +9,7 @@ export default function RestaurantCardList({
   searchQuery = "", 
   favorites = [],
   onToggleFavorite,
+  limit = null,
 }) {
   const navigate = useNavigate();
   const [restaurants, setRestaurants] = useState([]);
@@ -85,10 +86,14 @@ export default function RestaurantCardList({
     return true;
   });
 
+  const visibleRestaurants = limit
+    ? filteredRestaurants.slice(0, limit)
+    : filteredRestaurants;
+
   return (
     <div className="restaurant-list-section container">
       <div className="restaurant-cards-grid">
-        {filteredRestaurants.map((r) => (
+        {visibleRestaurants.map((r) => (
           <div
             className="restaurant-card"
             key={r.id}
