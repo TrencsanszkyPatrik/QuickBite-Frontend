@@ -1,7 +1,7 @@
 import React from 'react'
-import Navbar from '../components/Navbar'
-import Footer from '../components/Footer'
-import '../components/css/contact.css'
+import Navbar from '../../components/Navbar'
+import Footer from '../../components/Footer'
+import '../../styles/contact.css'
 import { usePageTitle } from '../../utils/usePageTitle';
 
 export default function Contact() {

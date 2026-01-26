@@ -1,35 +1,34 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import '../../src/pages//components//css/RestaurantDetails.css';
-import Navbar from './components/Navbar';
-import { usePageTitle } from '../utils/usePageTitle';
+import React, { useState, useEffect } from 'react'
+import { useParams } from 'react-router-dom'
+import '../styles/RestaurantDetails.css'
+import Navbar from '../components/Navbar'
+import { usePageTitle } from '../utils/usePageTitle'
+import { API_BASE } from '../utils/api'
 
 export default function RestaurantDetails({ favorites = [], onToggleFavorite }) {
-  const { id } = useParams();
-  const navigate = useNavigate();
-  const [restaurant, setRestaurant] = useState(null);
-  const [menuItems, setMenuItems] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const { id } = useParams()
+  const [restaurant, setRestaurant] = useState(null)
+  const [menuItems, setMenuItems] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState(null)
 
   useEffect(() => {
     const fetchRestaurantAndMenu = async () => {
       try {
-        setIsLoading(true);
+        setIsLoading(true)
         const [restaurantRes, menuRes] = await Promise.all([
-          fetch(`https://localhost:7236/api/Restaurants/${id}`),
-          fetch(`https://localhost:7236/api/MenuItems/restaurant/${id}`)
-        ]);
+          fetch(`${API_BASE}/Restaurants/${id}`),
+          fetch(`${API_BASE}/MenuItems/restaurant/${id}`)
+        ])
 
         if (!restaurantRes.ok) {
-          throw new Error('Nem sikerült betölteni az étterem adatait.');
+          throw new Error('Nem sikerült betölteni az étterem adatait.')
         }
 
-        const restaurantData = await restaurantRes.json();
-        
-        const categoriesRes = await fetch('https://localhost:7236/api/Categories');
-        const categories = await categoriesRes.json();
-        const cuisine = categories.find(c => c.id === restaurantData.cuisine_id);
+        const restaurantData = await restaurantRes.json()
+        const categoriesRes = await fetch(`${API_BASE}/Categories`)
+        const categories = await categoriesRes.json()
+        const cuisine = categories.find((c) => c.id === restaurantData.cuisine_id)
 
         const mappedRestaurant = {
           ...restaurantData,
@@ -38,45 +37,43 @@ export default function RestaurantDetails({ favorites = [], onToggleFavorite }) 
           img: restaurantData.image_url,
           cuisine: cuisine?.name || 'Ismeretlen',
           phone: restaurantData.phonenumber
-        };
+        }
 
-        setRestaurant(mappedRestaurant);
+        setRestaurant(mappedRestaurant)
 
         if (menuRes.ok) {
-          const menuData = await menuRes.json();
-          const mappedMenu = menuData.map(item => ({
+          const menuData = await menuRes.json()
+          const mappedMenu = menuData.map((item) => ({
             name: item.name,
             price: item.price,
             img: item.image_url || '/img/EtelKepek/default.png',
             desc: item.description || '',
             category: item.category
-          }));
-          setMenuItems(mappedMenu);
+          }))
+          setMenuItems(mappedMenu)
         }
       } catch (err) {
-        console.error(err);
-        setError(err.message || 'Hiba történt az adatok betöltése közben.');
+        console.error(err)
+        setError(err.message || 'Hiba történt az adatok betöltése közben.')
       } finally {
-        setIsLoading(false);
+        setIsLoading(false)
       }
-    };
+    }
+    fetchRestaurantAndMenu()
+  }, [id])
 
-    fetchRestaurantAndMenu();
-  }, [id]);
-
-  // Dinamikus title az étterem nevével
-  usePageTitle(restaurant ? `${restaurant.name} - QuickBite` : "Étterem részletek - QuickBite");
+  usePageTitle(restaurant ? `${restaurant.name} - QuickBite` : 'Étterem részletek - QuickBite')
 
   const isFavorite = restaurant
     ? favorites.some((fav) => String(fav.id) === String(restaurant.id))
-    : false;
+    : false
 
   if (isLoading) {
     return (
       <div className="container">
         <p>Betöltés...</p>
       </div>
-    );
+    )
   }
 
   if (error || !restaurant) {
@@ -84,15 +81,13 @@ export default function RestaurantDetails({ favorites = [], onToggleFavorite }) 
       <div className="container">
         <h2>{error || 'Étterem nem található'}</h2>
       </div>
-    );
+    )
   }
-
-  console.log(restaurant);
 
   return (
     <>
-    <Navbar/>
-    <div className="restaurant-details-page container">
+      <Navbar />
+      <div className="restaurant-details-page container">
       
       <div className="restaurant-details-header">
         <img src={restaurant.img} alt={restaurant.name} className="restaurant-details-img" />
@@ -106,11 +101,11 @@ export default function RestaurantDetails({ favorites = [], onToggleFavorite }) 
             </div>
             <button
               className={`favorite-btn favorite-btn--details ${
-                isFavorite ? "favorite-btn--active" : ""
+                isFavorite ? 'favorite-btn--active' : ''
               }`}
               onClick={() => onToggleFavorite && onToggleFavorite(restaurant)}
             >
-              {isFavorite ? "♥ Kedvenc" : "♡ Kedvencekhez"}
+              {isFavorite ? '♥ Kedvenc' : '♡ Kedvencekhez'}
             </button>
           </div>
           <div className="restaurant-details-meta">
@@ -148,17 +143,17 @@ export default function RestaurantDetails({ favorites = [], onToggleFavorite }) 
         <div className="menu-container">
           {Object.entries(
             menuItems.reduce((acc, item) => {
-              const category = item.category || 'Egyéb';
-              if (!acc[category]) acc[category] = [];
-              acc[category].push(item);
-              return acc;
+              const category = item.category || 'Egyéb'
+              if (!acc[category]) acc[category] = []
+              acc[category].push(item)
+              return acc
             }, {})
           ).map(([category, items], categoryIdx) => (
             <div className="menu-category-section" key={category}>
               <h3 className="category-title">{category}</h3>
               <div className={`menu-grid menu-grid--${categoryIdx % 2 === 0 ? 'alternate' : 'standard'}`}>
                 {items.map((item, idx) => (
-                  <div 
+                  <div
                     className={`menu-card menu-card--${idx % 3 === 0 ? 'featured' : idx % 3 === 1 ? 'medium' : 'compact'}`}
                     key={`${category}-${idx}`}
                   >
@@ -182,7 +177,7 @@ export default function RestaurantDetails({ favorites = [], onToggleFavorite }) 
           ))}
         </div>
       )}
-    </div>
+      </div>
     </>
-  );
+  )
 }

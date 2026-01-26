@@ -1,25 +1,22 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
-import Navbar from './components/Navbar';
-import Footer from './components/Footer';
-import "../pages/components/css/opinions.css";
-import { showToast } from '../utils/toast';
-import { usePageTitle } from '../utils/usePageTitle';
+import React, { useState, useEffect, useMemo } from 'react'
+import { useNavigate } from 'react-router-dom'
+import Navbar from '../components/Navbar'
+import Footer from '../components/Footer'
+import '../styles/opinions.css'
+import { showToast } from '../utils/toast'
+import { usePageTitle } from '../utils/usePageTitle'
+import { API_BASE } from '../utils/api'
 
 export default function Opinions() {
-  usePageTitle("QuickBite - Vásárlói vélemények");
-  const navigate = useNavigate();
-
-  // Vélemények állapot
-  const [reviews, setReviews] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  // Új vélemény állapotok
-  const [newName, setNewName] = useState('');
-  const [newUsername, setNewUsername] = useState('');
-  const [newText, setNewText] = useState('');
-  const [newStars, setNewStars] = useState(5);
+  usePageTitle('QuickBite - Vásárlói vélemények')
+  const navigate = useNavigate()
+  const [reviews, setReviews] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+  const [newName, setNewName] = useState('')
+  const [newUsername, setNewUsername] = useState('')
+  const [newText, setNewText] = useState('')
+  const [newStars, setNewStars] = useState(5)
 
   const auth = useMemo(() => {
     const token = localStorage.getItem('quickbite_token');
@@ -31,105 +28,103 @@ export default function Opinions() {
       user = null;
     }
 
-    const email = user?.email || '';
-    const fallbackUsername = email && email.includes('@') ? email.split('@')[0] : '';
-    const displayName = user?.name || email || '';
-
+    const email = user?.email || ''
+    const fallbackUsername = email && email.includes('@') ? email.split('@')[0] : ''
+    const displayName = user?.name || email || ''
     return {
       isLoggedIn: Boolean(token && user),
       displayName,
-      username: fallbackUsername || displayName.replace(/\s+/g, '').toLowerCase(),
-    };
-  }, []);
+      username: fallbackUsername || displayName.replace(/\s+/g, '').toLowerCase()
+    }
+  }, [])
 
   useEffect(() => {
-    fetchReviews();
-  }, []);
+    fetchReviews()
+  }, [])
 
   const safeJson = async (response) => {
-    const text = await response.text();
-    if (!text) return null;
+    const text = await response.text()
+    if (!text) return null
     try {
-      return JSON.parse(text);
+      return JSON.parse(text)
     } catch (err) {
-      console.error('Hibás JSON válasz:', text);
-      throw new Error('Hibás szerver válasz');
+      console.error('Hibás JSON válasz:', text)
+      throw new Error('Hibás szerver válasz')
     }
-  };
+  }
 
   const fetchReviews = async () => {
     try {
-      setLoading(true);
-      const response = await fetch('https://localhost:7236/api/QuickbiteReviews');
+      setLoading(true)
+      const response = await fetch(`${API_BASE}/QuickbiteReviews`)
       if (!response.ok) {
-        throw new Error('Nem sikerült betölteni a véleményeket');
+        throw new Error('Nem sikerült betölteni a véleményeket')
       }
-      const data = await safeJson(response);
-      setReviews(data || []);
-      setError(null);
+      const data = await safeJson(response)
+      setReviews(data || [])
+      setError(null)
     } catch (err) {
-      setError(err.message);
-      console.error('Hiba a vélemények betöltésekor:', err);
+      setError(err.message)
+      console.error('Hiba a vélemények betöltésekor:', err)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   const renderStars = (count) => {
-    const stars = [];
+    const stars = []
     for (let i = 1; i <= 5; i++) {
       stars.push(
         <span key={i} className={`star ${i <= count ? 'filled' : ''}`} aria-hidden="true">★</span>
-      );
+      )
     }
-    return stars;
-  };
+    return stars
+  }
 
-  // Vélemény hozzáadása
   const addReview = async () => {
     if (!auth.isLoggedIn) {
-      showToast.error('Vélemény írásához bejelentkezés szükséges!');
-      setTimeout(() => navigate('/bejelentkezes'), 800);
-      return;
+      showToast.error('Vélemény írásához bejelentkezés szükséges!')
+      setTimeout(() => navigate('/bejelentkezes'), 800)
+      return
     }
 
     if (newText.trim() === '') {
-      showToast.error('Írj egy véleményt!');
-      return;
+      showToast.error('Írj egy véleményt!')
+      return
     }
-    
+
     const newReview = {
       name: auth.displayName || newName,
       username: auth.username || newUsername,
       review: newText,
       stars: newStars
-    };
+    }
 
     try {
-      const response = await fetch('https://localhost:7236/api/QuickbiteReviews', {
+      const response = await fetch(`${API_BASE}/QuickbiteReviews`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify(newReview)
-      });
+      })
 
       if (!response.ok) {
-        throw new Error('Nem sikerült hozzáadni a véleményt');
+        throw new Error('Nem sikerült hozzáadni a véleményt')
       }
 
-      const addedReview = await safeJson(response);
+      const addedReview = await safeJson(response)
       if (addedReview) {
-        setReviews([addedReview, ...reviews]);
-        showToast.success('Sikeresen hozzáadva!');
+        setReviews([addedReview, ...reviews])
+        showToast.success('Sikeresen hozzáadva!')
       }
-      setNewText('');
-      setNewStars(5);
+      setNewText('')
+      setNewStars(5)
     } catch (err) {
-      console.error('Hiba a vélemény hozzáadásakor:', err);
-      showToast.error('Hiba történt a vélemény hozzáadásakor. Kérjük, próbálja újra.');
+      console.error('Hiba a vélemény hozzáadásakor:', err)
+      showToast.error('Hiba történt a vélemény hozzáadásakor. Kérjük, próbálja újra.')
     }
-  };
+  }
 
   return (
     <div>
@@ -138,8 +133,6 @@ export default function Opinions() {
       <div className="opinions-container">
         <h1>Vásárlói Vélemények</h1>
         <p>Olvasd el, mit gondolnak a QuickBite felhasználói!</p>
-
-        {/* Vélemény írása */}
         <div className="new-opinion">
           {!auth.isLoggedIn ? (
             <div style={{ marginBottom: 8, color: '#555' }}>
@@ -173,12 +166,8 @@ export default function Opinions() {
           </div>
           <button onClick={addReview}>Hozzáadás</button>
         </div>
-
-        {/* Betöltés és hibaüzenetek */}
         {loading && <p>Vélemények betöltése...</p>}
-        {error && <p style={{color: 'red'}}>Hiba: {error}</p>}
-
-        {/* Vélemények */}
+        {error && <p style={{ color: 'red' }}>Hiba: {error}</p>}
         <div className="opinions-grid">
           {reviews.length === 0 && !loading && (
             <p>Még nincsenek vélemények. Legyél te az első!</p>
@@ -200,8 +189,7 @@ export default function Opinions() {
           ))}
         </div>
       </div>
-
       <Footer />
     </div>
-  );
+  )
 }

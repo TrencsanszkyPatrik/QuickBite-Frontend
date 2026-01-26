@@ -1,7 +1,7 @@
 import React from 'react'
-import Navbar from '../components/Navbar'
-import Footer from '../components/Footer'
-import '../components/css/aszf.css'
+import Navbar from '../../components/Navbar'
+import Footer from '../../components/Footer'
+import '../../styles/aszf.css'
 import { usePageTitle } from '../../utils/usePageTitle';
 
 export default function DataProtection() {

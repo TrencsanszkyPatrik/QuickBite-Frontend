@@ -1,57 +1,55 @@
-import React, { useEffect, useState } from 'react';
-import './css/RestaurantCardList.css';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react'
+import '../styles/RestaurantCardList.css'
+import { useNavigate } from 'react-router-dom'
+import { API_BASE } from '../utils/api'
 
 export default function RestaurantCardList({
   showDiscountOnly = false,
   showFreeDeliveryOnly = false,
   selectedCuisineId = null,
-  searchQuery = "", 
+  searchQuery = '',
   favorites = [],
   onToggleFavorite,
-  limit = null,
+  limit = null
 }) {
-  const navigate = useNavigate();
-  const [restaurants, setRestaurants] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const navigate = useNavigate()
+  const [restaurants, setRestaurants] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState(null)
 
   useEffect(() => {
     const fetchRestaurants = async () => {
       try {
-        const response = await fetch('https://localhost:7236/api/Restaurants');
+        const response = await fetch(`${API_BASE}/Restaurants`)
         if (!response.ok) {
-          throw new Error('Nem sikerült betölteni az éttermeket.');
+          throw new Error('Nem sikerült betölteni az éttermeket.')
         }
-        const data = await response.json();
-
+        const data = await response.json()
         const mapped = data.map((r) => ({
           ...r,
           id: String(r.id),
           address: `${r.city}, ${r.address}`,
           img: r.image_url,
           freeDelivery: r.free_delivery,
-          acceptCards: r.accept_cards,
-        }));
-
-        setRestaurants(mapped);
+          acceptCards: r.accept_cards
+        }))
+        setRestaurants(mapped)
       } catch (err) {
-        console.error(err);
-        setError('Hiba történt az éttermek betöltése közben.');
+        console.error(err)
+        setError('Hiba történt az éttermek betöltése közben.')
       } finally {
-        setIsLoading(false);
+        setIsLoading(false)
       }
-    };
-
-    fetchRestaurants();
-  }, []);
+    }
+    fetchRestaurants()
+  }, [])
 
   if (isLoading) {
     return (
       <div className="restaurant-list-section container">
         <p>Étterem lista betöltése...</p>
       </div>
-    );
+    )
   }
 
   if (error) {
@@ -59,36 +57,32 @@ export default function RestaurantCardList({
       <div className="restaurant-list-section container">
         <p>{error}</p>
       </div>
-    );
+    )
   }
 
   const filteredRestaurants = restaurants.filter((restaurant) => {
-
-    if (searchQuery.trim() !== "") {
-      const q = searchQuery.toLowerCase();
-
-      const matchesName = restaurant.name.toLowerCase().includes(q);
-      const matchesAddress = restaurant.address?.toLowerCase().includes(q);
-      const matchesCuisine = restaurant.cuisine?.toLowerCase().includes(q);
-
-      if (!matchesName && !matchesAddress && !matchesCuisine) return false;
+    if (searchQuery.trim() !== '') {
+      const q = searchQuery.toLowerCase()
+      const matchesName = restaurant.name.toLowerCase().includes(q)
+      const matchesAddress = restaurant.address?.toLowerCase().includes(q)
+      const matchesCuisine = restaurant.cuisine?.toLowerCase().includes(q)
+      if (!matchesName && !matchesAddress && !matchesCuisine) return false
     }
-
     if (selectedCuisineId && restaurant.cuisine_id !== selectedCuisineId) {
-      return false;
+      return false
     }
     if (showDiscountOnly && restaurant.discount <= 0) {
-      return false;
+      return false
     }
     if (showFreeDeliveryOnly && !restaurant.freeDelivery) {
-      return false;
+      return false
     }
-    return true;
-  });
+    return true
+  })
 
   const visibleRestaurants = limit
     ? filteredRestaurants.slice(0, limit)
-    : filteredRestaurants;
+    : filteredRestaurants
 
   return (
     <div className="restaurant-list-section container">
@@ -103,22 +97,22 @@ export default function RestaurantCardList({
             <button
               className={`favorite-btn ${
                 favorites.some((fav) => String(fav.id) === String(r.id))
-                  ? "favorite-btn--active"
-                  : ""
+                  ? 'favorite-btn--active'
+                  : ''
               }`}
               onClick={(e) => {
-                e.stopPropagation();
+                e.stopPropagation()
                 if (onToggleFavorite) {
-                  onToggleFavorite(r);
+                  onToggleFavorite(r)
                 }
               }}
               aria-label={
                 favorites.some((fav) => String(fav.id) === String(r.id))
-                  ? "Eltávolítás a kedvencek közül"
-                  : "Hozzáadás a kedvencekhez"
+                  ? 'Eltávolítás a kedvencek közül'
+                  : 'Hozzáadás a kedvencekhez'
               }
             >
-              {favorites.some((fav) => String(fav.id) === String(r.id)) ? "♥" : "♡"}
+              {favorites.some((fav) => String(fav.id) === String(r.id)) ? '♥' : '♡'}
             </button>
             <img src={r.img} alt={r.name} className="restaurant-img" />
             <div className="restaurant-info">
@@ -128,11 +122,10 @@ export default function RestaurantCardList({
             </div>
           </div>
         ))}
-
         {filteredRestaurants.length === 0 && (
           <p>Nincs találat a megadott keresésre.</p>
         )}
       </div>
     </div>
-  );
+  )
 }

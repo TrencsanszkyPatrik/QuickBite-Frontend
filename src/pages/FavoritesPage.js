@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Navbar from './components/Navbar';
-import Footer from './components/Footer';
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 import { showToast } from '../utils/toast';
-import '../pages/components/css/homepage.css';
-import '../pages/components/css/RestaurantCardList.css';
+import '../styles/homepage.css';
+import '../styles/RestaurantCardList.css';
 import { usePageTitle } from '../utils/usePageTitle';
 
 export default function FavoritesPage({ favorites = [], onToggleFavorite }) {
@@ -65,7 +65,6 @@ export default function FavoritesPage({ favorites = [], onToggleFavorite }) {
       </div>
       <Footer />
     </>
-  );
+  )
 }
-
 

@@ -1,5 +1,5 @@
 import React from "react";
-import "../pages//components/css/404page.css";
+import "../styles/404page.css";
 import { usePageTitle } from '../utils/usePageTitle';
 
 export default function PageNotFound() {

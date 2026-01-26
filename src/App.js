@@ -1,31 +1,30 @@
-import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import HomePage from "./pages/HomePage";
-import AboutUs from "./pages/AboutUs";
-import PageNotFound from "./pages/404page";
-import AllRestaurantPage from "./pages/AllRestaurantPage";
-import RestaurantDetails from "./pages/RestaurantDetails";
-import Aszf from "./pages/footerpages/Aszf";
-import Contact from "./pages/footerpages/Contact";
-import Cart from "./pages/Cart";
-import Login from "./pages/Login";
-import Opinions from "./pages/Opinions";
-import FavoritesPage from "./pages/FavoritesPage";
-import Profile from "./pages/Profile";
-import DataProtection from "./pages/footerpages/DataProtection";
-
+import React, { useState, useEffect } from 'react'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+import HomePage from './pages/HomePage'
+import AboutUs from './pages/AboutUs'
+import PageNotFound from './pages/404page'
+import AllRestaurantPage from './pages/AllRestaurantPage'
+import RestaurantDetails from './pages/RestaurantDetails'
+import Aszf from './pages/footerpages/Aszf'
+import Contact from './pages/footerpages/Contact'
+import Cart from './pages/Cart'
+import Login from './pages/Login'
+import Opinions from './pages/Opinions'
+import FavoritesPage from './pages/FavoritesPage'
+import Profile from './pages/Profile'
+import DataProtection from './pages/footerpages/DataProtection'
+import { API_BASE } from './utils/api'
 
 export default function App() {
-
-  const [opinions, setOpinions] = useState([]);
-  const [favorites, setFavorites] = useState([]);
+  const [opinions, setOpinions] = useState([])
+  const [favorites, setFavorites] = useState([])
 
   useEffect(() => {
     const fetchOpinions = async () => {
       try {
-        const response = await fetch("https://localhost:7236/api/quickbite_reviews")
+        const response = await fetch(`${API_BASE}/quickbite_reviews`)
         if (!response.ok) {
           throw new Error(`Failed to load opinions: ${response.status}`)
         }
@@ -39,57 +38,52 @@ export default function App() {
         const data = JSON.parse(text)
         setOpinions(Array.isArray(data) ? data : [])
       } catch (err) {
-        console.error("Hiba a vélemények betöltésekor:", err)
+        console.error('Hiba a vélemények betöltésekor:', err)
         setOpinions([])
       }
     }
-
-    fetchOpinions();
-  }, []);
+    fetchOpinions()
+  }, [])
 
   useEffect(() => {
     try {
-      const stored = localStorage.getItem("quickbite_favorites");
+      const stored = localStorage.getItem('quickbite_favorites')
       if (stored) {
-        const parsed = JSON.parse(stored);
+        const parsed = JSON.parse(stored)
         if (Array.isArray(parsed)) {
-          setFavorites(parsed);
+          setFavorites(parsed)
         }
       }
     } catch (err) {
-      console.error("Nem sikerült beolvasni a kedvenceket:", err);
+      console.error('Nem sikerült beolvasni a kedvenceket:', err)
     }
-  }, []);
+  }, [])
 
   useEffect(() => {
     try {
-      localStorage.setItem("quickbite_favorites", JSON.stringify(favorites));
+      localStorage.setItem('quickbite_favorites', JSON.stringify(favorites))
     } catch (err) {
-      console.error("Nem sikerült menteni a kedvenceket:", err);
+      console.error('Nem sikerült menteni a kedvenceket:', err)
     }
-  }, [favorites]);
+  }, [favorites])
 
   const handleToggleFavorite = (restaurant) => {
-    if (!restaurant || !restaurant.id) return;
-
-    const id = String(restaurant.id);
-
+    if (!restaurant || !restaurant.id) return
+    const id = String(restaurant.id)
     setFavorites((prev) => {
-      const exists = prev.find((r) => r.id === id);
+      const exists = prev.find((r) => r.id === id)
       if (exists) {
-        return prev.filter((r) => r.id !== id);
+        return prev.filter((r) => r.id !== id)
       }
-
       const simplified = {
         id,
         name: restaurant.name,
         address: restaurant.address,
-        img: restaurant.img,
-      };
-
-      return [...prev, simplified];
-    });
-  };
+        img: restaurant.img
+      }
+      return [...prev, simplified]
+    })
+  }
 
   return (
     <Router>
@@ -135,11 +129,11 @@ export default function App() {
           }
         />
         <Route path="*" element={<PageNotFound />} />
-        <Route path="/kosar" element={<Cart/>}></Route>
-        <Route path="/bejelentkezes" element={<Login/>}></Route>
-        <Route path="/velemenyek" element={<Opinions/>}></Route>
-        <Route path="/profilom" element={<Profile/>}></Route>
-        <Route path="/adatvedelem" element={<DataProtection/>}></Route>
+        <Route path="/kosar" element={<Cart />} />
+        <Route path="/bejelentkezes" element={<Login />} />
+        <Route path="/velemenyek" element={<Opinions />} />
+        <Route path="/profilom" element={<Profile />} />
+        <Route path="/adatvedelem" element={<DataProtection />} />
       </Routes>
       <ToastContainer
         position="top-right"
@@ -154,6 +148,6 @@ export default function App() {
         theme="light"
       />
     </Router>
-  );
+  )
 }
 

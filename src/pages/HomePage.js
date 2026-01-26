@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import Navbar from './components/Navbar'
-import Footer from './components/Footer'
-import '../pages//components/css/homepage.css'
+import Navbar from '../components/Navbar'
+import Footer from '../components/Footer'
+import '../styles/homepage.css'
 import 'leaflet/dist/leaflet.css';
-import RestaurantMap from './components/RestaurantMap';
-import '../../src/pages/components/css/CuisineList.css'
-import RestaurantCardList from './components/RestaurantCardList';
-import Benefits from './components/Benefits';
-import Cousines from './components/Cousines';
-import BackToTopButton from './components/BackToTopButton.js';
-import FloatingOpinions from './components/FloatingOpinions';
+import RestaurantMap from '../components/RestaurantMap';
+import '../styles/CuisineList.css'
+import RestaurantCardList from '../components/RestaurantCardList';
+import Benefits from '../components/Benefits';
+import Cousines from '../components/Cousines';
+import BackToTopButton from '../components/BackToTopButton.js';
+import FloatingOpinions from '../components/FloatingOpinions';
 import { usePageTitle } from '../utils/usePageTitle';
 
 export default function HomePage({ favorites = [], onToggleFavorite }) {

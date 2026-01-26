@@ -1,25 +1,22 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import Navbar from './components/Navbar'
-import Footer from './components/Footer'
-import "../pages/components/css/login.css"
+import Navbar from '../components/Navbar'
+import Footer from '../components/Footer'
+import '../styles/login.css'
 import { usePageTitle } from '../utils/usePageTitle'
 import { showToast } from '../utils/toast'
+import { API_BASE } from '../utils/api'
 
 export default function Login() {
-  usePageTitle("QuickBite - Bejelentkezés");
+  usePageTitle('QuickBite - Bejelentkezés')
   const navigate = useNavigate()
   const [isLogin, setIsLogin] = useState(true)
   const [isLoading, setIsLoading] = useState(false)
   const [showLoginPassword, setShowLoginPassword] = useState(false)
   const [showRegisterPassword, setShowRegisterPassword] = useState(false)
   const [showRegisterConfirmPassword, setShowRegisterConfirmPassword] = useState(false)
-  
-  // Bejelentkezés state
   const [loginEmail, setLoginEmail] = useState('')
   const [loginPassword, setLoginPassword] = useState('')
-  
-  // Regisztráció state
   const [registerFullName, setRegisterFullName] = useState('')
   const [registerEmail, setRegisterEmail] = useState('')
   const [registerPassword, setRegisterPassword] = useState('')
@@ -57,8 +54,6 @@ export default function Login() {
       }
 
       const data = await response.json()
-      
-      // Token mentése localStorage-ba
       if (data.token) {
         localStorage.setItem('quickbite_token', data.token)
         localStorage.setItem('quickbite_user', JSON.stringify({
@@ -66,8 +61,6 @@ export default function Login() {
           email: loginEmail,
           name: data.name || loginEmail
         }))
-        
-        // Custom event a Navbar frissítéséhez
         window.dispatchEvent(new Event('userLoggedIn'))
       }
 
@@ -108,7 +101,7 @@ export default function Login() {
 
     setIsLoading(true)
     try {
-      const response = await fetch('https://localhost:7236/api/Auth/register', {
+      const response = await fetch(`${API_BASE}/Auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -126,8 +119,6 @@ export default function Login() {
       }
 
       const data = await response.json()
-      
-      // Token mentése localStorage-ba
       if (data.token) {
         localStorage.setItem('quickbite_token', data.token)
         localStorage.setItem('quickbite_user', JSON.stringify({
@@ -135,8 +126,6 @@ export default function Login() {
           email: registerEmail,
           name: registerFullName
         }))
-        
-        // Custom event a Navbar frissítéséhez
         window.dispatchEvent(new Event('userLoggedIn'))
       }
 
@@ -154,7 +143,6 @@ export default function Login() {
 
   const switchToLogin = () => {
     setIsLogin(true)
-    // Mezők törlése
     setRegisterFullName('')
     setRegisterEmail('')
     setRegisterPassword('')
@@ -163,15 +151,14 @@ export default function Login() {
 
   const switchToRegister = () => {
     setIsLogin(false)
-    // Mezők törlése
     setLoginEmail('')
     setLoginPassword('')
   }
 
   return (
     <div className="login-page">
-        <Navbar/>
-    <div className="container-login">
+      <Navbar />
+      <div className="container-login">
         <h1>QuickBite</h1>
         <p>{isLogin ? 'Jelentkezz be a könnyebb rendelésért!' : 'Regisztrálj, hogy máris rendelhess!'}</p>
         <div className="buttons-login">
@@ -326,9 +313,8 @@ export default function Login() {
             </button>
           </form>
         )}
+      </div>
+      <Footer />
     </div>
-    <Footer/>
-    </div>
-
   )
 }

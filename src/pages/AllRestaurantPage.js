@@ -1,70 +1,68 @@
-import React, { useState, useEffect, useRef } from 'react';
-import Navbar from './components/Navbar';
-import Footer from './components/Footer';
-import '../pages/components/css/homepage.css';
-import RestaurantCardList from './components/RestaurantCardList';
-import '../../src/pages/components/css/CuisineList.css';
-import '../../src/pages/components/css/AllRestaurantPage.css';
-import { usePageTitle } from '../utils/usePageTitle';
-import { useLocation } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from 'react'
+import Navbar from '../components/Navbar'
+import Footer from '../components/Footer'
+import '../styles/homepage.css'
+import RestaurantCardList from '../components/RestaurantCardList'
+import '../styles/CuisineList.css'
+import '../styles/AllRestaurantPage.css'
+import { usePageTitle } from '../utils/usePageTitle'
+import { useLocation } from 'react-router-dom'
+import { API_BASE } from '../utils/api'
 
 export default function AllRestaurantPage({ favorites = [], onToggleFavorite }) {
-  usePageTitle("QuickBite - Éttermeink");
-  const location = useLocation();
-  const [showDiscountOnly, setShowDiscountOnly] = useState(false);
-  const [showFreeDeliveryOnly, setShowFreeDeliveryOnly] = useState(false);
-  const [showCardPaymentOnly, setShowCardPaymentOnly] = useState(false);
-  const [showOpenNowOnly, setShowOpenNowOnly] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategoryId, setSelectedCategoryId] = useState(null);
-  const [categories, setCategories] = useState([]);
-  const [isLoadingCategories, setIsLoadingCategories] = useState(true);
-  const hasAppliedUrlFilters = useRef(false);
+  usePageTitle('QuickBite - Éttermeink')
+  const location = useLocation()
+  const [showDiscountOnly, setShowDiscountOnly] = useState(false)
+  const [showFreeDeliveryOnly, setShowFreeDeliveryOnly] = useState(false)
+  const [showCardPaymentOnly, setShowCardPaymentOnly] = useState(false)
+  const [showOpenNowOnly, setShowOpenNowOnly] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [selectedCategoryId, setSelectedCategoryId] = useState(null)
+  const [categories, setCategories] = useState([])
+  const [isLoadingCategories, setIsLoadingCategories] = useState(true)
+  const hasAppliedUrlFilters = useRef(false)
 
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch('https://localhost:7236/api/Categories');
+        const response = await fetch(`${API_BASE}/Categories`)
         if (!response.ok) {
           throw new Error('Nem sikerült betölteni a kategóriákat.');
         }
-        const data = await response.json();
-        setCategories(data);
+        const data = await response.json()
+        setCategories(data)
       } catch (err) {
-        console.error('Hiba történt a kategóriák betöltése közben:', err);
+        console.error('Hiba történt a kategóriák betöltése közben:', err)
       } finally {
-        setIsLoadingCategories(false);
+        setIsLoadingCategories(false)
       }
-    };
+    }
+    fetchCategories()
+  }, [])
 
-    fetchCategories();
-  }, []); 
-
-  // URL paraméterek (cím + konyha) alkalmazása első betöltéskor
   useEffect(() => {
-    if (hasAppliedUrlFilters.current) return;
-    if (isLoadingCategories) return;
+    if (hasAppliedUrlFilters.current) return
+    if (isLoadingCategories) return
 
-    const params = new URLSearchParams(location.search);
-    const city = params.get('cim') || "";
-    const cuisine = (params.get('konyha') || "").toLowerCase().trim();
+    const params = new URLSearchParams(location.search)
+    const city = params.get('cim') || ''
+    const cuisine = (params.get('konyha') || '').toLowerCase().trim()
 
     if (city) {
-      setSearchQuery(city);
+      setSearchQuery(city)
     }
 
     if (cuisine && categories.length > 0) {
-      const matchedCategory = categories.find(cat =>
-        cat.name &&
-        cat.name.toLowerCase().includes(cuisine)
-      );
+      const matchedCategory = categories.find((cat) =>
+        cat.name && cat.name.toLowerCase().includes(cuisine)
+      )
       if (matchedCategory) {
-        setSelectedCategoryId(matchedCategory.id);
+        setSelectedCategoryId(matchedCategory.id)
       }
     }
 
-    hasAppliedUrlFilters.current = true;
-  }, [location.search, categories, isLoadingCategories]);
+    hasAppliedUrlFilters.current = true
+  }, [location.search, categories, isLoadingCategories])
 
   return (
     <>
@@ -114,7 +112,6 @@ export default function AllRestaurantPage({ favorites = [], onToggleFavorite }) 
           </div>
 
           <div className="category-filter">
-            
             <div className="category-buttons">
               <button
                 className={`category-btn ${selectedCategoryId === null ? 'selected' : ''}`}
@@ -143,7 +140,7 @@ export default function AllRestaurantPage({ favorites = [], onToggleFavorite }) 
             showDiscountOnly={showDiscountOnly}
             showFreeDeliveryOnly={showFreeDeliveryOnly}
             selectedCuisineId={selectedCategoryId}
-            searchQuery={searchQuery} // <-- ÁTADJUK
+            searchQuery={searchQuery}
             favorites={favorites}
             onToggleFavorite={onToggleFavorite}
           />

@@ -1,7 +1,7 @@
 import React from 'react'
-import Footer from './components/Footer'
-import '../pages/components/css/aboutus.css'
-import Navbar from './components/Navbar';
+import Footer from '../components/Footer'
+import '../styles/aboutus.css'
+import Navbar from '../components/Navbar';
 import { usePageTitle } from '../utils/usePageTitle';
 
 export default function AboutUs() {

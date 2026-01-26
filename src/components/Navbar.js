@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import '../components/css/navbar.css'
+import '../styles/navbar.css'
 
 export default function Navbar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
@@ -9,11 +9,9 @@ export default function Navbar() {
   const dropdownRef = useRef(null)
 
   useEffect(() => {
-    // Ellenőrizzük a bejelentkezési állapotot
     const checkAuth = () => {
       const token = localStorage.getItem('quickbite_token')
       const user = localStorage.getItem('quickbite_user')
-      
       if (token && user) {
         setIsLoggedIn(true)
         try {
@@ -29,12 +27,8 @@ export default function Navbar() {
     }
 
     checkAuth()
-    
-    // Hallgatjuk a storage változásokat (pl. másik ablakban történő bejelentkezés)
     const handleStorageChange = () => checkAuth()
     window.addEventListener('storage', handleStorageChange)
-    
-    // Custom event a bejelentkezés után
     window.addEventListener('userLoggedIn', checkAuth)
     window.addEventListener('userLoggedOut', checkAuth)
 
@@ -59,55 +53,51 @@ export default function Navbar() {
   }, [])
 
   return (
-
     <header>
-      <div class="header-content">
-        <Link to={"/"}>
-          <div class="logo">
+      <div className="header-content">
+        <Link to="/">
+          <div className="logo">
             <span><span id="quick">Quick</span><span id="bite">Bite</span></span>
           </div>
         </Link>
-
-        <div class="header-actions">
+        <div className="header-actions">
           <Link to="/ettermek">Éttermeink</Link>
           <Link to="/kedvencek">Kedvencek</Link>
-
-          <div class="dropdown" ref={dropdownRef}>
+          <div className="dropdown" ref={dropdownRef}>
             <button
-              class="btn btn-secondary dropdown-toggle"
+              className="btn btn-secondary dropdown-toggle"
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
             >
-              <i class="bi bi-list"></i>Menü
+              <i className="bi bi-list"></i>Menü
             </button>
             {isDropdownOpen && (
-              <div class="dropdown-menu">
-
+              <div className="dropdown-menu">
                 <Link to="/velemenyek">Vásárlók véleményei</Link>
-
                 <Link to="/kapcsolat">Kapcsolat</Link>
                 <Link to="/rolunk">Rólunk</Link>
               </div>
             )}
           </div>
-
-            
-          <Link to="/kosar"><button class="btn btn-secondary"><i class="bi bi-basket2-fill"></i>Kosár</button></Link>
+          <Link to="/kosar">
+            <button className="btn btn-secondary">
+              <i className="bi bi-basket2-fill"></i>Kosár
+            </button>
+          </Link>
           {isLoggedIn ? (
             <Link to="/profilom">
-              <button class="btn btn-primary">
-                <i class="bi bi-person-circle"></i>Profilom
+              <button className="btn btn-primary">
+                <i className="bi bi-person-circle"></i>Profilom
               </button>
             </Link>
           ) : (
             <Link to="/bejelentkezes">
-              <button class="btn btn-primary">
-                <i class="bi bi-person-circle"></i>Bejelentkezés
+              <button className="btn btn-primary">
+                <i className="bi bi-person-circle"></i>Bejelentkezés
               </button>
             </Link>
           )}
         </div>
       </div>
     </header>
-
   )
 }
