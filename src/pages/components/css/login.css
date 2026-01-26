@@ -209,28 +209,37 @@ html, body {
     font-family: inherit;
 }
 
+/* Windows/Edge beépített "szem" ikon elrejtése a password mezőben */
+.form-group-login input[type="password"]::-ms-reveal,
+.form-group-login input[type="password"]::-ms-clear {
+    display: none;
+}
+
 .password-input-wrapper {
     position: relative;
     width: 100%;
 }
 
 .password-input-wrapper input {
-    padding-right: 84px; /* hely a Mutat/Elrejt gombnak */
+    padding-right: 48px; /* hely az ikon gombnak */
 }
 
 .toggle-password-visibility {
     position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
+    right: 0;
+    top: 0;
+    bottom: 0;
     border: none;
     background: transparent;
     color: var(--primary);
-    font-weight: 700;
     cursor: pointer;
-    padding: 6px 8px;
-    border-radius: 10px;
-    font-size: 13px;
+    padding: 0 12px;
+    border-radius: 0 12px 12px 0;
+    font-size: 16px;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .toggle-password-visibility:hover:not(:disabled) {

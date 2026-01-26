@@ -152,9 +152,6 @@ export default function Login() {
 
   const switchToLogin = () => {
     setIsLogin(true)
-    setShowLoginPassword(false)
-    setShowRegisterPassword(false)
-    setShowRegisterConfirmPassword(false)
     // Mezők törlése
     setRegisterFullName('')
     setRegisterEmail('')
@@ -164,9 +161,6 @@ export default function Login() {
 
   const switchToRegister = () => {
     setIsLogin(false)
-    setShowLoginPassword(false)
-    setShowRegisterPassword(false)
-    setShowRegisterConfirmPassword(false)
     // Mezők törlése
     setLoginEmail('')
     setLoginPassword('')
@@ -219,16 +213,18 @@ export default function Login() {
                   disabled={isLoading}
                   required
                 />
-                <button
-                  type="button"
-                  className="toggle-password-visibility"
-                  onClick={() => setShowLoginPassword((prev) => !prev)}
-                  aria-label={showLoginPassword ? "Jelszó elrejtése" : "Jelszó megjelenítése"}
-                  aria-pressed={showLoginPassword}
-                  disabled={isLoading}
-                >
-                  {showLoginPassword ? "Elrejt" : "Mutat"}
-                </button>
+                {loginPassword.length > 0 && (
+                  <button
+                    type="button"
+                    className="toggle-password-visibility"
+                    onClick={() => setShowLoginPassword((prev) => !prev)}
+                    aria-label={showLoginPassword ? "Jelszó elrejtése" : "Jelszó megjelenítése"}
+                    aria-pressed={showLoginPassword}
+                    disabled={isLoading}
+                  >
+                    <i className="bi bi-eye" aria-hidden="true"></i>
+                  </button>
+                )}
               </div>
             </div>
             <button 
@@ -278,16 +274,18 @@ export default function Login() {
                   required
                   minLength={6}
                 />
-                <button
-                  type="button"
-                  className="toggle-password-visibility"
-                  onClick={() => setShowRegisterPassword((prev) => !prev)}
-                  aria-label={showRegisterPassword ? "Jelszó elrejtése" : "Jelszó megjelenítése"}
-                  aria-pressed={showRegisterPassword}
-                  disabled={isLoading}
-                >
-                  {showRegisterPassword ? "Elrejt" : "Mutat"}
-                </button>
+                {registerPassword.length > 0 && (
+                  <button
+                    type="button"
+                    className="toggle-password-visibility"
+                    onClick={() => setShowRegisterPassword((prev) => !prev)}
+                    aria-label={showRegisterPassword ? "Jelszó elrejtése" : "Jelszó megjelenítése"}
+                    aria-pressed={showRegisterPassword}
+                    disabled={isLoading}
+                  >
+                    <i className="bi bi-eye" aria-hidden="true"></i>
+                  </button>
+                )}
               </div>
             </div>
             <div className="form-group-login">
@@ -303,16 +301,18 @@ export default function Login() {
                   required
                   minLength={6}
                 />
-                <button
-                  type="button"
-                  className="toggle-password-visibility"
-                  onClick={() => setShowRegisterConfirmPassword((prev) => !prev)}
-                  aria-label={showRegisterConfirmPassword ? "Jelszó elrejtése" : "Jelszó megjelenítése"}
-                  aria-pressed={showRegisterConfirmPassword}
-                  disabled={isLoading}
-                >
-                  {showRegisterConfirmPassword ? "Elrejt" : "Mutat"}
-                </button>
+                {registerConfirmPassword.length > 0 && (
+                  <button
+                    type="button"
+                    className="toggle-password-visibility"
+                    onClick={() => setShowRegisterConfirmPassword((prev) => !prev)}
+                    aria-label={showRegisterConfirmPassword ? "Jelszó elrejtése" : "Jelszó megjelenítése"}
+                    aria-pressed={showRegisterConfirmPassword}
+                    disabled={isLoading}
+                  >
+                    <i className="bi bi-eye" aria-hidden="true"></i>
+                  </button>
+                )}
               </div>
             </div>
             <button 
