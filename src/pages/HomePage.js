@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import '../pages//components/css/homepage.css'
@@ -15,8 +15,11 @@ import { usePageTitle } from '../utils/usePageTitle';
 
 export default function HomePage({ favorites = [], onToggleFavorite }) {
     usePageTitle("QuickBite - Főoldal");
+    const navigate = useNavigate()
     const [selectedCuisineId, setSelectedCuisineId] = useState(null)
     const [isScrolled, setIsScrolled] = useState(false)
+    const [heroAddress, setHeroAddress] = useState("")
+    const [heroQuery, setHeroQuery] = useState("")
 
     useEffect(() => {
         const handleScroll = () => {
@@ -35,6 +38,13 @@ export default function HomePage({ favorites = [], onToggleFavorite }) {
         setSelectedCuisineId((current) => (current === id ? null : id))
     }
 
+    const handleHeroSearch = () => {
+        const params = new URLSearchParams()
+        if (heroAddress.trim()) params.set('cim', heroAddress.trim())
+        if (heroQuery.trim()) params.set('konyha', heroQuery.trim())
+        navigate(`/ettermek${params.toString() ? `?${params.toString()}` : ''}`)
+    }
+
     return (
         <>
             <Navbar />
@@ -48,9 +58,24 @@ export default function HomePage({ favorites = [], onToggleFavorite }) {
                                 <p>Fedezd fel a környék legjobb éttermeit és élvezd a gyors kiszállítást.</p>
                             </div>
                             <div className="hero-search">
-                                <input type="text" placeholder="📍 Add meg a címed" />
-                                <input type="text" placeholder="🍕 Mit keresel?" />
-                                <button className="btn btn-primary">Keresés</button>
+                                <input 
+                                    type="text" 
+                                    placeholder="📍 Add meg a címed" 
+                                    value={heroAddress}
+                                    onChange={(e) => setHeroAddress(e.target.value)}
+                                />
+                                <input 
+                                    type="text" 
+                                    placeholder="🍕 Mit keresel?" 
+                                    value={heroQuery}
+                                    onChange={(e) => setHeroQuery(e.target.value)}
+                                />
+                                <button 
+                                    className="btn btn-primary"
+                                    onClick={handleHeroSearch}
+                                >
+                                    Keresés
+                                </button>
                                 <RestaurantMap />
                             </div>
                         </div>
