@@ -13,6 +13,7 @@ import Cart from "./pages/Cart";
 import Login from "./pages/Login";
 import Opinions from "./pages/Opinions";
 import FavoritesPage from "./pages/FavoritesPage";
+import Profile from "./pages/Profile";
 
 
 export default function App() {
@@ -136,6 +137,7 @@ export default function App() {
         <Route path="/kosar" element={<Cart/>}></Route>
         <Route path="/bejelentkezes" element={<Login/>}></Route>
         <Route path="/velemenyek" element={<Opinions/>}></Route>
+        <Route path="/profilom" element={<Profile/>}></Route>
       </Routes>
       <ToastContainer
         position="top-right"

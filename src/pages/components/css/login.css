@@ -267,3 +267,22 @@ html, body {
         0 4px 15px 0 rgba(93, 93, 129, 0.2),
         inset 0 1px 1px 0 rgba(255, 255, 255, 0.2);
 }
+
+.create-account-login:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.create-account-login:disabled:hover {
+    transform: none;
+    box-shadow: 
+        0 8px 32px 0 rgba(93, 93, 129, 0.25),
+        inset 0 1px 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.form-group-login input:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background: rgba(255, 255, 255, 0.3);
+}

@@ -5,7 +5,46 @@ import '../components/css/navbar.css'
 
 export default function Navbar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [userName, setUserName] = useState('')
   const dropdownRef = useRef(null)
+
+  useEffect(() => {
+    // Ellenőrizzük a bejelentkezési állapotot
+    const checkAuth = () => {
+      const token = localStorage.getItem('quickbite_token')
+      const user = localStorage.getItem('quickbite_user')
+      
+      if (token && user) {
+        setIsLoggedIn(true)
+        try {
+          const userData = JSON.parse(user)
+          setUserName(userData.name || userData.email || 'Felhasználó')
+        } catch (e) {
+          setUserName('Felhasználó')
+        }
+      } else {
+        setIsLoggedIn(false)
+        setUserName('')
+      }
+    }
+
+    checkAuth()
+    
+    // Hallgatjuk a storage változásokat (pl. másik ablakban történő bejelentkezés)
+    const handleStorageChange = () => checkAuth()
+    window.addEventListener('storage', handleStorageChange)
+    
+    // Custom event a bejelentkezés után
+    window.addEventListener('userLoggedIn', checkAuth)
+    window.addEventListener('userLoggedOut', checkAuth)
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange)
+      window.removeEventListener('userLoggedIn', checkAuth)
+      window.removeEventListener('userLoggedOut', checkAuth)
+    }
+  }, [])
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -55,7 +94,19 @@ export default function Navbar() {
 
             
           <Link to="/kosar"><button class="btn btn-secondary"><i class="bi bi-basket2-fill"></i>Kosár</button></Link>
-          <Link to="/bejelentkezes"><button class="btn btn-primary"><i class="bi bi-person-circle"></i>Bejelentkezés</button></Link>
+          {isLoggedIn ? (
+            <Link to="/profilom">
+              <button class="btn btn-primary">
+                <i class="bi bi-person-circle"></i>Profilom
+              </button>
+            </Link>
+          ) : (
+            <Link to="/bejelentkezes">
+              <button class="btn btn-primary">
+                <i class="bi bi-person-circle"></i>Bejelentkezés
+              </button>
+            </Link>
+          )}
         </div>
       </div>
     </header>
