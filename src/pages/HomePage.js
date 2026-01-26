@@ -110,7 +110,7 @@ export default function HomePage({ favorites = [], onToggleFavorite }) {
                     selectedCuisineId={selectedCuisineId}
                     favorites={favorites}
                     onToggleFavorite={onToggleFavorite}
-                    limit={5}
+                    limit={4}
                 />
                 <div className="view-all-restaurants-container">
                     <Link to="/ettermek" className="btn btn-primary view-all-btn">

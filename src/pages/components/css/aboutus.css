@@ -1,6 +1,8 @@
 
 /* Button styles már az index.css-ben vannak */
-
+.section-title.gradient-title{
+    margin-top: 0.5rem;
+}
 /* Container */
 .container {
     max-width: 1500px;
