@@ -11,6 +11,8 @@ export default function AllRestaurantPage({ favorites = [], onToggleFavorite }) 
   usePageTitle("QuickBite - Éttermeink");
   const [showDiscountOnly, setShowDiscountOnly] = useState(false);
   const [showFreeDeliveryOnly, setShowFreeDeliveryOnly] = useState(false);
+  const [showCardPaymentOnly, setShowCardPaymentOnly] = useState(false);
+  const [showOpenNowOnly, setShowOpenNowOnly] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategoryId, setSelectedCategoryId] = useState(null);
   const [categories, setCategories] = useState([]);
@@ -53,33 +55,33 @@ export default function AllRestaurantPage({ favorites = [], onToggleFavorite }) 
           />
 
           <div className="filter-options">
-            <label>
-              <input
-                type="checkbox"
-                checked={showFreeDeliveryOnly}
-                onChange={(e) => setShowFreeDeliveryOnly(e.target.checked)}
-              />
-              <span>Ingyenes kiszállítás</span>
-            </label>
+            <button
+              className={`filter-btn ${showFreeDeliveryOnly ? 'selected' : ''}`}
+              onClick={() => setShowFreeDeliveryOnly(!showFreeDeliveryOnly)}
+            >
+              Ingyenes kiszállítás
+            </button>
 
-            <label>
-              <input type="checkbox" />
-              <span>Bankkártyás fizetés</span>
-            </label>
+            <button
+              className={`filter-btn ${showCardPaymentOnly ? 'selected' : ''}`}
+              onClick={() => setShowCardPaymentOnly(!showCardPaymentOnly)}
+            >
+              Bankkártyás fizetés
+            </button>
 
-            <label>
-              <input
-                type="checkbox"
-                checked={showDiscountOnly}
-                onChange={(e) => setShowDiscountOnly(e.target.checked)}
-              />
-              <span>Akciós ajánlatok</span>
-            </label>
+            <button
+              className={`filter-btn ${showDiscountOnly ? 'selected' : ''}`}
+              onClick={() => setShowDiscountOnly(!showDiscountOnly)}
+            >
+              Akciós ajánlatok
+            </button>
 
-            <label>
-              <input type="checkbox" />
-              <span>Nyitva most</span>
-            </label>
+            <button
+              className={`filter-btn ${showOpenNowOnly ? 'selected' : ''}`}
+              onClick={() => setShowOpenNowOnly(!showOpenNowOnly)}
+            >
+              Nyitva most
+            </button>
           </div>
 
           <div className="category-filter">
