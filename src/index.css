@@ -93,9 +93,9 @@ a {
 
 /* Section Title */
 .section-title {
-  font-size: 2rem;
+  font-size: 3rem;
   font-weight: 700;
-  margin-bottom: 2rem;
+  margin-top: 8rem;
   color: var(--secondary);
   text-align: center;
 }
