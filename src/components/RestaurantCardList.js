@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 import '../styles/RestaurantCardList.css'
 import { useNavigate } from 'react-router-dom'
 import { API_BASE } from '../utils/api'
@@ -10,7 +10,8 @@ export default function RestaurantCardList({
   searchQuery = '',
   favorites = [],
   onToggleFavorite,
-  limit = null
+  limit = null,
+  menuItems = [] // Új prop a menü tételekhez
 }) {
   const navigate = useNavigate()
   const [restaurants, setRestaurants] = useState([])
@@ -44,6 +45,35 @@ export default function RestaurantCardList({
     fetchRestaurants()
   }, [])
 
+  const filteredRestaurants = useMemo(() => {
+    return restaurants.filter((restaurant) => {
+      if (searchQuery.trim() !== '') {
+        const q = searchQuery.toLowerCase()
+        const matchesName = restaurant.name.toLowerCase().includes(q)
+        const matchesAddress = restaurant.address?.toLowerCase().includes(q)
+        const matchesCuisine = restaurant.cuisine?.toLowerCase().includes(q)
+        
+        const hasMatchingMenuItem = menuItems.some(item => {
+          const itemRestaurantId = typeof item.restaurant_id === 'string' ? item.restaurant_id : item.restaurant_id.toString()
+          const restaurantId = typeof restaurant.id === 'string' ? restaurant.id : restaurant.id.toString()
+          return itemRestaurantId === restaurantId && item.name.toLowerCase().includes(q)
+        })
+        
+        if (!matchesName && !matchesAddress && !matchesCuisine && !hasMatchingMenuItem) return false
+      }
+      if (selectedCuisineId && restaurant.cuisine_id !== selectedCuisineId) {
+        return false
+      }
+      if (showDiscountOnly && restaurant.discount <= 0) {
+        return false
+      }
+      if (showFreeDeliveryOnly && !restaurant.freeDelivery) {
+        return false
+      }
+      return true
+    })
+  }, [restaurants, searchQuery, selectedCuisineId, showDiscountOnly, showFreeDeliveryOnly, menuItems])
+
   if (isLoading) {
     return (
       <div className="restaurant-list-section container">
@@ -59,26 +89,6 @@ export default function RestaurantCardList({
       </div>
     )
   }
-
-  const filteredRestaurants = restaurants.filter((restaurant) => {
-    if (searchQuery.trim() !== '') {
-      const q = searchQuery.toLowerCase()
-      const matchesName = restaurant.name.toLowerCase().includes(q)
-      const matchesAddress = restaurant.address?.toLowerCase().includes(q)
-      const matchesCuisine = restaurant.cuisine?.toLowerCase().includes(q)
-      if (!matchesName && !matchesAddress && !matchesCuisine) return false
-    }
-    if (selectedCuisineId && restaurant.cuisine_id !== selectedCuisineId) {
-      return false
-    }
-    if (showDiscountOnly && restaurant.discount <= 0) {
-      return false
-    }
-    if (showFreeDeliveryOnly && !restaurant.freeDelivery) {
-      return false
-    }
-    return true
-  })
 
   const visibleRestaurants = limit
     ? filteredRestaurants.slice(0, limit)

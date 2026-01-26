@@ -35,7 +35,7 @@
 }
 
 .restaurant-search {
-  width: 100%;
+  width: 210%;
   padding: 1.2rem 1.2rem;
   border-radius: 8px;
   border: 1px solid var(--border, #e0e0e0);
@@ -154,4 +154,40 @@
 
 .category-name {
   line-height: 1;
+}
+
+.search-container {
+  position: relative;
+  width: 100%;
+}
+
+.search-suggestions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(24, 28, 20, 0.15);
+  z-index: 10;
+  max-height: 300px;
+  overflow-y: auto;
+  margin-top: 4px;
+}
+
+.search-suggestion-item {
+  padding: 0.8rem 1.2rem;
+  cursor: pointer;
+  border-bottom: 1px solid var(--border-light);
+  transition: background-color 0.2s;
+  font-size: 1rem;
+}
+
+.search-suggestion-item:hover {
+  background: var(--bg-light);
+}
+
+.search-suggestion-item:last-child {
+  border-bottom: none;
 }
