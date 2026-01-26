@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import "../pages/components/css/opinions.css";
@@ -7,6 +8,8 @@ import { usePageTitle } from '../utils/usePageTitle';
 
 export default function Opinions() {
   usePageTitle("QuickBite - Vásárlói vélemények");
+  const navigate = useNavigate();
+
   // Vélemények állapot
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -17,6 +20,27 @@ export default function Opinions() {
   const [newUsername, setNewUsername] = useState('');
   const [newText, setNewText] = useState('');
   const [newStars, setNewStars] = useState(5);
+
+  const auth = useMemo(() => {
+    const token = localStorage.getItem('quickbite_token');
+    const userRaw = localStorage.getItem('quickbite_user');
+    let user = null;
+    try {
+      user = userRaw ? JSON.parse(userRaw) : null;
+    } catch {
+      user = null;
+    }
+
+    const email = user?.email || '';
+    const fallbackUsername = email && email.includes('@') ? email.split('@')[0] : '';
+    const displayName = user?.name || email || '';
+
+    return {
+      isLoggedIn: Boolean(token && user),
+      displayName,
+      username: fallbackUsername || displayName.replace(/\s+/g, '').toLowerCase(),
+    };
+  }, []);
 
   useEffect(() => {
     fetchReviews();
@@ -63,14 +87,20 @@ export default function Opinions() {
 
   // Vélemény hozzáadása
   const addReview = async () => {
-    if (newName.trim() === '' || newUsername.trim() === '' || newText.trim() === '') {
-      showToast.error('Minden mező kitöltése kötelező!');
+    if (!auth.isLoggedIn) {
+      showToast.error('Vélemény írásához bejelentkezés szükséges!');
+      setTimeout(() => navigate('/bejelentkezes'), 800);
+      return;
+    }
+
+    if (newText.trim() === '') {
+      showToast.error('Írj egy véleményt!');
       return;
     }
     
     const newReview = {
-      name: newName,
-      username: newUsername,
+      name: auth.displayName || newName,
+      username: auth.username || newUsername,
       review: newText,
       stars: newStars
     };
@@ -93,8 +123,6 @@ export default function Opinions() {
         setReviews([addedReview, ...reviews]);
         showToast.success('Sikeresen hozzáadva!');
       }
-      setNewName('');
-      setNewUsername('');
       setNewText('');
       setNewStars(5);
     } catch (err) {
@@ -113,18 +141,15 @@ export default function Opinions() {
 
         {/* Vélemény írása */}
         <div className="new-opinion">
-          <input 
-            type="text" 
-            placeholder="Neved" 
-            value={newName} 
-            onChange={(e) => setNewName(e.target.value)} 
-          />
-          <input 
-            type="text" 
-            placeholder="Felhasználónév (username)" 
-            value={newUsername} 
-            onChange={(e) => setNewUsername(e.target.value)} 
-          />
+          {!auth.isLoggedIn ? (
+            <div style={{ marginBottom: 8, color: '#555' }}>
+              Vélemény írásához jelentkezz be.
+            </div>
+          ) : (
+            <div style={{ marginBottom: 8, color: '#555' }}>
+              Bejelentkezve mint <strong>{auth.displayName}</strong>
+            </div>
+          )}
           <textarea 
             placeholder="Írd meg a véleményed..." 
             value={newText} 
