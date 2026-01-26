@@ -83,22 +83,27 @@ export default function AllRestaurantPage({ favorites = [], onToggleFavorite }) 
           </div>
 
           <div className="category-filter">
-            <label htmlFor="category-select" className="category-filter-label">
-              Konyhatípus:
-            </label>
-            <select
-              id="category-select"
-              className="category-select"
-              value={selectedCategoryId || ""}
-              onChange={(e) => setSelectedCategoryId(e.target.value ? Number(e.target.value) : null)}
-            >
-              <option value="">Összes konyhatípus</option>
+            
+            <div className="category-buttons">
+              <button
+                className={`category-btn ${selectedCategoryId === null ? 'selected' : ''}`}
+                onClick={() => setSelectedCategoryId(null)}
+              >
+                Összes
+              </button>
               {!isLoadingCategories && categories.map((category) => (
-                <option key={category.id} value={category.id}>
-                  {category.icon} {category.name}
-                </option>
+                <button
+                  key={category.id}
+                  className={`category-btn ${selectedCategoryId === category.id ? 'selected' : ''}`}
+                  onClick={() => setSelectedCategoryId(
+                    selectedCategoryId === category.id ? null : category.id
+                  )}
+                >
+                  <span className="category-icon">{category.icon}</span>
+                  <span className="category-name">{category.name}</span>
+                </button>
               ))}
-            </select>
+            </div>
           </div>
         </div>
 

@@ -36,6 +36,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 2rem;
+  justify-content: center;
 }
     
 .filter-options label {
@@ -60,7 +61,7 @@
 
 .category-filter {
   display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: 1rem;
   margin-top: 0.5rem;
 }
@@ -69,24 +70,55 @@
   font-size: 1rem;
   color: var(--text, #222);
   font-weight: 500;
+}
+
+.category-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+}
+
+.category-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1.2rem;
+  border-radius: 8px;
+  border: 2px solid var(--border, #e0e0e0);
+  background: #fff;
+  color: var(--text, #222);
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
   white-space: nowrap;
 }
 
-.category-select {
-  flex: 1;
-  max-width: 300px;
-  padding: 0.8rem 1rem;
-  border-radius: 8px;
-  border: 1px solid var(--border, #e0e0e0);
-  font-size: 1rem;
+.category-btn:hover {
+  border-color: var(--primary, #7c5dfa);
   background: #f6f6f7;
-  color: var(--text, #222);
-  outline: none;
-  transition: border 0.2s;
-  cursor: pointer;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(124, 93, 250, 0.15);
 }
 
-.category-select:focus {
+.category-btn.selected {
   border-color: var(--primary, #7c5dfa);
-  background: #fff;
+  background: var(--primary, #7c5dfa);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(124, 93, 250, 0.25);
+}
+
+.category-btn.selected:hover {
+  background: var(--primary-dark, #6b4fd8);
+  border-color: var(--primary-dark, #6b4fd8);
+}
+
+.category-icon {
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.category-name {
+  line-height: 1;
 }
