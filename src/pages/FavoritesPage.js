@@ -4,6 +4,7 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { showToast } from '../utils/toast';
 import '../styles/homepage.css';
+import '../styles/FavoritesPage.css';
 import '../styles/RestaurantCardList.css';
 import { usePageTitle } from '../utils/usePageTitle';
 
@@ -11,27 +12,32 @@ export default function FavoritesPage({ favorites = [], onToggleFavorite }) {
   usePageTitle("QuickBite - Kedvencek");
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (favorites.length === 0) {
-      showToast.info('Még nincsenek kedvenc éttermeid. Átirányítunk a főoldalra.');
-      setTimeout(() => {
-        navigate('/');
-      }, 2000);
-    }
-  }, [favorites.length, navigate]);
 
   return (
     <>
       <Navbar />
-      <div className="container" style={{ paddingBottom: "3rem" }}>
-        <h1 className="section-title" style={{ marginTop: "1.5rem" }}>
+      <div className="container" style={{ paddingBottom: "00rem" }}>
+        <h1 className="section-title" style={{ marginTop: "-2rem", marginBottom: "-3rem" }}>
           Kedvenc éttermeid
         </h1>
 
         {favorites.length === 0 ? (
-          <></>
+          <div className="empty-favorites">
+            <div className="empty-favorites-icon">😞</div>
+            <h2>Még nincsenek kedvenc éttermeid</h2>
+            <p>Fedezz fel új ízeket és mentsd el a kedvenceidet!</p>
+            <button 
+              className="favorites-button"
+              onClick={() => navigate('/ettermek')}
+            >
+              Éttermeink böngészése
+            </button>
+          </div>
         ) : (
           <div className="restaurant-list-section container">
+            <div className="favorites-stats">
+              <span>{favorites.length} kedvenc étterem</span>
+            </div>
             <div className="restaurant-cards-grid">
               {favorites.map((r) => (
                 <div
@@ -41,7 +47,7 @@ export default function FavoritesPage({ favorites = [], onToggleFavorite }) {
                   onClick={() => navigate(`/restaurant/${r.id}`)}
                 >
                   <button
-                    className="favorite-btn favorite-btn--active"
+                    className="favorite-btn favorite-btn--active favorite-btn--bounce"
                     onClick={(e) => {
                       e.stopPropagation();
                       if (onToggleFavorite) {

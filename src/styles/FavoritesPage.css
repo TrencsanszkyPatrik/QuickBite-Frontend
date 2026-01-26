@@ -1,0 +1,67 @@
+
+.empty-favorites {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: var(--bg-light);
+  border-radius: 16px;
+  margin-top: 4rem;
+  box-shadow: 0 2px 10px rgba(24, 28, 20, 0.08);
+}
+
+.empty-favorites-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  animation: heartbeat 2s infinite;
+}
+
+.empty-favorites h2 {
+  color: var(--text);
+  margin-bottom: 0.5rem;
+  font-size: 1.5rem;
+}
+
+.empty-favorites p {
+  color: var(--text-light);
+  margin-bottom: 2rem;
+  font-size: 1.1rem;
+}
+
+.favorites-stats {
+    font-size: 1.2rem;
+  margin-bottom: 1rem;
+  padding: 0.5rem 2rem;
+  background: var(--bg-warm);
+  border-radius: 8px;
+  color: var(--text);
+  font-weight: 500;
+  display: block;
+  text-align: center;
+}
+
+.favorites-button{
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.favorite-btn--bounce {
+  animation: bounce-in 0.6s ease-out;
+  
+}
+
+@keyframes heartbeat {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+@keyframes bounce-in {
+  0% { transform: scale(0.3); opacity: 0; }
+  50% { transform: scale(1.05); }
+  70% { transform: scale(0.9); }
+  100% { transform: scale(1); opacity: 1; }
+}
