@@ -401,12 +401,12 @@ footer {
 
 .stat-item {
     text-align: center;
-    background: rgba(255, 255, 255, 0.8);
+    background: var(--bg);
     backdrop-filter: blur(20px);
     padding: 2rem 2.5rem;
     border-radius: 16px;
-    box-shadow: 0 8px 30px rgba(59, 51, 85, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 8px 30px var(--secondary);
+    border: 1px solid var(--secondary);
     transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
@@ -431,7 +431,7 @@ footer {
 .stat-number {
     font-size: 3rem;
     font-weight: 800;
-    background: linear-gradient(135deg, #00b893, #5D5D81);
+    background: linear-gradient(135deg, var(--secondary), var(--primary));
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
