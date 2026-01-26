@@ -17,6 +17,10 @@ export default function AllRestaurantPage({ favorites = [], onToggleFavorite }) 
   const [showCardPaymentOnly, setShowCardPaymentOnly] = useState(false)
   const [showOpenNowOnly, setShowOpenNowOnly] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
+  const [searchSuggestions, setSearchSuggestions] = useState([])
+  const [showSuggestions, setShowSuggestions] = useState(false)
+  const [allRestaurants, setAllRestaurants] = useState([])
+  const [allMenuItems, setAllMenuItems] = useState([])
   const [selectedCategoryId, setSelectedCategoryId] = useState(null)
   const [categories, setCategories] = useState([])
   const [isLoadingCategories, setIsLoadingCategories] = useState(true)
@@ -37,32 +41,83 @@ export default function AllRestaurantPage({ favorites = [], onToggleFavorite }) 
         setIsLoadingCategories(false)
       }
     }
-    fetchCategories()
-  }, [])
 
-  useEffect(() => {
-    if (hasAppliedUrlFilters.current) return
-    if (isLoadingCategories) return
-
-    const params = new URLSearchParams(location.search)
-    const city = params.get('cim') || ''
-    const cuisine = (params.get('konyha') || '').toLowerCase().trim()
-
-    if (city) {
-      setSearchQuery(city)
-    }
-
-    if (cuisine && categories.length > 0) {
-      const matchedCategory = categories.find((cat) =>
-        cat.name && cat.name.toLowerCase().includes(cuisine)
-      )
-      if (matchedCategory) {
-        setSelectedCategoryId(matchedCategory.id)
+    const fetchRestaurants = async () => {
+      try {
+        const response = await fetch(`${API_BASE}/Restaurants`)
+        if (!response.ok) {
+          throw new Error('Nem sikerült betölteni az éttermeket.')
+        }
+        const data = await response.json()
+        const mapped = data.map((r) => ({
+          ...r,
+          id: String(r.id),
+          address: `${r.city}, ${r.address}`,
+          img: r.image_url,
+          freeDelivery: r.free_delivery,
+          acceptCards: r.accept_cards
+        }))
+        setAllRestaurants(mapped)
+      } catch (err) {
+        console.error('Hiba történt az éttermek betöltése közben:', err)
       }
     }
 
-    hasAppliedUrlFilters.current = true
-  }, [location.search, categories, isLoadingCategories])
+    const fetchMenuItems = async () => {
+      try {
+        const response = await fetch(`${API_BASE}/MenuItems`)
+        if (!response.ok) {
+          throw new Error('Nem sikerült betölteni a menü tételeket.')
+        }
+        const data = await response.json()
+        console.log('Menu items loaded:', data.length)
+        setAllMenuItems(data)
+      } catch (err) {
+        console.error('Hiba történt a menü tételek betöltése közben:', err)
+      }
+    }
+
+    fetchCategories()
+    fetchRestaurants()
+    fetchMenuItems()
+  }, [])
+
+  useEffect(() => {
+    if (searchQuery.trim().length < 2) {
+      setSearchSuggestions([])
+      setShowSuggestions(false)
+      return
+    }
+
+    const suggestions = new Set()
+    const query = searchQuery.toLowerCase()
+
+    // Étterem adatok alapján
+    allRestaurants.forEach(restaurant => {
+      if (restaurant.name.toLowerCase().includes(query)) {
+        suggestions.add(`Étterem: ${restaurant.name}`)
+      }
+      if (restaurant.address.toLowerCase().includes(query)) {
+        suggestions.add(`Cím: ${restaurant.address}`)
+      }
+      if (restaurant.cuisine?.toLowerCase().includes(query)) {
+        suggestions.add(`Típus: ${restaurant.cuisine}`)
+      }
+      if (restaurant.city?.toLowerCase().includes(query)) {
+        suggestions.add(`Város: ${restaurant.city}`)
+      }
+    })
+
+    // Étel nevek alapján
+    allMenuItems.forEach(item => {
+      if (item.name.toLowerCase().includes(query)) {
+        suggestions.add(`Étel: ${item.name}`)
+      }
+    })
+
+    setSearchSuggestions(Array.from(suggestions).slice(0, 10)) 
+    setShowSuggestions(true)
+  }, [searchQuery, allRestaurants, allMenuItems])
 
   return (
     <>
@@ -73,13 +128,39 @@ export default function AllRestaurantPage({ favorites = [], onToggleFavorite }) 
         </h1>
 
         <div className="restaurant-filters">
-          <input
-            type="text"
-            className="restaurant-search"
-            placeholder="🔍 Étterem neve, cím, konyha..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)} 
-          />
+          <div className="search-container">
+            <input
+              type="text"
+              className="restaurant-search"
+              placeholder="Keress név, cím, típus vagy étel alapján..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onFocus={() => searchQuery.trim().length >= 2 && setShowSuggestions(true)}
+              onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  setShowSuggestions(false)
+                }
+              }}
+            />
+            {showSuggestions && searchSuggestions.length > 0 && (
+              <div className="search-suggestions">
+                {searchSuggestions.map((suggestion, index) => (
+                  <div
+                    key={index}
+                    className="search-suggestion-item"
+                    onClick={() => {
+                      const cleanQuery = suggestion.replace(/^[^\s]+\s/, '')
+                      setSearchQuery(cleanQuery)
+                      setShowSuggestions(false)
+                    }}
+                  >
+                    {suggestion}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
 
           <div className="filter-options">
             <button
@@ -143,6 +224,7 @@ export default function AllRestaurantPage({ favorites = [], onToggleFavorite }) 
             searchQuery={searchQuery}
             favorites={favorites}
             onToggleFavorite={onToggleFavorite}
+            menuItems={allMenuItems}
           />
         </div>
       </div>
