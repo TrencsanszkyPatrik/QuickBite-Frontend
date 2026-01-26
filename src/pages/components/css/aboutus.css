@@ -10,16 +10,17 @@
 
 /* Map Section */
 .map-section {
-    background: white;
+    background: linear-gradient(135deg, var(--bg) 0%, var(--bg-warm) 100%);
     border-radius: 20px;
     overflow: hidden;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    box-shadow: 0 4px 20px rgba(24, 28, 20, 0.1);
+    border: 1px solid var(--border-light);
     margin-bottom: 2rem;
 }
 
 .map-header {
     padding: 1.5rem 2rem;
-    background: rgba(171, 171, 171, 0.744);
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
     border-bottom: 1px solid var(--border);
     font-weight: 700;
     font-size: 1.25rem;
@@ -50,20 +51,21 @@
 }
 
 .cuisine-card {
-    background: white;
+    background: linear-gradient(135deg, var(--bg) 0%, var(--bg-warm) 100%);
     padding: 2rem 1.5rem;
     border-radius: 16px;
     text-align: center;
     cursor: pointer;
     transition: all 0.3s;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    box-shadow: 0 2px 10px rgba(24, 28, 20, 0.08);
+    border: 1px solid rgba(139, 122, 107, 0.25);
     text-decoration: none;
     color: var(--text);
 }
 
 .cuisine-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+    box-shadow: 0 8px 25px rgba(24, 28, 20, 0.16);
 }
 
 .cuisine-icon {
@@ -85,8 +87,8 @@
 
 /* Footer */
 footer {
-    background: var(--secondary);
-    color: white;
+    background: var(--primary-dark);
+    color: var(--bg);
     padding: 3rem 2rem;
     margin-top: 4rem;
 }
@@ -116,7 +118,7 @@ footer {
 }
 
 .footer-links a {
-    color: white;
+    color: var(--bg);
     text-decoration: none;
     opacity: 0.8;
     transition: opacity 0.3s;
@@ -138,7 +140,7 @@ footer {
 /* About Section */
 .about-section {
     padding: 6rem 2rem;
-    background: linear-gradient(135deg, #FEFCFD 0%, #BFCDE0 100%);
+    background: linear-gradient(180deg, var(--bg) 0%, var(--bg-warm) 100%);
     text-align: center;
     position: relative;
     overflow: hidden;
@@ -151,14 +153,14 @@ footer {
     left: 0;
     right: 0;
     bottom: 0;
-    background: url('data:image/svg+xml,<svg width="60" height="60" xmlns="http://www.w3.org/2000/svg"><circle cx="30" cy="30" r="1.5" fill="%233B3355" opacity="0.1"/></svg>');
+    background: url('data:image/svg+xml,<svg width="60" height="60" xmlns="http://www.w3.org/2000/svg"><circle cx="30" cy="30" r="1.5" fill="%238B7A6B" opacity="0.1"/></svg>');
     background-size: 60px 60px;
     pointer-events: none;
 }
 
 .about-section .section-title.gradient-title {
     color: transparent;
-    background: linear-gradient(135deg, #3B3355, #5D5D81, #8888ac);
+    background: linear-gradient(135deg, var(--primary-dark), var(--primary), var(--secondary));
     -webkit-background-clip: text;
     background-clip: text;
     font-size: 3.2rem;
@@ -182,13 +184,13 @@ footer {
 .about-section .story-container {
     max-width: 900px;
     margin: 0 auto 4rem;
-    background: rgba(254, 252, 253, 0.95);
+    background: rgba(236, 223, 204, 0.95);
     backdrop-filter: blur(20px);
     padding: 3rem;
     border-radius: 24px;
-    box-shadow: 0 20px 60px rgba(59, 51, 85, 0.15);
+    box-shadow: 0 20px 60px rgba(24, 28, 20, 0.18);
     text-align: left;
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    border: 1px solid rgba(139, 122, 107, 0.3);
     position: relative;
     z-index: 1;
 }
@@ -221,7 +223,7 @@ footer {
 
 .why-choose-section {
     padding: 6rem 2rem;
-    background: linear-gradient(180deg, #FEFCFD 0%, #BFCDE0 100%);
+    background: linear-gradient(180deg, var(--bg-warm) 0%, var(--bg) 100%);
     position: relative;
     border-radius: 0 0 20px 20px;
     }
@@ -233,7 +235,7 @@ footer {
     left: 0;
     right: 0;
     bottom: 0;
-    background: url('data:image/svg+xml,<svg width="80" height="80" xmlns="http://www.w3.org/2000/svg"><circle cx="40" cy="40" r="2" fill="%235D5D81" opacity="0.08"/></svg>');
+    background: url('data:image/svg+xml,<svg width="80" height="80" xmlns="http://www.w3.org/2000/svg"><circle cx="40" cy="40" r="2" fill="%23697565" opacity="0.08"/></svg>');
     background-size: 80px 80px;
     pointer-events: none;
 }
@@ -258,14 +260,14 @@ footer {
 }
 
 .benefit-card {
-    background: rgba(255, 255, 255, 0.9);
+    background: linear-gradient(135deg, var(--bg) 0%, var(--bg-warm) 100%);
     backdrop-filter: blur(20px);
     padding: 2.5rem;
     border-radius: 20px;
-    box-shadow: 0 10px 40px rgba(59, 51, 85, 0.1);
+    box-shadow: 0 10px 40px rgba(24, 28, 20, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.4);
     text-align: center;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    border: 1px solid rgba(139, 122, 107, 0.25);
     position: relative;
     overflow: hidden;
 }
@@ -288,28 +290,28 @@ footer {
 
 .benefit-card:hover {
     transform: translateY(-8px) scale(1.02);
-    box-shadow: 0 20px 60px rgba(59, 51, 85, 0.2);
-    border-color: rgba(59, 51, 85, 0.2);
+    box-shadow: 0 20px 60px rgba(24, 28, 20, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    border-color: rgba(139, 122, 107, 0.4);
 }
 
 .benefit-icon {
     width: 80px;
     height: 80px;
-    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 50%, var(--secondary) 100%);
     border-radius: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 2rem;
     margin: 0 auto 1.5rem;
-    color: white;
-    box-shadow: 0 8px 25px rgba(59, 51, 85, 0.3);
+    color: var(--bg);
+    box-shadow: 0 8px 25px rgba(24, 28, 20, 0.3), inset 0 2px 4px rgba(255, 255, 255, 0.2);
     transition: all 0.3s ease;
 }
 
 .benefit-card:hover .benefit-icon {
     transform: scale(1.1) rotate(5deg);
-    box-shadow: 0 12px 35px rgba(59, 51, 85, 0.4);
+    box-shadow: 0 12px 35px rgba(24, 28, 20, 0.4);
 }
 
 .benefit-card h3 {
@@ -336,12 +338,12 @@ footer {
 
 .stat-item {
     text-align: center;
-    background: var(--bg);
+    background: linear-gradient(135deg, var(--bg) 0%, var(--bg-warm) 100%);
     backdrop-filter: blur(20px);
     padding: 2rem 2.5rem;
     border-radius: 16px;
-    box-shadow: 0 8px 30px var(--secondary);
-    border: 1px solid var(--secondary);
+    box-shadow: 0 8px 30px rgba(24, 28, 20, 0.18);
+    border: 1px solid var(--border-light);
     transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
@@ -360,7 +362,7 @@ footer {
 
 .stat-item:hover {
     transform: translateY(-5px);
-    box-shadow: 0 15px 45px rgba(59, 51, 85, 0.2);
+    box-shadow: 0 15px 45px rgba(24, 28, 20, 0.22);
 }
 
 .stat-number {
@@ -396,7 +398,7 @@ footer {
 }
 
 .back-link button {
-    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
     border: none;
     color: white;
     font-size: 1.2rem;
@@ -404,7 +406,7 @@ footer {
     cursor: pointer;
     padding: 1rem 2.5rem;
     border-radius: 30px;
-    box-shadow: 0 8px 25px rgba(59, 51, 85, 0.3);
+    box-shadow: 0 8px 25px rgba(24, 28, 20, 0.3);
     display: flex;
     align-items: center;
     gap: 12px;
@@ -430,7 +432,7 @@ footer {
 
 .back-link button:hover {
     background: linear-gradient(135deg, var(--primary-dark), var(--secondary));
-    box-shadow: 0 12px 35px rgba(59, 51, 85, 0.4);
+    box-shadow: 0 12px 35px rgba(24, 28, 20, 0.4);
     transform: translateY(-3px) scale(1.05);
 }
 
