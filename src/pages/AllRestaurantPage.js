@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import '../pages/components/css/homepage.css';
@@ -11,7 +11,29 @@ export default function AllRestaurantPage({ favorites = [], onToggleFavorite }) 
   usePageTitle("QuickBite - Éttermeink");
   const [showDiscountOnly, setShowDiscountOnly] = useState(false);
   const [showFreeDeliveryOnly, setShowFreeDeliveryOnly] = useState(false);
-  const [searchQuery, setSearchQuery] = useState(""); 
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategoryId, setSelectedCategoryId] = useState(null);
+  const [categories, setCategories] = useState([]);
+  const [isLoadingCategories, setIsLoadingCategories] = useState(true);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch('https://localhost:7236/api/Categories');
+        if (!response.ok) {
+          throw new Error('Nem sikerült betölteni a kategóriákat.');
+        }
+        const data = await response.json();
+        setCategories(data);
+      } catch (err) {
+        console.error('Hiba történt a kategóriák betöltése közben:', err);
+      } finally {
+        setIsLoadingCategories(false);
+      }
+    };
+
+    fetchCategories();
+  }, []); 
 
   return (
     <>
@@ -59,12 +81,32 @@ export default function AllRestaurantPage({ favorites = [], onToggleFavorite }) 
               <span>Nyitva most</span>
             </label>
           </div>
+
+          <div className="category-filter">
+            <label htmlFor="category-select" className="category-filter-label">
+              Konyhatípus:
+            </label>
+            <select
+              id="category-select"
+              className="category-select"
+              value={selectedCategoryId || ""}
+              onChange={(e) => setSelectedCategoryId(e.target.value ? Number(e.target.value) : null)}
+            >
+              <option value="">Összes konyhatípus</option>
+              {!isLoadingCategories && categories.map((category) => (
+                <option key={category.id} value={category.id}>
+                  {category.icon} {category.name}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
 
         <div style={{ marginTop: "2rem" }}>
           <RestaurantCardList
             showDiscountOnly={showDiscountOnly}
             showFreeDeliveryOnly={showFreeDeliveryOnly}
+            selectedCuisineId={selectedCategoryId}
             searchQuery={searchQuery} // <-- ÁTADJUK
             favorites={favorites}
             onToggleFavorite={onToggleFavorite}

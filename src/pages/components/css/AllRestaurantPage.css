@@ -57,3 +57,36 @@
 .filter-options label:nth-child(3){
     color: red;
 }
+
+.category-filter {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.category-filter-label {
+  font-size: 1rem;
+  color: var(--text, #222);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.category-select {
+  flex: 1;
+  max-width: 300px;
+  padding: 0.8rem 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--border, #e0e0e0);
+  font-size: 1rem;
+  background: #f6f6f7;
+  color: var(--text, #222);
+  outline: none;
+  transition: border 0.2s;
+  cursor: pointer;
+}
+
+.category-select:focus {
+  border-color: var(--primary, #7c5dfa);
+  background: #fff;
+}
