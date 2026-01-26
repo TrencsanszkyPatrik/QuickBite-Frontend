@@ -1,3 +1,20 @@
+:root {
+    --primary: #3C3D37;           /* Sötétszürke/zöldes - fő szín */
+    --primary-dark: #181C14;      /* Legsötétebb zöldes/fekete */
+    --secondary: #697565;         /* Középszürke/zöldes - másodlagos szín */
+    --text: #181C14;              /* Sötét szöveg */
+    --text-light: #697565;        /* Világosabb szöveg */
+    --accent: #8B7A6B;           /* Meleg barnás/bézs akcentus szín */
+    --bg: #ECDFCC;                /* Bézs/krém háttér */
+    --bg-light: #F5EDE0;          /* Világosabb háttér */
+    --bg-warm: #E8D9C8;           /* Melegebb háttér árnyalat */
+    --border: #697565;            /* Border szín */
+    --border-light: rgba(139, 122, 107, 0.3); /* Világosabb border */
+    --success: #697565;
+    --glass-bg: rgba(236, 223, 204, 0.9);
+    --glass-border: rgba(105, 117, 101, 0.3);
+}
+
 
 header {
     background: linear-gradient(135deg, var(--bg) 0%, var(--bg-warm) 100%);
@@ -19,6 +36,16 @@ header {
     gap: 2rem;
 }
 
+#quick{
+    color: var(--primary);
+    font-size: 4rem;
+    
+}
+#bite {
+    color : var(--secondary);
+    font-size: 3.8rem;
+}
+
 .logo {
     display: flex;
     align-items: center;
@@ -28,7 +55,7 @@ header {
     color: var(--primary);
 }
 
-.logo-img { width: 150px; height: 100px; object-fit: cover; border-radius: 8px; display: block; }
+.logo-img { width: 250px; height: 100px; object-fit: cover; border-radius: 100px; display: block; background-color: #ffff }
 
 .search-container {
     flex: 1;

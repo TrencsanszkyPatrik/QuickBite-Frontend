@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect } from 'react'
-import logo from '../../img/LOGO/logo.jpg'
 import { Link } from 'react-router-dom'
 import '../components/css/navbar.css'
 
@@ -65,8 +64,7 @@ export default function Navbar() {
       <div class="header-content">
         <Link to={"/"}>
           <div class="logo">
-            <img class="logo-img" src={logo} alt="QuickBite logó" />
-            <span>QuickBite</span>
+            <span><span id="quick">Quick</span><span id="bite">Bite</span></span>
           </div>
         </Link>
 
