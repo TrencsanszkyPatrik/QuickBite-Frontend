@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { API_BASE, getAuthHeaders } from '../utils/api'
 import { showToast } from '../utils/toast'
+import AddressAutocomplete from './AddressAutocomplete'
 
 const ADDRESS_LABELS = [
   { value: 'Otthon', label: 'Otthon' },
@@ -203,11 +204,16 @@ export default function AddressSection({ addresses, onUpdate }) {
             </div>
             <div className="profile-form-group full-width">
               <label>Cím (utca, házszám)</label>
-              <input
-                type="text"
+              <AddressAutocomplete
                 value={form.addressLine}
-                onChange={(e) => setForm((f) => ({ ...f, addressLine: e.target.value }))}
-                placeholder="Petőfi Sándor út 1."
+                onChange={(value) => setForm((f) => ({ ...f, addressLine: value }))}
+                onAddressSelect={(addressData) => setForm((f) => ({
+                  ...f,
+                  addressLine: addressData.addressLine,
+                  city: addressData.city,
+                  zipCode: addressData.zipCode
+                }))}
+                placeholder="Palóczy László utca 3."
                 required
               />
             </div>
@@ -217,7 +223,7 @@ export default function AddressSection({ addresses, onUpdate }) {
                 type="text"
                 value={form.city}
                 onChange={(e) => setForm((f) => ({ ...f, city: e.target.value }))}
-                placeholder="Budapest"
+                placeholder="Miskolc"
                 required
               />
             </div>
@@ -227,7 +233,7 @@ export default function AddressSection({ addresses, onUpdate }) {
                 type="text"
                 value={form.zipCode}
                 onChange={(e) => setForm((f) => ({ ...f, zipCode: e.target.value }))}
-                placeholder="1051"
+                placeholder="3525"
                 required
               />
             </div>
