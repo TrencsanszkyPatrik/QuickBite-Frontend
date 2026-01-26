@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import '../pages/components/css/homepage.css';
@@ -6,9 +6,11 @@ import RestaurantCardList from './components/RestaurantCardList';
 import '../../src/pages/components/css/CuisineList.css';
 import '../../src/pages/components/css/AllRestaurantPage.css';
 import { usePageTitle } from '../utils/usePageTitle';
+import { useLocation } from 'react-router-dom';
 
 export default function AllRestaurantPage({ favorites = [], onToggleFavorite }) {
   usePageTitle("QuickBite - Éttermeink");
+  const location = useLocation();
   const [showDiscountOnly, setShowDiscountOnly] = useState(false);
   const [showFreeDeliveryOnly, setShowFreeDeliveryOnly] = useState(false);
   const [showCardPaymentOnly, setShowCardPaymentOnly] = useState(false);
@@ -17,6 +19,7 @@ export default function AllRestaurantPage({ favorites = [], onToggleFavorite }) 
   const [selectedCategoryId, setSelectedCategoryId] = useState(null);
   const [categories, setCategories] = useState([]);
   const [isLoadingCategories, setIsLoadingCategories] = useState(true);
+  const hasAppliedUrlFilters = useRef(false);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -36,6 +39,32 @@ export default function AllRestaurantPage({ favorites = [], onToggleFavorite }) 
 
     fetchCategories();
   }, []); 
+
+  // URL paraméterek (cím + konyha) alkalmazása első betöltéskor
+  useEffect(() => {
+    if (hasAppliedUrlFilters.current) return;
+    if (isLoadingCategories) return;
+
+    const params = new URLSearchParams(location.search);
+    const city = params.get('cim') || "";
+    const cuisine = (params.get('konyha') || "").toLowerCase().trim();
+
+    if (city) {
+      setSearchQuery(city);
+    }
+
+    if (cuisine && categories.length > 0) {
+      const matchedCategory = categories.find(cat =>
+        cat.name &&
+        cat.name.toLowerCase().includes(cuisine)
+      );
+      if (matchedCategory) {
+        setSelectedCategoryId(matchedCategory.id);
+      }
+    }
+
+    hasAppliedUrlFilters.current = true;
+  }, [location.search, categories, isLoadingCategories]);
 
   return (
     <>
