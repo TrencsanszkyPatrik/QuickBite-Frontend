@@ -62,6 +62,7 @@ export default function Login() {
       if (data.token) {
         localStorage.setItem('quickbite_token', data.token)
         localStorage.setItem('quickbite_user', JSON.stringify({
+          id: data.userId,
           email: loginEmail,
           name: data.name || loginEmail
         }))
@@ -130,6 +131,7 @@ export default function Login() {
       if (data.token) {
         localStorage.setItem('quickbite_token', data.token)
         localStorage.setItem('quickbite_user', JSON.stringify({
+          id: data.userId,
           email: registerEmail,
           name: registerFullName
         }))

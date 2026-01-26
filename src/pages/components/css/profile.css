@@ -1,0 +1,426 @@
+/* Profil oldal – moderne kártyás layout */
+.profile-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, var(--bg-light) 0%, var(--bg-warm) 50%, rgba(105, 117, 101, 0.08) 100%);
+  padding-bottom: 3rem;
+}
+
+.profile-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+/* Fejléc kártya – avatar + név + tagline */
+.profile-header-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 24px;
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 12px 40px rgba(24, 28, 20, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  padding: 2.5rem;
+  margin-bottom: 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2rem;
+}
+
+.profile-avatar-wrap {
+  flex-shrink: 0;
+}
+
+.profile-avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--border-light);
+  box-shadow: 0 8px 24px rgba(24, 28, 20, 0.15);
+}
+
+.profile-avatar-initials {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  color: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.25rem;
+  font-weight: 700;
+  letter-spacing: -1px;
+  border: 3px solid var(--border-light);
+  box-shadow: 0 8px 24px rgba(24, 28, 20, 0.15);
+}
+
+.profile-header-info h1 {
+  font-size: 1.75rem;
+  color: var(--text);
+  margin: 0 0 0.35rem 0;
+  font-weight: 700;
+}
+
+.profile-header-info .profile-email {
+  color: var(--text-light);
+  font-size: 1rem;
+  margin: 0;
+}
+
+.profile-header-info .profile-member-since {
+  font-size: 0.9rem;
+  color: var(--text-light);
+  margin-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+/* Stat kártyák */
+.profile-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.profile-stat-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 16px;
+  border: 1px solid var(--glass-border);
+  padding: 1.25rem;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(24, 28, 20, 0.08);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.profile-stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(24, 28, 20, 0.12);
+}
+
+.profile-stat-card a {
+  color: inherit;
+  text-decoration: none;
+  display: block;
+}
+
+.profile-stat-card .stat-value {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--primary);
+  line-height: 1.2;
+}
+
+.profile-stat-card .stat-label {
+  font-size: 0.85rem;
+  color: var(--text-light);
+  margin-top: 0.25rem;
+}
+
+/* Személyes adatok kártya */
+.profile-section-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 20px;
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 8px 32px rgba(24, 28, 20, 0.1);
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
+
+.profile-section-card h2 {
+  font-size: 1.25rem;
+  color: var(--text);
+  margin: 0 0 1.5rem 0;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid var(--border-light);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.profile-form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.25rem;
+}
+
+.profile-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.profile-form-group label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.profile-form-group input {
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.6);
+  font-size: 1rem;
+  color: var(--text);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.profile-form-group input:focus {
+  outline: none;
+  border-color: var(--secondary);
+  box-shadow: 0 0 0 3px rgba(105, 117, 101, 0.2);
+}
+
+.profile-form-group input::placeholder {
+  color: var(--text-light);
+  opacity: 0.7;
+}
+
+.profile-form-group.full-width {
+  grid-column: 1 / -1;
+}
+
+/* Gombok */
+.profile-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.profile-btn {
+  padding: 0.85rem 1.75rem;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.profile-btn-primary {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  color: var(--bg);
+  box-shadow: 0 4px 16px rgba(24, 28, 20, 0.25);
+}
+
+.profile-btn-primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(24, 28, 20, 0.3);
+}
+
+.profile-btn-primary:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.profile-btn-outline {
+  background: transparent;
+  color: var(--primary);
+  border: 2px solid var(--border);
+}
+
+.profile-btn-outline:hover {
+  background: rgba(60, 61, 55, 0.08);
+  border-color: var(--primary);
+}
+
+.profile-btn-danger {
+  background: linear-gradient(135deg, #c0392b 0%, #a93226 100%);
+  color: #fff;
+  margin-left: auto;
+}
+
+.profile-btn-danger:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(192, 57, 43, 0.4);
+}
+
+/* Betöltés */
+.profile-loading {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: var(--text-light);
+  font-size: 1.1rem;
+}
+
+.profile-loading .spinner {
+  width: 48px;
+  height: 48px;
+  border: 3px solid var(--border-light);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: profile-spin 0.8s linear infinite;
+  margin: 0 auto 1rem;
+}
+
+@keyframes profile-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Címeim / Fizetési módok lista */
+.profile-item-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.profile-item-card {
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid var(--border-light);
+  border-radius: 14px;
+  padding: 1.25rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.profile-item-card.is-default {
+  border-color: var(--secondary);
+  box-shadow: 0 0 0 2px rgba(105, 117, 101, 0.2);
+}
+
+.profile-item-body {
+  flex: 1;
+  min-width: 180px;
+}
+
+.profile-item-body .profile-item-label {
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 0.35rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.profile-item-body .profile-item-detail {
+  font-size: 0.95rem;
+  color: var(--text-light);
+  line-height: 1.4;
+}
+
+.profile-default-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: var(--primary);
+  color: var(--bg);
+  padding: 0.2rem 0.5rem;
+  border-radius: 6px;
+}
+
+.profile-item-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.profile-btn-sm {
+  padding: 0.45rem 0.75rem;
+  font-size: 0.85rem;
+  border-radius: 8px;
+  min-width: auto;
+}
+
+.profile-btn-ghost {
+  background: transparent;
+  color: var(--text-light);
+  border: 1px solid var(--border-light);
+}
+
+.profile-btn-ghost:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: var(--text);
+}
+
+.profile-add-form {
+  margin-top: 1rem;
+  padding: 1.25rem;
+  background: rgba(255, 255, 255, 0.4);
+  border: 1px dashed var(--border-light);
+  border-radius: 14px;
+}
+
+.profile-add-form .profile-form-grid {
+  margin-bottom: 1rem;
+}
+
+.profile-form-group select {
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.6);
+  font-size: 1rem;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.profile-form-group select:focus {
+  outline: none;
+  border-color: var(--secondary);
+}
+
+.profile-section-card .profile-btn-outline.link-style {
+  text-decoration: none;
+}
+
+/* Fiók törlése – veszélyzóna */
+.profile-section-card--danger {
+  border-color: rgba(192, 57, 43, 0.4);
+  background: linear-gradient(135deg, rgba(236, 223, 204, 0.95) 0%, rgba(232, 217, 200, 0.95) 100%);
+}
+
+.profile-section-card--danger h2 {
+  color: #a93226;
+}
+
+.profile-danger-text {
+  font-size: 0.95rem;
+  color: var(--text-light);
+  margin: 0 0 1.25rem 0;
+  line-height: 1.5;
+}
+
+.profile-checkbox-label {
+  font-weight: 500 !important;
+  cursor: pointer;
+  display: flex !important;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.profile-checkbox-label input[type="checkbox"] {
+  margin-top: 0.25rem;
+  flex-shrink: 0;
+}
+
+@media (max-width: 600px) {
+  .profile-header-card {
+    flex-direction: column;
+    text-align: center;
+  }
+  .profile-header-info .profile-member-since {
+    justify-content: center;
+  }
+  .profile-item-card {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .profile-item-actions {
+    justify-content: flex-end;
+  }
+}
