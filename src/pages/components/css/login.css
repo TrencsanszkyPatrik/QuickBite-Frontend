@@ -209,6 +209,39 @@ html, body {
     font-family: inherit;
 }
 
+.password-input-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.password-input-wrapper input {
+    padding-right: 84px; /* hely a Mutat/Elrejt gombnak */
+}
+
+.toggle-password-visibility {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    border: none;
+    background: transparent;
+    color: var(--primary);
+    font-weight: 700;
+    cursor: pointer;
+    padding: 6px 8px;
+    border-radius: 10px;
+    font-size: 13px;
+}
+
+.toggle-password-visibility:hover:not(:disabled) {
+    background: rgba(105, 117, 101, 0.12);
+}
+
+.toggle-password-visibility:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
 .form-group-login input:focus {
     outline: none;
     border-color: var(--secondary);

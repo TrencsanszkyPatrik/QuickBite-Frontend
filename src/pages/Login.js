@@ -11,6 +11,9 @@ export default function Login() {
   const navigate = useNavigate()
   const [isLogin, setIsLogin] = useState(true)
   const [isLoading, setIsLoading] = useState(false)
+  const [showLoginPassword, setShowLoginPassword] = useState(false)
+  const [showRegisterPassword, setShowRegisterPassword] = useState(false)
+  const [showRegisterConfirmPassword, setShowRegisterConfirmPassword] = useState(false)
   
   // Bejelentkezés state
   const [loginEmail, setLoginEmail] = useState('')
@@ -149,6 +152,9 @@ export default function Login() {
 
   const switchToLogin = () => {
     setIsLogin(true)
+    setShowLoginPassword(false)
+    setShowRegisterPassword(false)
+    setShowRegisterConfirmPassword(false)
     // Mezők törlése
     setRegisterFullName('')
     setRegisterEmail('')
@@ -158,6 +164,9 @@ export default function Login() {
 
   const switchToRegister = () => {
     setIsLogin(false)
+    setShowLoginPassword(false)
+    setShowRegisterPassword(false)
+    setShowRegisterConfirmPassword(false)
     // Mezők törlése
     setLoginEmail('')
     setLoginPassword('')
@@ -200,15 +209,27 @@ export default function Login() {
             </div>
             <div className="form-group-login">
               <label htmlFor="login-password">Jelszó:</label>
-              <input 
-                type="password" 
-                id="login-password" 
-                placeholder="Jelszó"
-                value={loginPassword}
-                onChange={(e) => setLoginPassword(e.target.value)}
-                disabled={isLoading}
-                required
-              />
+              <div className="password-input-wrapper">
+                <input 
+                  type={showLoginPassword ? "text" : "password"}
+                  id="login-password" 
+                  placeholder="Jelszó"
+                  value={loginPassword}
+                  onChange={(e) => setLoginPassword(e.target.value)}
+                  disabled={isLoading}
+                  required
+                />
+                <button
+                  type="button"
+                  className="toggle-password-visibility"
+                  onClick={() => setShowLoginPassword((prev) => !prev)}
+                  aria-label={showLoginPassword ? "Jelszó elrejtése" : "Jelszó megjelenítése"}
+                  aria-pressed={showLoginPassword}
+                  disabled={isLoading}
+                >
+                  {showLoginPassword ? "Elrejt" : "Mutat"}
+                </button>
+              </div>
             </div>
             <button 
               type="submit"
@@ -246,29 +267,53 @@ export default function Login() {
             </div>
             <div className="form-group-login">
               <label htmlFor="register-password">Jelszó:</label>
-              <input 
-                type="password" 
-                id="register-password" 
-                placeholder="Jelszó"
-                value={registerPassword}
-                onChange={(e) => setRegisterPassword(e.target.value)}
-                disabled={isLoading}
-                required
-                minLength={6}
-              />
+              <div className="password-input-wrapper">
+                <input 
+                  type={showRegisterPassword ? "text" : "password"}
+                  id="register-password" 
+                  placeholder="Jelszó"
+                  value={registerPassword}
+                  onChange={(e) => setRegisterPassword(e.target.value)}
+                  disabled={isLoading}
+                  required
+                  minLength={6}
+                />
+                <button
+                  type="button"
+                  className="toggle-password-visibility"
+                  onClick={() => setShowRegisterPassword((prev) => !prev)}
+                  aria-label={showRegisterPassword ? "Jelszó elrejtése" : "Jelszó megjelenítése"}
+                  aria-pressed={showRegisterPassword}
+                  disabled={isLoading}
+                >
+                  {showRegisterPassword ? "Elrejt" : "Mutat"}
+                </button>
+              </div>
             </div>
             <div className="form-group-login">
               <label htmlFor="register-confirmPassword">Jelszó Megerősítése:</label>
-              <input 
-                type="password" 
-                id="register-confirmPassword" 
-                placeholder="Jelszó Megerősítése"
-                value={registerConfirmPassword}
-                onChange={(e) => setRegisterConfirmPassword(e.target.value)}
-                disabled={isLoading}
-                required
-                minLength={6}
-              />
+              <div className="password-input-wrapper">
+                <input 
+                  type={showRegisterConfirmPassword ? "text" : "password"}
+                  id="register-confirmPassword" 
+                  placeholder="Jelszó Megerősítése"
+                  value={registerConfirmPassword}
+                  onChange={(e) => setRegisterConfirmPassword(e.target.value)}
+                  disabled={isLoading}
+                  required
+                  minLength={6}
+                />
+                <button
+                  type="button"
+                  className="toggle-password-visibility"
+                  onClick={() => setShowRegisterConfirmPassword((prev) => !prev)}
+                  aria-label={showRegisterConfirmPassword ? "Jelszó elrejtése" : "Jelszó megjelenítése"}
+                  aria-pressed={showRegisterConfirmPassword}
+                  disabled={isLoading}
+                >
+                  {showRegisterConfirmPassword ? "Elrejt" : "Mutat"}
+                </button>
+              </div>
             </div>
             <button 
               type="submit"
