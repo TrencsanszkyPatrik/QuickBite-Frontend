@@ -5,13 +5,17 @@
     max-width: 800px;
     margin: 0 auto;
     padding: 4rem 2rem;
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(20px);
-    border-radius: 20px;
-    box-shadow: 0 10px 40px rgba(59, 51, 85, 0.1);
+    /* Ugyanolyan "üveges" alap, mint a bejelentkezés ablaknál */
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 25px;
+    box-shadow:
+        0 8px 32px 0 rgba(24, 28, 20, 0.2),
+        inset 0 1px 1px 0 rgba(236, 223, 204, 0.3);
     margin-top: 2rem;
     margin-bottom: 2rem;
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    border: 1px solid var(--glass-border);
 }
 
 /* Főcím */
