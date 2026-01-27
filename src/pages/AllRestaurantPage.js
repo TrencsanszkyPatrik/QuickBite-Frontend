@@ -83,6 +83,46 @@ export default function AllRestaurantPage({ favorites = [], onToggleFavorite }) 
   }, [])
 
   useEffect(() => {
+    // URL paraméterek kezelése a főoldali keresőből:
+    // /ettermek?cim=miskolc&konyha=olasz
+    // Ha "konyha" van megadva (pl. "olasz"), akkor ugyanaz történjen,
+    // mintha az "Olasz" kategória gombra kattintott volna a user:
+    // -> beállítjuk a megfelelő kategória ID-t.
+    //
+    // Ha csak "cim" van (pl. "miskolc"), akkor azt írjuk be a keresőmezőbe.
+
+    if (hasAppliedUrlFilters.current) return
+
+    const params = new URLSearchParams(location.search)
+    const rawCuisine = params.get('konyha') || ''
+    const rawAddress = params.get('cim') || ''
+
+    const cuisine = rawCuisine.trim()
+    const address = rawAddress.trim()
+
+    // 1) Konyha paraméter -> kategória gomb kiválasztása (pl. "Olasz")
+    if (cuisine && categories.length > 0) {
+      const lowerCuisine = cuisine.toLowerCase()
+
+      const matchedCategory = categories.find((cat) =>
+        cat.name?.toLowerCase() === lowerCuisine
+      )
+
+      if (matchedCategory) {
+        setSelectedCategoryId(matchedCategory.id)
+        hasAppliedUrlFilters.current = true
+        return
+      }
+    }
+
+    // 2) Ha nem találtunk ilyen kategóriát, de van cím -> szabad szöveges keresésre használjuk
+    if (address && !hasAppliedUrlFilters.current) {
+      setSearchQuery(address)
+      hasAppliedUrlFilters.current = true
+    }
+  }, [location.search, categories])
+
+  useEffect(() => {
     if (searchQuery.trim().length < 2) {
       setSearchSuggestions([])
       setShowSuggestions(false)
