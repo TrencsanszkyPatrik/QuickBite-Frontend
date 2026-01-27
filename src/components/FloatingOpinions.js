@@ -27,6 +27,11 @@ export default function FloatingOpinions() {
   }
 
   const opinion = opinions[current]
+  const maxLength = 100
+  const shortText =
+    typeof opinion.text === 'string' && opinion.text.length > maxLength
+      ? `${opinion.text.slice(0, maxLength)}...`
+      : opinion.text
 
   return (
     <div className="floating-opinion" key={current}>
@@ -35,7 +40,7 @@ export default function FloatingOpinions() {
           <div className="floating-opinion-stars">
             {'★'.repeat(opinion.stars)}{'☆'.repeat(5 - opinion.stars)}
           </div>
-          <div className="floating-opinion-text">"{opinion.text}"</div>
+          <div className="floating-opinion-text">"{shortText}"</div>
           <div className="floating-opinion-name">- {opinion.name}</div>
         </div>
       </Link>
