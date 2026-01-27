@@ -27,27 +27,53 @@
   flex-direction: column;
   gap: 1.5rem;
   margin-top: 2rem;
-  background:var(--bg-light);
-  border-radius: 16px;
-  box-shadow: 0 2px 10px rgba(24, 28, 20, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  /* Meleg, barnás "glass" kártya – illik a bézs háttérhez */
+  background: linear-gradient(
+    145deg,
+    rgba(224, 205, 184, 0.78) 0%,
+    rgba(210, 189, 165, 0.74) 45%,
+    rgba(139, 122, 107, 0.42) 100%
+  );
+  border-radius: 22px;
+  box-shadow:
+    0 18px 45px rgba(24, 28, 20, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.40);
   padding: 2rem 2rem 1.5rem 2rem;
-  border: 1px solid var(--border);
+  border: 1px solid rgba(139, 122, 107, 0.58);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 .restaurant-search {
   width: 210%;
   padding: 1.2rem 1.2rem;
-  border-radius: 8px;
-  border: 1px solid var(--border, #e0e0e0);
+  border-radius: 14px;
+  border: 1px solid rgba(139, 122, 107, 0.68);
   font-size: 1.1rem;
-  background: linear-gradient(135deg, rgba(245, 237, 224, 0.6) 0%, rgba(236, 223, 204, 0.5) 100%);
-  color: var(--text, #222);
+  /* Hangulatos, modern barnás/krém üveg-hatás */
+  background: linear-gradient(135deg, rgba(232, 217, 200, 0.92), rgba(210, 189, 165, 0.86));
+  color: var(--text, #181C14);
   outline: none;
-  transition: border 0.2s;
+  box-shadow:
+    0 10px 26px rgba(24, 28, 20, 0.22),
+    inset 0 1px 1px rgba(255, 255, 255, 0.40);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: border 0.2s ease, box-shadow 0.2s ease, transform 0.1s ease, background 0.2s ease;
 }
 
 .restaurant-search:focus {
-  border-color: var(--primary, #7c5dfa);
+  border-color: var(--accent);
+  box-shadow:
+    0 12px 34px rgba(24, 28, 20, 0.22),
+    0 0 0 3px rgba(139, 122, 107, 0.25),
+    inset 0 1px 1px rgba(255, 255, 255, 0.6);
+  transform: translateY(-1px);
+  background: linear-gradient(135deg, rgba(236, 223, 204, 0.98), rgba(210, 189, 165, 0.92));
+}
+
+.restaurant-search::placeholder {
+  color: rgba(60, 61, 55, 0.65);
 }
 
 .filter-options {
