@@ -84,13 +84,13 @@ export default function Navbar() {
             </button>
           </Link>
           {isLoggedIn ? (
-            <Link to="/profilom">
+            <Link to="/profilom" className="auth-link">
               <button className="btn btn-primary">
                 <i className="bi bi-person-circle"></i>Profilom
               </button>
             </Link>
           ) : (
-            <Link to="/bejelentkezes">
+            <Link to="/bejelentkezes" className="auth-link">
               <button className="btn btn-primary">
                 <i className="bi bi-person-circle"></i>Bejelentkezés
               </button>

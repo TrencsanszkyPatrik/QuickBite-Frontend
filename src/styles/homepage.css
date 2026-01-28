@@ -5,12 +5,12 @@
     color: var(--bg);
     padding: 8rem 2rem;
     position: fixed;
-    top: 0;
+    top: var(--header-height);
     left: 0;
     right: 0;
-    height: 100vh;
-    min-height: 100vh;
-    max-height: 100vh;
+    height: calc(100vh - var(--header-height));
+    min-height: calc(100vh - var(--header-height));
+    max-height: calc(100vh - var(--header-height));
     overflow: hidden;
     display: flex;
     align-items: center;
@@ -616,7 +616,7 @@
 
 .main-content > .container:first-child {
     padding-top: 0;
-    margin-top: -85vh;
+    margin-top: -75vh;
 }
 
 .main-content-visible {
@@ -652,6 +652,18 @@ html {
 }
 
 
+@media (max-width: 1000px) {
+    .cuisines-grid {
+        margin-top: 45rem;
+    }
+}
+
+@media (max-width: 900px) {
+    .cuisines-grid {
+        margin-top: 38rem;
+    }
+}
+
 @media (max-width: 768px) {
     .hero-content {
         gap: 2rem;
@@ -674,6 +686,57 @@ html {
     
     .stat-text {
         font-size: 0.8rem;
+    }
+
+    .cuisines-grid {
+        margin-top: 30rem;
+        padding: 0 1rem;
+    }
+}
+
+@media (max-width: 600px) {
+    .hero {
+        padding: 1.5rem 1rem;
+    }
+
+    .hero-content {
+        padding-top: 0;
+    }
+
+    .hero h1 {
+        font-size: 2.2rem;
+    }
+
+    .hero p {
+        font-size: 1.05rem;
+    }
+
+    .hero-search {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .hero-search input {
+        min-width: 0;
+        width: 100%;
+    }
+
+    .hero-search .btn,
+    .hero-search .restaurant-map-open-btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .categories-pills {
+        bottom: 0.5rem;
+        padding: 0.5rem 0.75rem;
+        border-radius: 28px;
+    }
+
+    .cuisines-grid {
+        margin-top: 26rem;
+        grid-template-columns: repeat(2, minmax(140px, 1fr));
+        gap: 1rem;
     }
 }
 

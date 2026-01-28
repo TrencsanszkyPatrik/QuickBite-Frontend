@@ -21,6 +21,7 @@
   --success: #697565;          /* Success szín */
   --glass-bg: rgba(236, 223, 204, 0.85);  /* Üveghatás háttér */
   --glass-border: rgba(105, 117, 101, 0.3); /* Üveghatás border */
+  --header-height: 88px;       /* Navbar hozzávetőleges magassága */
 }
 
 /* Body Styles */
