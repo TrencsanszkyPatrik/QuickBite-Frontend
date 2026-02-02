@@ -17,6 +17,9 @@ export default function Opinions() {
   const [newUsername, setNewUsername] = useState('')
   const [newText, setNewText] = useState('')
   const [newStars, setNewStars] = useState(5)
+  const [editingId, setEditingId] = useState(null)
+  const [editText, setEditText] = useState('')
+  const [editStars, setEditStars] = useState(5)
 
   const auth = useMemo(() => {
     const token = localStorage.getItem('quickbite_token');
@@ -126,6 +129,77 @@ export default function Opinions() {
     }
   }
 
+  const startEdit = (review) => {
+    setEditingId(review.id)
+    setEditText(review.review || review.text)
+    setEditStars(review.stars)
+  }
+
+  const cancelEdit = () => {
+    setEditingId(null)
+    setEditText('')
+    setEditStars(5)
+  }
+
+  const updateReview = async (id) => {
+    if (editText.trim() === '') {
+      showToast.error('A vélemény nem lehet üres!')
+      return
+    }
+
+    try {
+      const response = await fetch(`${API_BASE}/QuickbiteReviews/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          review: editText,
+          stars: editStars
+        })
+      })
+
+      if (!response.ok) {
+        throw new Error('Nem sikerült módosítani a véleményt')
+      }
+
+      const updatedReview = await safeJson(response)
+      setReviews(reviews.map(r => r.id === id ? { ...r, review: editText, stars: editStars } : r))
+      showToast.success('Vélemény módosítva!')
+      cancelEdit()
+    } catch (err) {
+      console.error('Hiba a vélemény módosításakor:', err)
+      showToast.error('Nem sikerült módosítani a véleményt.')
+    }
+  }
+
+  const deleteReview = async (id) => {
+    if (!window.confirm('Biztosan törölni szeretnéd ezt a véleményt?')) {
+      return
+    }
+
+    try {
+      const response = await fetch(`${API_BASE}/QuickbiteReviews/${id}`, {
+        method: 'DELETE'
+      })
+
+      if (!response.ok) {
+        throw new Error('Nem sikerült törölni a véleményt')
+      }
+
+      setReviews(reviews.filter(r => r.id !== id))
+      showToast.success('Vélemény törölve!')
+    } catch (err) {
+      console.error('Hiba a vélemény törlésekor:', err)
+      showToast.error('Nem sikerült törölni a véleményt.')
+    }
+  }
+
+  const isOwnReview = (review) => {
+    if (!auth.isLoggedIn) return false
+    return review.username === auth.username || review.name === auth.displayName
+  }
+
   return (
     <div>
       <Navbar />
@@ -178,12 +252,56 @@ export default function Opinions() {
                 <h3>{r.name}</h3>
                 <span className="username">@{r.username}</span>
               </div>
-              <p className="opinion-text">"{r.review || r.text}"</p>
-              <div className="stars">{renderStars(r.stars)}</div>
-              {r.createdAt && (
-                <div className="opinion-date">
-                  {new Date(r.createdAt).toLocaleDateString('hu-HU')}
+              
+              {editingId === r.id ? (
+                <div className="edit-opinion-form">
+                  <textarea 
+                    value={editText}
+                    onChange={(e) => setEditText(e.target.value)}
+                    className="edit-textarea"
+                  />
+                  <div className="stars edit-stars">
+                    {[1,2,3,4,5].map((n) => (
+                      <span
+                        key={n}
+                        className={`star ${n <= editStars ? 'filled' : ''}`}
+                        onClick={() => setEditStars(n)}
+                        style={{cursor: 'pointer'}}
+                      >
+                        ★
+                      </span>
+                    ))}
+                  </div>
+                  <div className="edit-actions">
+                    <button className="save-btn" onClick={() => updateReview(r.id)}>
+                      <i className="bi bi-check-lg"></i> Mentés
+                    </button>
+                    <button className="cancel-btn" onClick={cancelEdit}>
+                      <i className="bi bi-x-lg"></i> Mégse
+                    </button>
+                  </div>
                 </div>
+              ) : (
+                <>
+                  <p className="opinion-text">"{r.review || r.text}"</p>
+                  <div className="stars">{renderStars(r.stars)}</div>
+                  {r.createdAt && (
+                    <div className="opinion-date">
+                      {new Date(r.createdAt).toLocaleDateString('hu-HU')}
+                    </div>
+                  )}
+                  
+                  {isOwnReview(r) && (
+                    <div className="opinion-actions">
+                      <button className="edit-btn" onClick={() => startEdit(r)} title="Szerkesztés">
+                        <i className="bi bi-pencil"></i>
+                      </button>
+                      <button className="delete-btn" onClick={() => deleteReview(r.id)} title="Törlés">
+                        <i className="bi bi-trash"></i>
+                      </button>
+                    </div>
+                  )}
+                </>
               )}
             </div>
           ))}
