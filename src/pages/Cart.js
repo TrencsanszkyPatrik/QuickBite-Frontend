@@ -18,6 +18,8 @@ export default function Cart() {
   const [selectedAddressId, setSelectedAddressId] = useState(null)
   const [selectedPaymentId, setSelectedPaymentId] = useState(null)
   const [useNewAddress, setUseNewAddress] = useState(false)
+  const [suggestedItems, setSuggestedItems] = useState([])
+  const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false)
   const [deliveryAddress, setDeliveryAddress] = useState({
     fullName: '',
     address: '',
@@ -101,6 +103,13 @@ export default function Cart() {
   useEffect(() => {
     localStorage.setItem('quickbite_cart', JSON.stringify(cartItems))
     window.dispatchEvent(new Event('cartUpdated'))
+    
+    // Javasolt ételek betöltése ha van étterem a kosárban
+    if (cartItems.length > 0 && cartItems[0].restaurantId) {
+      loadSuggestedItems(cartItems[0].restaurantId)
+    } else {
+      setSuggestedItems([])
+    }
   }, [cartItems])
 
   const increaseQuantity = (index) => {
@@ -208,6 +217,79 @@ export default function Cart() {
     return calculateSubtotal() + calculateDeliveryFee()
   }
 
+  const loadSuggestedItems = async (restaurantId) => {
+    setIsLoadingSuggestions(true)
+    try {
+      const res = await fetch(`${API_BASE}/MenuItems/restaurant/${restaurantId}`)
+      if (res.ok) {
+        const allItems = await res.json()
+        
+        // Kiszűrjük a kosárban lévő ételeket
+        const cartItemIds = cartItems.map(item => item.id)
+        const filtered = allItems.filter(item => !cartItemIds.includes(item.id))
+        
+        // Véletlenszerű keveredés
+        const shuffled = [...filtered].sort(() => Math.random() - 0.5)
+        
+        // Kategorizálás
+        const desserts = shuffled.filter(item => 
+          item.category?.toLowerCase().includes('desszert') ||
+          item.category?.toLowerCase().includes('édesség') ||
+          item.name?.toLowerCase().includes('süti') ||
+          item.name?.toLowerCase().includes('torta')
+        )
+        
+        const popular = shuffled.filter(item => item.isPopular || item.rating >= 4.5)
+        
+        // Véletlenszerűen válasszunk ételeket
+        let suggestions = []
+        
+        // Véletlenszerűen válasszunk 1-2 desszertet
+        if (desserts.length > 0) {
+          const randomDesserts = desserts.sort(() => Math.random() - 0.5).slice(0, Math.min(2, desserts.length))
+          suggestions.push(...randomDesserts)
+        }
+        
+        // Véletlenszerűen válasszunk 1-2 népszerű ételt
+        if (popular.length > 0) {
+          const randomPopular = popular
+            .filter(item => !suggestions.includes(item))
+            .sort(() => Math.random() - 0.5)
+            .slice(0, Math.min(2, popular.length))
+          suggestions.push(...randomPopular)
+        }
+        
+        // Ha kevés az ajánlat, töltsük fel véletlenszerű ételekkel
+        if (suggestions.length < 4 && filtered.length > suggestions.length) {
+          const remaining = shuffled.filter(item => !suggestions.includes(item))
+          const randomRemaining = remaining.slice(0, 4 - suggestions.length)
+          suggestions.push(...randomRemaining)
+        }
+        
+        setSuggestedItems(suggestions.slice(0, 6))
+      }
+    } catch (error) {
+      console.error('Javasolt ételek betöltése sikertelen:', error)
+    } finally {
+      setIsLoadingSuggestions(false)
+    }
+  }
+
+  const addSuggestedToCart = (item) => {
+    const newItem = {
+      id: item.id,
+      name: item.name,
+      price: item.price,
+      desc: item.description,
+      img: item.image_url || '/img/EtelKepek/default.png',
+      quantity: 1,
+      restaurantId: item.restaurantId,
+      restaurantName: cartItems[0]?.restaurantName,
+      restaurantFreeDelivery: cartItems[0]?.restaurantFreeDelivery
+    }
+    setCartItems([...cartItems, newItem])
+  }
+
   // Csak egy etterembol rendeles
   const restaurantId = cartItems.length > 0 ? cartItems[0].restaurantId : null
   const restaurantName = cartItems.length > 0 ? cartItems[0].restaurantName : null
@@ -287,6 +369,40 @@ export default function Cart() {
                     </div>
                   ))}
                 </div>
+
+                 {suggestedItems.length > 0 && (
+                  <div className="suggested-items-section">
+                    <h3>Hiányzik valami?</h3>
+                    <p className="suggested-subtitle">Ezeket is sokan rendelik ebből az étteremből</p>
+                    <div className="suggested-items-grid">
+                      {suggestedItems.map((item) => (
+                        <div key={item.id} className="suggested-item">
+                          <img 
+                            src={item.image_url || '/img/EtelKepek/default.png'} 
+                            alt={item.name}
+                            className="suggested-item-image"
+                          />
+                          <div className="suggested-item-info">
+                            <h4>{item.name}</h4>
+                            {item.description && (
+                              <p className="suggested-item-desc">{item.description.substring(0, 60)}...</p>
+                            )}
+                            <div className="suggested-item-footer">
+                              <span className="suggested-item-price">{item.price.toLocaleString()} Ft</span>
+                              <button 
+                                className="suggested-add-btn"
+                                onClick={() => addSuggestedToCart(item)}
+                                title="Hozzáadás a kosárhoz"
+                              >
+                                <i className="bi bi-plus-lg"></i> Kosárba
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div className="cart-sidebar">

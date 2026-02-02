@@ -724,6 +724,18 @@
   .cart-item-image {
     height: 150px;
   }
+
+  .suggested-items-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .suggested-items-section {
+    padding: 1.5rem;
+  }
+
+  .suggested-items-section h3 {
+    font-size: 1.5rem;
+  }
 }
 
 /* Address Autocomplete Styles */
@@ -790,3 +802,111 @@
   background: var(--bg-light);
 }
 
+/* Suggested Items Section */
+.suggested-items-section {
+  margin-top: 3rem;
+  padding: 2rem;
+  background: linear-gradient(135deg, var(--bg-light) 0%, var(--bg) 100%);
+  border: 2px solid var(--border-light);
+  border-radius: 20px;
+}
+
+.suggested-items-section h3 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin: 0 0 0.5rem 0;
+}
+
+.suggested-subtitle {
+  color: var(--text-light);
+  font-size: 1rem;
+  margin: 0 0 1.5rem 0;
+}
+
+.suggested-items-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.25rem;
+}
+
+.suggested-item {
+  background: white;
+  border: 2px solid var(--border-light);
+  border-radius: 16px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.suggested-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  border-color: var(--accent);
+}
+
+.suggested-item-image {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  background: var(--bg-warm);
+}
+
+.suggested-item-info {
+  padding: 1rem;
+}
+
+.suggested-item-info h4 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin: 0 0 0.5rem 0;
+}
+
+.suggested-item-desc {
+  font-size: 0.85rem;
+  color: var(--text-light);
+  margin: 0 0 0.75rem 0;
+  line-height: 1.4;
+}
+
+.suggested-item-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.75rem;
+}
+
+.suggested-item-price {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.suggested-add-btn {
+  padding: 0.5rem 1rem;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.suggested-add-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(60, 61, 55, 0.3);
+}
+
+.suggested-add-btn:active {
+  transform: scale(0.98);
+}
+
+.suggested-add-btn i {
+  font-size: 1rem;
+}
