@@ -7,7 +7,9 @@ export default function Navbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [userName, setUserName] = useState('')
   const [cartItemsCount, setCartItemsCount] = useState(0)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const dropdownRef = useRef(null)
+  const mobileMenuRef = useRef(null)
 
   const updateCartCount = () => {
     try {
@@ -69,8 +71,16 @@ export default function Navbar() {
 
   useEffect(() => {
     const handleClickOutside = (event) => {
+      const hamburgerBtn = document.querySelector('.hamburger-btn')
+      
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsDropdownOpen(false)
+      }
+      
+      if (mobileMenuRef.current && 
+          !mobileMenuRef.current.contains(event.target) &&
+          hamburgerBtn && !hamburgerBtn.contains(event.target)) {
+        setIsMobileMenuOpen(false)
       }
     }
 
@@ -84,11 +94,22 @@ export default function Navbar() {
     <header>
       <div className="header-content">
         <Link to="/">
-          <div className="logo">
-            <span><span id="quick">Quick</span><span id="bite">Bite</span></span>
-          </div>
+          <div className="logo"> <span id='quick'> Quick</span><span id='bite' >Bite</span></div>
         </Link>
-        <div className="header-actions">
+        
+        {/* Hamburger menü gomb (mobil) */}
+        <button 
+          className="hamburger-btn"
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          aria-label="Menü megnyitása"
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+
+        {/* Desktop menü */}
+        <div className="header-actions desktop-menu">
           <Link to="/ettermek">Éttermeink</Link>
           <Link to="/kedvencek">Kedvencek</Link>
           <div className="dropdown" ref={dropdownRef}>
@@ -127,6 +148,47 @@ export default function Navbar() {
               </button>
             </Link>
           )}
+        </div>
+
+        {/* Mobil menü */}
+        <div 
+          ref={mobileMenuRef}
+          className={`mobile-menu ${isMobileMenuOpen ? 'mobile-menu-open' : ''}`}
+        >
+          <div className="mobile-menu-content">
+            <Link to="/ettermek" onClick={() => setIsMobileMenuOpen(false)}>
+              <i className="bi bi-shop"></i> Éttermeink
+            </Link>
+            <Link to="/kedvencek" onClick={() => setIsMobileMenuOpen(false)}>
+              <i className="bi bi-heart"></i> Kedvencek
+            </Link>
+            <Link to="/kosar" onClick={() => setIsMobileMenuOpen(false)}>
+              <i className="bi bi-basket2-fill"></i> Kosár
+              {cartItemsCount > 0 && (
+                <span className="mobile-cart-badge">{cartItemsCount}</span>
+              )}
+            </Link>
+            <div className="mobile-menu-divider"></div>
+            <Link to="/velemenyek" onClick={() => setIsMobileMenuOpen(false)}>
+              <i className="bi bi-chat-quote"></i> Vásárlók véleményei
+            </Link>
+            <Link to="/kapcsolat" onClick={() => setIsMobileMenuOpen(false)}>
+              <i className="bi bi-envelope"></i> Kapcsolat
+            </Link>
+            <Link to="/rolunk" onClick={() => setIsMobileMenuOpen(false)}>
+              <i className="bi bi-info-circle"></i> Rólunk
+            </Link>
+            <div className="mobile-menu-divider"></div>
+            {isLoggedIn ? (
+              <Link to="/profilom" className="mobile-menu-auth" onClick={() => setIsMobileMenuOpen(false)}>
+                <i className="bi bi-person-circle"></i> Profilom
+              </Link>
+            ) : (
+              <Link to="/bejelentkezes" className="mobile-menu-auth" onClick={() => setIsMobileMenuOpen(false)}>
+                <i className="bi bi-person-circle"></i> Bejelentkezés
+              </Link>
+            )}
+          </div>
         </div>
       </div>
     </header>

@@ -29,7 +29,7 @@ header {
 .header-content {
     max-width: 1700px;
     margin: 0 auto;
-    padding: 1rem 2rem;
+    padding: 1.25rem 2rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -39,21 +39,15 @@ header {
 #quick{
     color: var(--primary);
     font-size: 4rem;
+    font-weight: 700;
     
 }
 #bite {
     color : var(--secondary);
     font-size: 3.8rem;
+    font-weight: 700;
 }
 
-.logo {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    font-size: 1.7rem;
-    font-weight: 700;
-    color: var(--primary);
-}
 
 .logo-img { width: 250px; height: 100px; object-fit: cover; border-radius: 100px; display: block; background-color: #ffff }
 
@@ -186,6 +180,118 @@ header {
     color: var(--primary-dark);
 }
 
+/* Hamburger Button */
+.hamburger-btn {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    z-index: 2001;
+}
+
+.hamburger-btn span {
+    width: 28px;
+    height: 3px;
+    background: var(--primary);
+    border-radius: 2px;
+    transition: all 0.3s ease;
+}
+
+.hamburger-btn:hover span {
+    background: var(--primary-dark);
+}
+
+/* Mobile Menu */
+.mobile-menu {
+    display: none;
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 280px;
+    height: 100vh;
+    background: linear-gradient(180deg, var(--bg-light) 0%, var(--bg) 100%);
+    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
+    transition: right 0.3s ease;
+    z-index: 2000;
+    overflow-y: auto;
+}
+
+.mobile-menu-open {
+    right: 0 !important;
+}
+
+.mobile-menu-content {
+    padding: 5rem 1.5rem 2rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.mobile-menu-content a {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    color: var(--text);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 1rem;
+    border-radius: 12px;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.mobile-menu-content a i {
+    font-size: 1.25rem;
+    width: 24px;
+}
+
+.mobile-menu-content a:hover {
+    background: var(--bg-warm);
+    color: var(--primary);
+    transform: translateX(5px);
+}
+
+.mobile-menu-divider {
+    height: 1px;
+    background: var(--border-light);
+    margin: 0.75rem 0;
+}
+
+.mobile-menu-auth {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: var(--bg) !important;
+    font-weight: 600;
+    margin-top: 0.5rem;
+}
+
+.mobile-menu-auth:hover {
+    transform: translateX(5px);
+    box-shadow: 0 4px 12px rgba(60, 61, 55, 0.3);
+}
+
+.mobile-cart-badge {
+    background: #e74c3c;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    font-weight: 700;
+    margin-left: auto;
+}
+
+/* Desktop menu - rejtsd el mobilon */
+.desktop-menu {
+    display: flex;
+}
+
 /* Tablet breakpoint */
 @media (max-width: 1024px) {
     .header-content {
@@ -217,12 +323,13 @@ header {
 /* Mobile breakpoint */
 @media (max-width: 768px) {
     .header-content {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.75rem;
+        padding: 0.75rem 1.25rem;
+        gap: 0;
+        justify-content: space-between;
     }
 
     .logo {
+        font-size: 1.7rem;
         justify-content: flex-start;
     }
 
@@ -234,39 +341,19 @@ header {
         font-size: 2.4rem;
     }
 
-    .header-actions {
-        width: 100%;
-        justify-content: flex-start;
-        flex-wrap: wrap;
-        row-gap: 0.5rem;
-        column-gap: 0.5rem;
+    /* Desktop menü elrejtése */
+    .desktop-menu {
+        display: none !important;
     }
 
-    .header-actions a {
-        font-size: 0.9rem;
+    /* Hamburger gomb megjelenítése */
+    .hamburger-btn {
+        display: flex;
     }
 
-    /* Linkek kisebb "chip" stílusban */
-    .header-actions > a {
-        padding: 0.35rem 0.6rem;
-        border-radius: 999px;
-        background: rgba(236, 223, 204, 0.9);
-        border: 1px solid var(--border-light);
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .header-actions > a:hover {
-        background: var(--bg);
-    }
-
-    .header-actions .dropdown {
-        margin-left: auto;
-    }
-
-    .header-actions .btn {
-        padding-inline: 0.8rem;
+    /* Mobil menü megjelenítése */
+    .mobile-menu {
+        display: block;
     }
 }
 
@@ -284,12 +371,7 @@ header {
         font-size: 2rem;
     }
 
-    .header-actions {
-        gap: 0.5rem;
-    }
-
-    .header-actions > a,
-    .header-actions .dropdown {
-        flex: 1 1 100%;
+    .mobile-menu {
+        width: 100%;
     }
 }
