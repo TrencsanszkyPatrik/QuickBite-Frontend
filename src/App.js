@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import ScrollToTop from './components/ScrollToTop'
+import CookieBanner from './components/CookieBanner'
 import HomePage from './pages/HomePage'
 import AboutUs from './pages/AboutUs'
 import PageNotFound from './pages/404page'
@@ -149,7 +150,7 @@ export default function App() {
         pauseOnHover
         theme="light"
       />
+      <CookieBanner />
     </Router>
   )
 }
-
