@@ -15,9 +15,45 @@ export default function RestaurantDetails({ favorites = [], onToggleFavorite }) 
   const [error, setError] = useState(null)
   const [showSwitchModal, setShowSwitchModal] = useState(false)
   const [pendingItem, setPendingItem] = useState(null)
+  const [pendingQuantity, setPendingQuantity] = useState(1)
   const [oldRestaurantName, setOldRestaurantName] = useState('')
 
-  const addToCart = (menuItem) => {
+  const [showItemModal, setShowItemModal] = useState(false)
+  const [selectedItemIndex, setSelectedItemIndex] = useState(-1)
+  const [selectedQuantity, setSelectedQuantity] = useState(1)
+
+  const openItemModal = (itemIndex) => {
+    if (typeof itemIndex !== 'number') return
+    if (itemIndex < 0 || itemIndex >= menuItems.length) return
+    setSelectedItemIndex(itemIndex)
+    setSelectedQuantity(1)
+    setShowItemModal(true)
+  }
+
+  const closeItemModal = () => {
+    setShowItemModal(false)
+    setSelectedItemIndex(-1)
+    setSelectedQuantity(1)
+  }
+
+  const selectedItem =
+    selectedItemIndex >= 0 && selectedItemIndex < menuItems.length
+      ? menuItems[selectedItemIndex]
+      : null
+
+  const goToPrevItem = () => {
+    if (menuItems.length <= 1) return
+    setSelectedQuantity(1)
+    setSelectedItemIndex((idx) => (idx <= 0 ? menuItems.length - 1 : idx - 1))
+  }
+
+  const goToNextItem = () => {
+    if (menuItems.length <= 1) return
+    setSelectedQuantity(1)
+    setSelectedItemIndex((idx) => (idx >= menuItems.length - 1 ? 0 : idx + 1))
+  }
+
+  const addToCart = (menuItem, quantity = 1) => {
     const savedCart = localStorage.getItem('quickbite_cart')
     let currentCart = []
     
@@ -33,6 +69,7 @@ export default function RestaurantDetails({ favorites = [], onToggleFavorite }) 
     if (currentCart.length > 0 && currentCart[0].restaurantId !== restaurant.id) {
       setOldRestaurantName(currentCart[0].restaurantName)
       setPendingItem(menuItem)
+      setPendingQuantity(Math.max(1, Number(quantity) || 1))
       setShowSwitchModal(true)
       return
     }
@@ -42,14 +79,14 @@ export default function RestaurantDetails({ favorites = [], onToggleFavorite }) 
     )
 
     if (existingItemIndex > -1) {
-      currentCart[existingItemIndex].quantity += 1
+      currentCart[existingItemIndex].quantity += Math.max(1, Number(quantity) || 1)
     } else {
       const cartItem = {
         ...menuItem,
         restaurantId: restaurant.id,
         restaurantName: restaurant.name,
         restaurantFreeDelivery: restaurant.free_delivery || false,
-        quantity: 1
+        quantity: Math.max(1, Number(quantity) || 1)
       }
       currentCart.push(cartItem)
     }
@@ -67,7 +104,7 @@ export default function RestaurantDetails({ favorites = [], onToggleFavorite }) 
       restaurantId: restaurant.id,
       restaurantName: restaurant.name,
       restaurantFreeDelivery: restaurant.free_delivery || false,
-      quantity: 1
+      quantity: Math.max(1, Number(pendingQuantity) || 1)
     }
     
     localStorage.setItem('quickbite_cart', JSON.stringify([cartItem]))
@@ -76,12 +113,14 @@ export default function RestaurantDetails({ favorites = [], onToggleFavorite }) 
     
     setShowSwitchModal(false)
     setPendingItem(null)
+    setPendingQuantity(1)
     setOldRestaurantName('')
   }
 
   const handleSwitchCancel = () => {
     setShowSwitchModal(false)
     setPendingItem(null)
+    setPendingQuantity(1)
     setOldRestaurantName('')
   }
 
@@ -192,6 +231,97 @@ export default function RestaurantDetails({ favorites = [], onToggleFavorite }) 
           </div>
         </div>
       )}
+
+      {showItemModal && selectedItem && (
+        <div className="modal-overlay" onClick={closeItemModal}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2 className="product-modal-title">{selectedItem.name}</h2>
+              <div className="product-modal-nav">
+                <button
+                  type="button"
+                  className="product-modal-nav-btn"
+                  onClick={goToPrevItem}
+                  aria-label="Előző étel/ital"
+                  disabled={menuItems.length <= 1}
+                  title="Előző"
+                >
+                  ‹
+                </button>
+                <button
+                  type="button"
+                  className="product-modal-nav-btn"
+                  onClick={goToNextItem}
+                  aria-label="Következő étel/ital"
+                  disabled={menuItems.length <= 1}
+                  title="Következő"
+                >
+                  ›
+                </button>
+                <button className="modal-close" onClick={closeItemModal} aria-label="Bezárás">
+                  ✕
+                </button>
+              </div>
+            </div>
+            <div className="modal-body product-modal-body">
+              <div className="product-modal-top">
+                <img
+                  className="product-modal-img"
+                  src={selectedItem.img}
+                  alt={selectedItem.name}
+                />
+                <div className="product-modal-info">
+                  <div className="product-modal-price">{selectedItem.price} Ft</div>
+                  {selectedItem.desc ? (
+                    <p className="product-modal-desc">{selectedItem.desc}</p>
+                  ) : (
+                    <p className="product-modal-desc product-modal-desc--muted">
+                      Nincs megadott leírás.
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              <div className="product-modal-qty">
+                <span className="product-modal-qty-label">Mennyiség</span>
+                <div className="product-modal-qty-controls">
+                  <button
+                    type="button"
+                    className="product-modal-qty-btn"
+                    onClick={() => setSelectedQuantity((q) => Math.max(1, q - 1))}
+                    aria-label="Mennyiség csökkentése"
+                  >
+                    −
+                  </button>
+                  <span className="product-modal-qty-value">{selectedQuantity}</span>
+                  <button
+                    type="button"
+                    className="product-modal-qty-btn"
+                    onClick={() => setSelectedQuantity((q) => Math.min(99, q + 1))}
+                    aria-label="Mennyiség növelése"
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div className="modal-actions">
+              <button className="modal-btn modal-btn-cancel" onClick={closeItemModal}>
+                Mégse
+              </button>
+              <button
+                className="modal-btn modal-btn-confirm"
+                onClick={() => {
+                  addToCart(selectedItem, selectedQuantity)
+                  closeItemModal()
+                }}
+              >
+                Kosárba teszem
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       <div className="restaurant-details-page container">
       
       <div className="restaurant-details-header">
@@ -267,9 +397,9 @@ export default function RestaurantDetails({ favorites = [], onToggleFavorite }) 
                       <div className="menu-card-overlay">
                         <button 
                           className="btn btn-primary btn-overlay"
-                          onClick={() => addToCart(item)}
+                          onClick={() => openItemModal(menuItems.indexOf(item))}
                         >
-                          Kosárba
+                          + Részletek
                         </button>
                       </div>
                     </div>
