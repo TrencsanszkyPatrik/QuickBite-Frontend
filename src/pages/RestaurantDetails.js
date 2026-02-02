@@ -48,6 +48,7 @@ export default function RestaurantDetails({ favorites = [], onToggleFavorite }) 
         ...menuItem,
         restaurantId: restaurant.id,
         restaurantName: restaurant.name,
+        restaurantFreeDelivery: restaurant.free_delivery || false,
         quantity: 1
       }
       currentCart.push(cartItem)
@@ -65,6 +66,7 @@ export default function RestaurantDetails({ favorites = [], onToggleFavorite }) 
       ...pendingItem,
       restaurantId: restaurant.id,
       restaurantName: restaurant.name,
+      restaurantFreeDelivery: restaurant.free_delivery || false,
       quantity: 1
     }
     

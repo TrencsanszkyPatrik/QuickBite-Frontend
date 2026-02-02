@@ -194,6 +194,12 @@ export default function Cart() {
   }
 
   const calculateDeliveryFee = () => {
+    const hasFreeDelivery = cartItems.length > 0 && cartItems[0].restaurantFreeDelivery
+    
+    if (!hasFreeDelivery) {
+      return 499 
+    }
+    
     const subtotal = calculateSubtotal()
     return subtotal > 5000 ? 0 : 499
   }
@@ -300,7 +306,7 @@ export default function Cart() {
                       )}
                     </span>
                   </div>
-                  {calculateSubtotal() < 5000 && calculateSubtotal() > 0 && (
+                  {cartItems.length > 0 && cartItems[0].restaurantFreeDelivery && calculateSubtotal() < 5000 && calculateSubtotal() > 0 && (
                     <p className="free-delivery-info">
                       Még {(5000 - calculateSubtotal()).toLocaleString()} Ft és ingyenes a szállítás!
                     </p>
