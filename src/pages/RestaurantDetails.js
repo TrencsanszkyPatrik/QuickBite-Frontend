@@ -1,16 +1,87 @@
 import React, { useState, useEffect } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import '../styles/RestaurantDetails.css'
 import Navbar from '../components/Navbar'
 import { usePageTitle } from '../utils/usePageTitle'
 import { API_BASE } from '../utils/api'
+import { showToast } from '../utils/toast'
 
 export default function RestaurantDetails({ favorites = [], onToggleFavorite }) {
   const { id } = useParams()
+  const navigate = useNavigate()
   const [restaurant, setRestaurant] = useState(null)
   const [menuItems, setMenuItems] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [showSwitchModal, setShowSwitchModal] = useState(false)
+  const [pendingItem, setPendingItem] = useState(null)
+  const [oldRestaurantName, setOldRestaurantName] = useState('')
+
+  const addToCart = (menuItem) => {
+    const savedCart = localStorage.getItem('quickbite_cart')
+    let currentCart = []
+    
+    try {
+      if (savedCart) {
+        currentCart = JSON.parse(savedCart)
+      }
+    } catch (error) {
+      console.error('Hiba a kosár betöltése közben:', error)
+      currentCart = []
+    }
+
+    if (currentCart.length > 0 && currentCart[0].restaurantId !== restaurant.id) {
+      setOldRestaurantName(currentCart[0].restaurantName)
+      setPendingItem(menuItem)
+      setShowSwitchModal(true)
+      return
+    }
+
+    const existingItemIndex = currentCart.findIndex(
+      (item) => item.name === menuItem.name && item.restaurantId === restaurant.id
+    )
+
+    if (existingItemIndex > -1) {
+      currentCart[existingItemIndex].quantity += 1
+    } else {
+      const cartItem = {
+        ...menuItem,
+        restaurantId: restaurant.id,
+        restaurantName: restaurant.name,
+        quantity: 1
+      }
+      currentCart.push(cartItem)
+    }
+
+    localStorage.setItem('quickbite_cart', JSON.stringify(currentCart))
+    
+    window.dispatchEvent(new Event('cartUpdated'))
+    
+    showToast.success(`${menuItem.name} hozzáadva a kosárhoz!`)
+  }
+
+  const handleSwitchConfirm = () => {
+    const cartItem = {
+      ...pendingItem,
+      restaurantId: restaurant.id,
+      restaurantName: restaurant.name,
+      quantity: 1
+    }
+    
+    localStorage.setItem('quickbite_cart', JSON.stringify([cartItem]))
+    window.dispatchEvent(new Event('cartUpdated'))
+    showToast.success(`${pendingItem.name} hozzáadva a kosárhoz!`)
+    
+    setShowSwitchModal(false)
+    setPendingItem(null)
+    setOldRestaurantName('')
+  }
+
+  const handleSwitchCancel = () => {
+    setShowSwitchModal(false)
+    setPendingItem(null)
+    setOldRestaurantName('')
+  }
 
   useEffect(() => {
     const fetchRestaurantAndMenu = async () => {
@@ -87,6 +158,38 @@ export default function RestaurantDetails({ favorites = [], onToggleFavorite }) 
   return (
     <>
       <Navbar />
+      
+      {/* Étterem váltás modal */}
+      {showSwitchModal && (
+        <div className="modal-overlay" onClick={handleSwitchCancel}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>Étterem váltás</h2>
+              <button className="modal-close" onClick={handleSwitchCancel}>
+                ✕
+              </button>
+            </div>
+            <div className="modal-body">
+              <div className="modal-icon">⚠️</div>
+              <p className="modal-text">
+                A kosaradban már van rendelés innen: <strong>{oldRestaurantName}</strong>
+              </p>
+              <p className="modal-text">
+                Ha új ételt adsz hozzá innen: <strong>{restaurant?.name}</strong>, az előző kosár tartalma törlődik.
+              </p>
+              <p className="modal-question">Biztosan folytatod?</p>
+            </div>
+            <div className="modal-actions">
+              <button className="modal-btn modal-btn-cancel" onClick={handleSwitchCancel}>
+                Mégse
+              </button>
+              <button className="modal-btn modal-btn-confirm" onClick={handleSwitchConfirm}>
+                Kosár ürítése és folytatás
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       <div className="restaurant-details-page container">
       
       <div className="restaurant-details-header">
@@ -160,7 +263,12 @@ export default function RestaurantDetails({ favorites = [], onToggleFavorite }) 
                     <div className="menu-card-image-wrapper">
                       <img src={item.img} alt={item.name} className="menu-img" />
                       <div className="menu-card-overlay">
-                        <button className="btn btn-primary btn-overlay">Kosárba</button>
+                        <button 
+                          className="btn btn-primary btn-overlay"
+                          onClick={() => addToCart(item)}
+                        >
+                          Kosárba
+                        </button>
                       </div>
                     </div>
                     <div className="menu-info">
