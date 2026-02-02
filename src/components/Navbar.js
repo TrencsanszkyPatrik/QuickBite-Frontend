@@ -8,8 +8,11 @@ export default function Navbar() {
   const [userName, setUserName] = useState('')
   const [cartItemsCount, setCartItemsCount] = useState(0)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [isCartPreviewOpen, setIsCartPreviewOpen] = useState(false)
+  const [cartItems, setCartItems] = useState([])
   const dropdownRef = useRef(null)
   const mobileMenuRef = useRef(null)
+  const cartPreviewRef = useRef(null)
 
   const updateCartCount = () => {
     try {
@@ -18,13 +21,20 @@ export default function Navbar() {
         const cart = JSON.parse(savedCart)
         const totalItems = cart.reduce((sum, item) => sum + (item.quantity || 1), 0)
         setCartItemsCount(totalItems)
+        setCartItems(cart)
       } else {
         setCartItemsCount(0)
+        setCartItems([])
       }
     } catch (error) {
       console.error('Hiba a kosár számának betöltése közben:', error)
       setCartItemsCount(0)
+      setCartItems([])
     }
+  }
+
+  const calculateTotal = () => {
+    return cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0)
   }
 
   useEffect(() => {
@@ -127,14 +137,51 @@ export default function Navbar() {
               </div>
             )}
           </div>
-          <Link to="/kosar">
-            <button className="btn btn-secondary cart-btn">
-              <i className="bi bi-basket2-fill"></i>Kosár
-              {cartItemsCount > 0 && (
-                <span className="cart-badge">{cartItemsCount}</span>
-              )}
-            </button>
-          </Link>
+          <div 
+            className="cart-wrapper"
+            onMouseEnter={() => setIsCartPreviewOpen(true)}
+            onMouseLeave={() => setIsCartPreviewOpen(false)}
+            ref={cartPreviewRef}
+          >
+            <Link to="/kosar">
+              <button className="btn btn-secondary cart-btn">
+                <i className="bi bi-basket2-fill"></i>Kosár
+                {cartItemsCount > 0 && (
+                  <span className="cart-badge">{cartItemsCount}</span>
+                )}
+              </button>
+            </Link>
+            
+            {/* Mini Cart Preview */}
+            {isCartPreviewOpen && cartItems.length > 0 && (
+              <div className="mini-cart-preview">
+                <div className="mini-cart-header">
+                  <h4>Kosár tartalma</h4>
+                  <span className="mini-cart-count">{cartItemsCount} tétel</span>
+                </div>
+                <div className="mini-cart-items">
+                  {cartItems.slice(0, 3).map((item, index) => (
+                    <div key={index} className="mini-cart-item">
+                      <img src={item.img || '/img/EtelKepek/default.png'} alt={item.name} />
+                      <div className="mini-cart-item-details">
+                        <span className="mini-cart-item-name">{item.name}</span>
+                        <span className="mini-cart-item-price">{item.quantity}x {item.price.toLocaleString()} Ft</span>
+                      </div>
+                    </div>
+                  ))}
+                  {cartItems.length > 3 && (
+                    <div className="mini-cart-more">+{cartItems.length - 3} további tétel</div>
+                  )}
+                </div>
+                <div className="mini-cart-footer">
+                  <div className="mini-cart-total">
+                    <span>Összesen:</span>
+                    <span className="mini-cart-total-amount">{calculateTotal().toLocaleString()} Ft</span>
+                  </div>
+                   </div>
+              </div>
+            )}
+          </div>
           {isLoggedIn ? (
             <Link to="/profilom" className="auth-link">
               <button className="btn btn-primary">
