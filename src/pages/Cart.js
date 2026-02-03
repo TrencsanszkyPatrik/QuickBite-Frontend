@@ -144,7 +144,7 @@ export default function Cart() {
       const orderAmount = calculateSubtotal() + calculateDeliveryFee()
       const restaurantId = cartItems.length > 0 ? cartItems[0].restaurantId : null
 
-      const endpoint = isLoggedIn ? '/apply' : '/validate'
+      const endpoint = '/validate'
       const headers = {
         'Content-Type': 'application/json'
       }
@@ -163,6 +163,7 @@ export default function Cart() {
       })
 
       const data = await response.json()
+      console.log('Kupon válasz:', data)
 
       if (data.isValid) {
         setAppliedCoupon(data)
@@ -223,7 +224,34 @@ export default function Cart() {
     processOrder()
   }
 
-  const processOrder = () => {
+  const processOrder = async () => {
+    // Ha van alkalmazott kupon és be van jelentkezve, felhasználjuk a kupont
+    if (appliedCoupon && isLoggedIn) {
+      try {
+        const orderAmount = calculateSubtotal() + calculateDeliveryFee()
+        const restaurantId = cartItems.length > 0 ? cartItems[0].restaurantId : null
+        
+        const response = await fetch(`${API_BASE}/Coupons/apply`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...getAuthHeaders()
+          },
+          body: JSON.stringify({
+            code: appliedCoupon.coupon.code,
+            orderAmount: orderAmount,
+            restaurantId: restaurantId
+          })
+        })
+
+        if (!response.ok) {
+          console.error('Kupon felhasználás sikertelen')
+        }
+      } catch (error) {
+        console.error('Hiba a kupon felhasználása során:', error)
+      }
+    }
+
     const order = {
       items: cartItems,
       delivery: deliveryAddress,
