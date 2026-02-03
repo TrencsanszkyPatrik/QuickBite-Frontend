@@ -20,6 +20,11 @@ export default function Cart() {
   const [useNewAddress, setUseNewAddress] = useState(false)
   const [suggestedItems, setSuggestedItems] = useState([])
   const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false)
+  const [couponCode, setCouponCode] = useState('')
+  const [appliedCoupon, setAppliedCoupon] = useState(null)
+  const [couponError, setCouponError] = useState('')
+  const [couponSuccess, setCouponSuccess] = useState('')
+  const [isValidatingCoupon, setIsValidatingCoupon] = useState(false)
   const [deliveryAddress, setDeliveryAddress] = useState({
     fullName: '',
     address: '',
@@ -125,7 +130,64 @@ export default function Cart() {
       setCartItems(newCart)
     }
   }
+  const handleApplyCoupon = async () => {
+    if (!couponCode.trim()) {
+      setCouponError('Kérlek, add meg a kuponkódot')
+      return
+    }
 
+    setCouponError('')
+    setCouponSuccess('')
+    setIsValidatingCoupon(true)
+
+    try {
+      const orderAmount = calculateSubtotal() + calculateDeliveryFee()
+      const restaurantId = cartItems.length > 0 ? cartItems[0].restaurantId : null
+
+      const endpoint = isLoggedIn ? '/apply' : '/validate'
+      const headers = {
+        'Content-Type': 'application/json'
+      }
+      if (isLoggedIn) {
+        Object.assign(headers, getAuthHeaders())
+      }
+
+      const response = await fetch(`${API_BASE}/Coupons${endpoint}`, {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify({
+          code: couponCode.trim(),
+          orderAmount: orderAmount,
+          restaurantId: restaurantId
+        })
+      })
+
+      const data = await response.json()
+
+      if (data.isValid) {
+        setAppliedCoupon(data)
+        setCouponSuccess(data.message)
+        setCouponError('')
+      } else {
+        setCouponError(data.message)
+        setCouponSuccess('')
+        setAppliedCoupon(null)
+      }
+    } catch (error) {
+      console.error('Kupon validálási hiba:', error)
+      setCouponError('Hiba történt a kupon validálása során')
+      setAppliedCoupon(null)
+    } finally {
+      setIsValidatingCoupon(false)
+    }
+  }
+
+  const handleRemoveCoupon = () => {
+    setAppliedCoupon(null)
+    setCouponCode('')
+    setCouponError('')
+    setCouponSuccess('')
+  }
   const removeItem = (index) => {
     const newCart = cartItems.filter((_, i) => i !== index)
     setCartItems(newCart)
@@ -158,6 +220,10 @@ export default function Cart() {
       return
     }
 
+    processOrder()
+  }
+
+  const processOrder = () => {
     const order = {
       items: cartItems,
       delivery: deliveryAddress,
@@ -166,6 +232,8 @@ export default function Cart() {
       savedPaymentId: selectedPaymentId,
       subtotal: calculateSubtotal(),
       deliveryFee: calculateDeliveryFee(),
+      discount: appliedCoupon ? appliedCoupon.discountAmount : 0,
+      couponCode: appliedCoupon ? appliedCoupon.coupon.code : null,
       total: calculateTotal(),
       timestamp: new Date().toISOString()
     }
@@ -175,6 +243,10 @@ export default function Cart() {
     
     
     setCartItems([])
+    setAppliedCoupon(null)
+    setCouponCode('')
+    setCouponError('')
+    setCouponSuccess('')
     
     
     if (!selectedAddressId) {
@@ -214,7 +286,10 @@ export default function Cart() {
   }
 
   const calculateTotal = () => {
-    return calculateSubtotal() + calculateDeliveryFee()
+    const subtotal = calculateSubtotal()
+    const deliveryFee = calculateDeliveryFee()
+    const discount = appliedCoupon ? appliedCoupon.discountAmount : 0
+    return Math.max(0, subtotal + deliveryFee - discount)
   }
 
   const loadSuggestedItems = async (restaurantId) => {
@@ -224,14 +299,11 @@ export default function Cart() {
       if (res.ok) {
         const allItems = await res.json()
         
-        // Kiszűrjük a kosárban lévő ételeket
         const cartItemIds = cartItems.map(item => item.id)
         const filtered = allItems.filter(item => !cartItemIds.includes(item.id))
         
-        // Véletlenszerű keveredés
         const shuffled = [...filtered].sort(() => Math.random() - 0.5)
         
-        // Kategorizálás
         const desserts = shuffled.filter(item => 
           item.category?.toLowerCase().includes('desszert') ||
           item.category?.toLowerCase().includes('édesség') ||
@@ -241,16 +313,13 @@ export default function Cart() {
         
         const popular = shuffled.filter(item => item.isPopular || item.rating >= 4.5)
         
-        // Véletlenszerűen válasszunk ételeket
         let suggestions = []
         
-        // Véletlenszerűen válasszunk 1-2 desszertet
         if (desserts.length > 0) {
           const randomDesserts = desserts.sort(() => Math.random() - 0.5).slice(0, Math.min(2, desserts.length))
           suggestions.push(...randomDesserts)
         }
         
-        // Véletlenszerűen válasszunk 1-2 népszerű ételt
         if (popular.length > 0) {
           const randomPopular = popular
             .filter(item => !suggestions.includes(item))
@@ -300,7 +369,6 @@ export default function Cart() {
       <main className="cart-page">
         <div className="cart-container">
           <div className="cart-header">
-            <h1>Kosár</h1>
             {cartItems.length > 0 && (
               <button className="clear-cart-btn" onClick={clearCart}>
                 Kosár ürítése
@@ -408,6 +476,48 @@ export default function Cart() {
               <div className="cart-sidebar">
                 <div className="order-summary">
                   <h3>Rendelés összesítő</h3>
+                  
+                  {!appliedCoupon ? (
+                    <div className="coupon-section">
+                      <div className="coupon-input-group">
+                        <input
+                          type="text"
+                          placeholder="Kuponkód"
+                          value={couponCode}
+                          onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                          className="coupon-input"
+                          disabled={isValidatingCoupon || cartItems.length === 0}
+                        />
+                        <button
+                          type="button"
+                          onClick={handleApplyCoupon}
+                          disabled={isValidatingCoupon || !couponCode.trim() || cartItems.length === 0}
+                          className="coupon-apply-btn"
+                        >
+                          {isValidatingCoupon ? 'Ellenőrzés...' : 'Alkalmazás'}
+                        </button>
+                      </div>
+                      {couponError && <p className="coupon-error">{couponError}</p>}
+                      {couponSuccess && <p className="coupon-success">{couponSuccess}</p>}
+                    </div>
+                  ) : (
+                    <div className="applied-coupon">
+                      <div className="coupon-badge">
+                        <i className="bi bi-tag-fill"></i>
+                        <span>{appliedCoupon.coupon.code}</span>
+                        <button 
+                          type="button"
+                          onClick={handleRemoveCoupon}
+                          className="remove-coupon-btn"
+                          title="Kupon eltávolítása"
+                        >
+                          <i className="bi bi-x"></i>
+                        </button>
+                      </div>
+                      <p className="coupon-description">{appliedCoupon.coupon.description}</p>
+                    </div>
+                  )}
+                  
                   <div className="summary-row">
                     <span>Részösszeg:</span>
                     <span>{calculateSubtotal().toLocaleString()} Ft</span>
@@ -422,6 +532,12 @@ export default function Cart() {
                       )}
                     </span>
                   </div>
+                  {appliedCoupon && (
+                    <div className="summary-row discount">
+                      <span>Kedvezmény:</span>
+                      <span className="discount-amount">-{appliedCoupon.discountAmount.toLocaleString()} Ft</span>
+                    </div>
+                  )}
                   {cartItems.length > 0 && cartItems[0].restaurantFreeDelivery && calculateSubtotal() < 5000 && calculateSubtotal() > 0 && (
                     <p className="free-delivery-info">
                       Még {(5000 - calculateSubtotal()).toLocaleString()} Ft és ingyenes a szállítás!
