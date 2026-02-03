@@ -238,9 +238,7 @@ export default function Cart() {
       timestamp: new Date().toISOString()
     }
 
-    console.log('Rendelés leadva:', order)
     alert('Sikeres rendelés! Köszönjük a vásárlást!')
-    
     
     setCartItems([])
     setAppliedCoupon(null)

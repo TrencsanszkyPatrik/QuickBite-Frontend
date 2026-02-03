@@ -12,6 +12,7 @@ import Cousines from '../components/Cousines';
 import BackToTopButton from '../components/BackToTopButton.js';
 import FloatingOpinions from '../components/FloatingOpinions';
 import { usePageTitle } from '../utils/usePageTitle';
+import { API_BASE } from '../utils/api';
 
 export default function HomePage({ favorites = [], onToggleFavorite }) {
     usePageTitle("QuickBite - Főoldal");
@@ -20,6 +21,33 @@ export default function HomePage({ favorites = [], onToggleFavorite }) {
     const [isScrolled, setIsScrolled] = useState(false)
     const [heroAddress, setHeroAddress] = useState("")
     const [heroQuery, setHeroQuery] = useState("")
+    const [restaurants, setRestaurants] = useState([])
+    const [isLoading, setIsLoading] = useState(true)
+
+    useEffect(() => {
+        const fetchRestaurants = async () => {
+            try {
+                const response = await fetch(`${API_BASE}/Restaurants`)
+                if (response.ok) {
+                    const data = await response.json()
+                    const mapped = data.map((r) => ({
+                        ...r,
+                        id: String(r.id),
+                        address: `${r.city}, ${r.address}`,
+                        img: r.image_url,
+                        freeDelivery: r.free_delivery,
+                        acceptCards: r.accept_cards
+                    }))
+                    setRestaurants(mapped)
+                }
+            } catch (err) {
+                console.error('Hiba az éttermek betöltésekor:', err)
+            } finally {
+                setIsLoading(false)
+            }
+        }
+        fetchRestaurants()
+    }, [])
 
     useEffect(() => {
         const handleScroll = () => {
@@ -107,10 +135,13 @@ export default function HomePage({ favorites = [], onToggleFavorite }) {
             <div className={`main-content ${isScrolled ? 'main-content-visible' : ''}`}>
                 <h1 className="section-title">Válassz kiemelkedő éttermeink közül!</h1>
                 <RestaurantCardList
+                    restaurants={restaurants}
                     selectedCuisineId={selectedCuisineId}
                     favorites={favorites}
                     onToggleFavorite={onToggleFavorite}
                     limit={4}
+                    skip={Math.max(0, restaurants.length - 4)}
+                    isLoading={isLoading}
                 />
                 <div className="view-all-restaurants-container">
                     <Link to="/ettermek" className="btn btn-primary view-all-btn">

@@ -84,8 +84,7 @@ export default function Opinions() {
       name: auth.displayName,
       username: auth.username,
       review: newText,
-      stars: newStars,
-      avatarUrl: auth.avatarUrl || null
+      stars: newStars
     }
 
     try {

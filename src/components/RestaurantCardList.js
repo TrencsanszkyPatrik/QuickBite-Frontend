@@ -1,49 +1,23 @@
-import React, { useEffect, useState, useMemo } from 'react'
+import React, { useMemo } from 'react'
 import '../styles/RestaurantCardList.css'
 import { useNavigate } from 'react-router-dom'
-import { API_BASE } from '../utils/api'
 
 export default function RestaurantCardList({
+  restaurants = [],
   showDiscountOnly = false,
   showFreeDeliveryOnly = false,
+  showCardPaymentOnly = false,
+  showOpenNowOnly = false,
   selectedCuisineId = null,
   searchQuery = '',
   favorites = [],
   onToggleFavorite,
   limit = null,
-  menuItems = [] // Új prop a menü tételekhez
+  skip = 0,
+  menuItems = [],
+  isLoading = false
 }) {
   const navigate = useNavigate()
-  const [restaurants, setRestaurants] = useState([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState(null)
-
-  useEffect(() => {
-    const fetchRestaurants = async () => {
-      try {
-        const response = await fetch(`${API_BASE}/Restaurants`)
-        if (!response.ok) {
-          throw new Error('Nem sikerült betölteni az éttermeket.')
-        }
-        const data = await response.json()
-        const mapped = data.map((r) => ({
-          ...r,
-          id: String(r.id),
-          address: `${r.city}, ${r.address}`,
-          img: r.image_url,
-          freeDelivery: r.free_delivery,
-          acceptCards: r.accept_cards
-        }))
-        setRestaurants(mapped)
-      } catch (err) {
-        console.error(err)
-        setError('Hiba történt az éttermek betöltése közben.')
-      } finally {
-        setIsLoading(false)
-      }
-    }
-    fetchRestaurants()
-  }, [])
 
   const filteredRestaurants = useMemo(() => {
     return restaurants.filter((restaurant) => {
@@ -64,35 +38,21 @@ export default function RestaurantCardList({
       if (selectedCuisineId && restaurant.cuisine_id !== selectedCuisineId) {
         return false
       }
-      if (showDiscountOnly && restaurant.discount <= 0) {
-        return false
-      }
-      if (showFreeDeliveryOnly && !restaurant.freeDelivery) {
-        return false
-      }
+      if (showDiscountOnly && restaurant.discount <= 0) return false
+      if (showFreeDeliveryOnly && !restaurant.freeDelivery) return false
+      if (showCardPaymentOnly && !restaurant.acceptCards) return false
+      if (showOpenNowOnly && !restaurant.isOpen) return false
       return true
     })
-  }, [restaurants, searchQuery, selectedCuisineId, showDiscountOnly, showFreeDeliveryOnly, menuItems])
+  }, [restaurants, searchQuery, selectedCuisineId, showDiscountOnly, showFreeDeliveryOnly, showCardPaymentOnly, showOpenNowOnly, menuItems])
 
   if (isLoading) {
-    return (
-      <div className="restaurant-list-section container">
-        <p>Étterem lista betöltése...</p>
-      </div>
-    )
-  }
-
-  if (error) {
-    return (
-      <div className="restaurant-list-section container">
-        <p>{error}</p>
-      </div>
-    )
+    return <div className="restaurant-list-section container"><p>Étterem lista betöltése...</p></div>
   }
 
   const visibleRestaurants = limit
-    ? filteredRestaurants.slice(0, limit)
-    : filteredRestaurants
+    ? filteredRestaurants.slice(skip, skip + limit)
+    : filteredRestaurants.slice(skip)
 
   return (
     <div className="restaurant-list-section container">
