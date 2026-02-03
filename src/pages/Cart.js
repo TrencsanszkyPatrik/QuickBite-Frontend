@@ -477,7 +477,6 @@ export default function Cart() {
                 <div className="order-summary">
                   <h3>Rendelés összesítő</h3>
                   
-                  {/* Kuponkód bevitel */}
                   {!appliedCoupon ? (
                     <div className="coupon-section">
                       <div className="coupon-input-group">

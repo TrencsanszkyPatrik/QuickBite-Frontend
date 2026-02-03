@@ -127,7 +127,7 @@ export default function Navbar() {
               className="btn btn-secondary dropdown-toggle"
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
             >
-              <i className="bi bi-list"></i>Menü
+              <i className="bi bi-list"></i>További
             </button>
             {isDropdownOpen && (
               <div className="dropdown-menu">
