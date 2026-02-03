@@ -121,7 +121,7 @@ export default function Navbar() {
         {/* Desktop menü */}
         <div className="header-actions desktop-menu">
           <Link to="/ettermek">Éttermeink</Link>
-          <Link to="/kedvencek">Kedvencek</Link>
+          {isLoggedIn && <Link to="/kedvencek">Kedvencek</Link>}
           <div className="dropdown" ref={dropdownRef}>
             <button
               className="btn btn-secondary dropdown-toggle"
@@ -185,7 +185,7 @@ export default function Navbar() {
           {isLoggedIn ? (
             <Link to="/profilom" className="auth-link">
               <button className="btn btn-primary">
-                <i className="bi bi-person-circle"></i>Profilom
+                <i className="bi bi-person-circle"></i>{userName}
               </button>
             </Link>
           ) : (
@@ -206,9 +206,11 @@ export default function Navbar() {
             <Link to="/ettermek" onClick={() => setIsMobileMenuOpen(false)}>
               <i className="bi bi-shop"></i> Éttermeink
             </Link>
-            <Link to="/kedvencek" onClick={() => setIsMobileMenuOpen(false)}>
-              <i className="bi bi-heart"></i> Kedvencek
-            </Link>
+            {isLoggedIn && (
+              <Link to="/kedvencek" onClick={() => setIsMobileMenuOpen(false)}>
+                <i className="bi bi-heart"></i> Kedvencek
+              </Link>
+            )}
             <Link to="/kosar" onClick={() => setIsMobileMenuOpen(false)}>
               <i className="bi bi-basket2-fill"></i> Kosár
               {cartItemsCount > 0 && (
@@ -228,7 +230,7 @@ export default function Navbar() {
             <div className="mobile-menu-divider"></div>
             {isLoggedIn ? (
               <Link to="/profilom" className="mobile-menu-auth" onClick={() => setIsMobileMenuOpen(false)}>
-                <i className="bi bi-person-circle"></i> Profilom
+                <i className="bi bi-person-circle"></i> {userName}
               </Link>
             ) : (
               <Link to="/bejelentkezes" className="mobile-menu-auth" onClick={() => setIsMobileMenuOpen(false)}>

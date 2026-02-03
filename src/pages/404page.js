@@ -1,6 +1,7 @@
 import React from "react";
 import "../styles/404page.css";
 import { usePageTitle } from '../utils/usePageTitle';
+import { Link } from "react-router-dom";
 
 export default function PageNotFound() {
   usePageTitle("404 - Oldal nem található - QuickBite");
@@ -23,7 +24,7 @@ export default function PageNotFound() {
           </defs>
           <g fill="none" fillRule="evenodd">
             <path
-              fill="#FFF"
+              fill=""
               d="M0 0H1366V800H0z"
               transform="translate(-448 -157)"
             />
@@ -134,8 +135,8 @@ export default function PageNotFound() {
         </svg>
       </div>
       <div style={{ textAlign: "center", marginTop: "-10rem" }}>
-        <a
-          href="/"
+        <Link
+          to="/"
           className="page404-home-link"
           style={{
             display: "inline-block",
@@ -145,7 +146,7 @@ export default function PageNotFound() {
           }}
         >
           Vissza
-        </a>
+        </Link>
       </div>
     </>
   );
