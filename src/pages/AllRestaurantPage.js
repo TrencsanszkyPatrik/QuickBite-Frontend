@@ -20,7 +20,6 @@ export default function AllRestaurantPage({ favorites = [], onToggleFavorite }) 
   const [searchSuggestions, setSearchSuggestions] = useState([])
   const [showSuggestions, setShowSuggestions] = useState(false)
   const [allRestaurants, setAllRestaurants] = useState([])
-  const [allMenuItems, setAllMenuItems] = useState([])
   const [selectedCategoryId, setSelectedCategoryId] = useState(null)
   const [categories, setCategories] = useState([])
   const [isLoadingCategories, setIsLoadingCategories] = useState(true)
@@ -63,23 +62,8 @@ export default function AllRestaurantPage({ favorites = [], onToggleFavorite }) 
       }
     }
 
-    const fetchMenuItems = async () => {
-      try {
-        const response = await fetch(`${API_BASE}/MenuItems`)
-        if (!response.ok) {
-          throw new Error('Nem sikerült betölteni a menü tételeket.')
-        }
-        const data = await response.json()
-        console.log('Menu items loaded:', data.length)
-        setAllMenuItems(data)
-      } catch (err) {
-        console.error('Hiba történt a menü tételek betöltése közben:', err)
-      }
-    }
-
     fetchCategories()
     fetchRestaurants()
-    fetchMenuItems()
   }, [])
 
   useEffect(() => {
@@ -148,16 +132,9 @@ export default function AllRestaurantPage({ favorites = [], onToggleFavorite }) 
       }
     })
 
-    // Étel nevek alapján
-    allMenuItems.forEach(item => {
-      if (item.name.toLowerCase().includes(query)) {
-        suggestions.add(`Étel: ${item.name}`)
-      }
-    })
-
     setSearchSuggestions(Array.from(suggestions).slice(0, 10)) 
     setShowSuggestions(true)
-  }, [searchQuery, allRestaurants, allMenuItems])
+  }, [searchQuery, allRestaurants])
 
   return (
     <>
@@ -258,13 +235,17 @@ export default function AllRestaurantPage({ favorites = [], onToggleFavorite }) 
 
         <div style={{ marginTop: "2rem" }}>
           <RestaurantCardList
+            restaurants={allRestaurants}
             showDiscountOnly={showDiscountOnly}
             showFreeDeliveryOnly={showFreeDeliveryOnly}
+            showCardPaymentOnly={showCardPaymentOnly}
+            showOpenNowOnly={showOpenNowOnly}
             selectedCuisineId={selectedCategoryId}
             searchQuery={searchQuery}
             favorites={favorites}
             onToggleFavorite={onToggleFavorite}
-            menuItems={allMenuItems}
+            menuItems={[]}
+            isLoading={false}
           />
         </div>
       </div>
