@@ -13,6 +13,7 @@ export default function RestaurantCardList({
   favorites = [],
   onToggleFavorite,
   limit = null,
+  skip = 0,
   menuItems = [],
   isLoading = false
 }) {
@@ -50,8 +51,8 @@ export default function RestaurantCardList({
   }
 
   const visibleRestaurants = limit
-    ? filteredRestaurants.slice(0, limit)
-    : filteredRestaurants
+    ? filteredRestaurants.slice(skip, skip + limit)
+    : filteredRestaurants.slice(skip)
 
   return (
     <div className="restaurant-list-section container">
