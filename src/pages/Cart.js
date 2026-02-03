@@ -300,7 +300,6 @@ export default function Cart() {
       <main className="cart-page">
         <div className="cart-container">
           <div className="cart-header">
-            <h1>Kosár</h1>
             {cartItems.length > 0 && (
               <button className="clear-cart-btn" onClick={clearCart}>
                 Kosár ürítése
