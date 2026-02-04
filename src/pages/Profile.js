@@ -139,6 +139,10 @@ export default function Profile() {
             <span className="stat-value">{getFavoritesCount()}</span>
             <span className="stat-label">Kedvenc étterem</span>
           </Link>
+          <Link to="/rendelesek" className="profile-stat-card">
+            <span className="stat-value">{profile.ordersCount ?? 0}</span>
+            <span className="stat-label">Leadott rendelés</span>
+          </Link>
           <div className="profile-stat-card">
             <span className="stat-value">{profile.reviewsCount ?? 0}</span>
             <span className="stat-label">Értékelésem</span>
