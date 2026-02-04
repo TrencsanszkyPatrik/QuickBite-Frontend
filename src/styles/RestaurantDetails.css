@@ -334,136 +334,6 @@
   font-size: 0.95rem;
 }
 
-/* Modal Styles */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 3000;
-  animation: fadeIn 0.2s ease;
-  backdrop-filter: blur(3px);
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-.modal-content {
-  background: var(--bg-light);
-  border-radius: 20px;
-  padding: 2rem;
-  max-width: 680px;
-  width: 90%;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-  animation: slideUp 0.3s ease;
-  border: 2px solid var(--border-light);
-}
-
-@keyframes slideUp {
-  from {
-    transform: translateY(30px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.5rem;
-  padding-bottom: 1rem;
-  border-bottom: 2px solid var(--border-light);
-}
-
-.modal-header h2 {
-  margin: 0;
-  font-size: 1.75rem;
-  font-weight: 700;
-  color: var(--primary);
-}
-
-.modal-close {
-  background: none;
-  border: none;
-  font-size: 1.75rem;
-  cursor: pointer;
-  color: var(--text-light);
-  width: 36px;
-  height: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 8px;
-  transition: all 0.2s ease;
-}
-
-.modal-close:hover {
-  background: var(--bg-warm);
-  color: var(--primary);
-  transform: rotate(90deg);
-}
-
-.modal-body {
-  text-align: center;
-  padding: 1rem 0;
-}
-
-.modal-icon {
-  font-size: 4rem;
-  margin-bottom: 1rem;
-  animation: bounce 0.6s ease;
-}
-
-@keyframes bounce {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
-}
-
-.modal-text {
-  font-size: 1rem;
-  color: var(--text);
-  margin-bottom: 0.75rem;
-  line-height: 1.6;
-}
-
-.modal-text strong {
-  color: var(--primary);
-  font-weight: 700;
-}
-
-.modal-question {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: var(--primary);
-  margin-top: 1.5rem;
-  margin-bottom: 0;
-}
-
-.modal-actions {
-  display: flex;
-  gap: 1rem;
-  margin-top: 2rem;
-}
-
 .product-modal-body {
   text-align: left;
   padding: 0.5rem 0 0 0;
@@ -592,41 +462,6 @@
   transform: none;
 }
 
-.modal-btn {
-  flex: 1;
-  padding: 1rem 1.5rem;
-  border: none;
-  border-radius: 12px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.modal-btn-cancel {
-  background: white;
-  color: var(--text);
-  border: 2px solid var(--border-light);
-}
-
-.modal-btn-cancel:hover {
-  background: var(--bg-warm);
-  border-color: var(--accent);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.modal-btn-confirm {
-  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-  color: white;
-}
-
-.modal-btn-confirm:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(60, 61, 55, 0.4);
-}
-
 /* Responsive design */
 @media (max-width: 768px) {
   .restaurant-details-header {
@@ -693,22 +528,7 @@
     justify-content: center;
   }
   
-  .modal-content {
-    padding: 1.5rem;
-    width: 95%;
-  }
-  
-  .modal-header h2 {
-    font-size: 1.5rem;
-  }
-  
-  .modal-actions {
-    flex-direction: column;
-  }
-  
-  .modal-btn {
-    width: 100%;
-  }
+  /* modal responsive styles moved to styles/modal.css */
 }
 @media (max-width: 700px) {
   .restaurant-details-header {

@@ -4,6 +4,7 @@ import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import AddressAutocomplete from '../components/AddressAutocomplete'
 import '../styles/cart.css'
+import '../styles/modal.css'
 import { usePageTitle } from '../utils/usePageTitle'
 import { API_BASE, getAuthHeaders } from '../utils/api'
 import { Link } from 'react-router-dom'
@@ -26,6 +27,10 @@ export default function Cart() {
   const [couponError, setCouponError] = useState('')
   const [couponSuccess, setCouponSuccess] = useState('')
   const [isValidatingCoupon, setIsValidatingCoupon] = useState(false)
+  const [showClearCartModal, setShowClearCartModal] = useState(false)
+  const [showCheckoutConfirmModal, setShowCheckoutConfirmModal] = useState(false)
+  const [showOrderSuccessModal, setShowOrderSuccessModal] = useState(false)
+  const [isPlacingOrder, setIsPlacingOrder] = useState(false)
   const [deliveryAddress, setDeliveryAddress] = useState({
     fullName: '',
     address: '',
@@ -196,9 +201,36 @@ export default function Cart() {
   }
 
   const clearCart = () => {
-    if (window.confirm('Biztosan törölni szeretnéd az összes terméket a kosárból?')) {
-      setCartItems([])
+    setShowClearCartModal(true)
+  }
+
+  const handleClearCartConfirm = () => {
+    setCartItems([])
+    setShowClearCartModal(false)
+  }
+
+  const handleClearCartCancel = () => {
+    setShowClearCartModal(false)
+  }
+
+  const handleCheckoutConfirm = async () => {
+    setIsPlacingOrder(true)
+    try {
+      await processOrder()
+      setShowCheckoutConfirmModal(false)
+      setShowOrderSuccessModal(true)
+    } finally {
+      setIsPlacingOrder(false)
     }
+  }
+
+  const handleCheckoutCancel = () => {
+    if (isPlacingOrder) return
+    setShowCheckoutConfirmModal(false)
+  }
+
+  const closeOrderSuccessModal = () => {
+    setShowOrderSuccessModal(false)
   }
 
   const handleCheckout = (e) => {
@@ -222,7 +254,7 @@ export default function Cart() {
       return
     }
 
-    processOrder()
+    setShowCheckoutConfirmModal(true)
   }
 
   const processOrder = async () => {
@@ -265,7 +297,7 @@ export default function Cart() {
       timestamp: new Date().toISOString()
     }
 
-    alert('Sikeres rendelés! Köszönjük a vásárlást!')
+    // TODO: ha lesz backend order endpoint, itt kell elküldeni az `order`-t.
     
     setCartItems([])
     setAppliedCoupon(null)
@@ -388,9 +420,120 @@ export default function Cart() {
   const restaurantId = cartItems.length > 0 ? cartItems[0].restaurantId : null
   const restaurantName = cartItems.length > 0 ? cartItems[0].restaurantName : null
 
+  const checkoutPaymentLabel = selectedPaymentId
+    ? userProfile?.paymentMethods?.find((pm) => pm.id === selectedPaymentId)?.displayName || 'Mentett fizetési mód'
+    : paymentMethod === 'credit-card'
+      ? 'Bankkártya'
+      : paymentMethod === 'cash'
+        ? 'Készpénz'
+        : paymentMethod
+
   return (
     <>
       <Navbar />
+      {showClearCartModal && (
+        <div className="modal-overlay" onClick={handleClearCartCancel}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>Kosár ürítése</h2>
+              <button className="modal-close" onClick={handleClearCartCancel} aria-label="Bezárás">
+                ✕
+              </button>
+            </div>
+            <div className="modal-body">
+              <div className="modal-icon">⚠️</div>
+              <p className="modal-text">
+                A kosaradban lévő összes tétel törlődni fog{restaurantName ? (
+                  <>
+                    {' '}innen: <strong>{restaurantName}</strong>
+                  </>
+                ) : null}
+                .
+              </p>
+              <p className="modal-question">Biztosan üríted a kosarat?</p>
+            </div>
+            <div className="modal-actions">
+              <button className="modal-btn modal-btn-cancel" onClick={handleClearCartCancel}>
+                Mégse
+              </button>
+              <button className="modal-btn modal-btn-confirm" onClick={handleClearCartConfirm}>
+                Kosár ürítése
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {showCheckoutConfirmModal && (
+        <div className="modal-overlay" onClick={handleCheckoutCancel}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>Rendelés leadása</h2>
+              <button className="modal-close" onClick={handleCheckoutCancel} aria-label="Bezárás">
+                ✕
+              </button>
+            </div>
+            <div className="modal-body">
+              <div className="modal-icon">🧾</div>
+              <p className="modal-text">
+                Ellenőrizd a rendelésed adatait, majd erősítsd meg a leadást.
+              </p>
+              {restaurantName && (
+                <p className="modal-text">
+                  Étterem: <strong>{restaurantName}</strong>
+                </p>
+              )}
+              <p className="modal-text">
+                Fizetési mód: <strong>{checkoutPaymentLabel}</strong>
+              </p>
+              <p className="modal-text">
+                Szállítás: <strong>{deliveryAddress.zip} {deliveryAddress.city}, {deliveryAddress.address}</strong>
+              </p>
+              <p className="modal-text">
+                Összesen fizetendő: <strong>{calculateTotal().toLocaleString()} Ft</strong>
+              </p>
+              <p className="modal-question">Leadod a rendelést?</p>
+            </div>
+            <div className="modal-actions">
+              <button
+                className="modal-btn modal-btn-cancel"
+                onClick={handleCheckoutCancel}
+                disabled={isPlacingOrder}
+              >
+                Mégse
+              </button>
+              <button
+                className="modal-btn modal-btn-confirm"
+                onClick={handleCheckoutConfirm}
+                disabled={isPlacingOrder}
+              >
+                {isPlacingOrder ? 'Folyamatban...' : 'Rendelés leadása'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {showOrderSuccessModal && (
+        <div className="modal-overlay" onClick={closeOrderSuccessModal}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>Sikeres rendelés</h2>
+              <button className="modal-close" onClick={closeOrderSuccessModal} aria-label="Bezárás">
+                ✕
+              </button>
+            </div>
+            <div className="modal-body">
+              <div className="modal-icon">✅</div>
+              <p className="modal-text">Köszönjük a vásárlást! A rendelésedet rögzítettük.</p>
+              <p className="modal-question">Jó étvágyat!</p>
+            </div>
+            <div className="modal-actions">
+              <button className="modal-btn modal-btn-confirm" onClick={closeOrderSuccessModal}>
+                Rendben
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       <main className="cart-page">
         <div className="cart-container">
           <div className="cart-header">
