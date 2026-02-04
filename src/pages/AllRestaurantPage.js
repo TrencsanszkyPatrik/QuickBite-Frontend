@@ -119,15 +119,12 @@ export default function AllRestaurantPage({ favorites = [], onToggleFavorite }) 
       if (restaurant.address.toLowerCase().includes(query)) {
         suggestions.add(`Cím: ${restaurant.address}`)
       }
-      if (restaurant.cuisine?.toLowerCase().includes(query)) {
-        suggestions.add(`Típus: ${restaurant.cuisine}`)
-      }
       if (restaurant.city?.toLowerCase().includes(query)) {
         suggestions.add(`Város: ${restaurant.city}`)
       }
     })
 
-    setSearchSuggestions(Array.from(suggestions).slice(0, 10)) 
+    setSearchSuggestions(Array.from(suggestions).slice(0, 4)) 
     setShowSuggestions(true)
   }, [searchQuery, allRestaurants])
 
@@ -144,7 +141,7 @@ export default function AllRestaurantPage({ favorites = [], onToggleFavorite }) 
             <input
               type="text"
               className="restaurant-search"
-              placeholder="Keress név, cím, típus vagy étel alapján..."
+              placeholder="Keress név, cím, város alapján..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onFocus={() => searchQuery.trim().length >= 2 && setShowSuggestions(true)}
