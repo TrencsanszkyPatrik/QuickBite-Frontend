@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import axios from 'axios'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import AddressAutocomplete from '../components/AddressAutocomplete'
@@ -54,9 +55,9 @@ export default function Cart() {
 
   const loadUserProfile = async () => {
     try {
-      const res = await fetch(`${API_BASE}/Profile/me`, { headers: getAuthHeaders() })
-      if (res.ok) {
-        const data = await res.json()
+      const res = await axios.get(`${API_BASE}/Profile/me`, { headers: getAuthHeaders() })
+      const data = res.data
+      if (data) {
         setUserProfile(data)
         
         const defaultAddress = data.addresses?.find(a => a.isDefault)
@@ -152,17 +153,17 @@ export default function Cart() {
         Object.assign(headers, getAuthHeaders())
       }
 
-      const response = await fetch(`${API_BASE}/Coupons${endpoint}`, {
-        method: 'POST',
-        headers: headers,
-        body: JSON.stringify({
+      const response = await axios.post(
+        `${API_BASE}/Coupons${endpoint}`,
+        {
           code: couponCode.trim(),
           orderAmount: orderAmount,
           restaurantId: restaurantId
-        })
-      })
+        },
+        { headers: headers }
+      )
 
-      const data = await response.json()
+      const data = response.data
       console.log('Kupon válasz:', data)
 
       if (data.isValid) {
@@ -231,22 +232,20 @@ export default function Cart() {
         const orderAmount = calculateSubtotal() + calculateDeliveryFee()
         const restaurantId = cartItems.length > 0 ? cartItems[0].restaurantId : null
         
-        const response = await fetch(`${API_BASE}/Coupons/apply`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            ...getAuthHeaders()
-          },
-          body: JSON.stringify({
+        await axios.post(
+          `${API_BASE}/Coupons/apply`,
+          {
             code: appliedCoupon.coupon.code,
             orderAmount: orderAmount,
             restaurantId: restaurantId
-          })
-        })
-
-        if (!response.ok) {
-          console.error('Kupon felhasználás sikertelen')
-        }
+          },
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              ...getAuthHeaders()
+            }
+          }
+        )
       } catch (error) {
         console.error('Hiba a kupon felhasználása során:', error)
       }
@@ -321,9 +320,9 @@ export default function Cart() {
   const loadSuggestedItems = async (restaurantId) => {
     setIsLoadingSuggestions(true)
     try {
-      const res = await fetch(`${API_BASE}/MenuItems/restaurant/${restaurantId}`)
-      if (res.ok) {
-        const allItems = await res.json()
+      const res = await axios.get(`${API_BASE}/MenuItems/restaurant/${restaurantId}`)
+      const allItems = res.data || []
+      if (allItems) {
         
         const cartItemIds = cartItems.map(item => item.id)
         const filtered = allItems.filter(item => !cartItemIds.includes(item.id))

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react'
+import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
@@ -40,22 +41,18 @@ export default function Opinions() {
   }, [])
 
   useEffect(() => {
-    fetchReviews()
+    loadReviews()
   }, [])
 
-  const fetchReviews = async () => {
+  const loadReviews = async () => {
     try {
       setLoading(true)
-      const response = await fetch(`${API_BASE}/QuickbiteReviews`)
-      if (!response.ok) {
-        throw new Error('Nem sikerült betölteni a véleményeket')
-      }
-      const text = await response.text()
-      const data = text ? JSON.parse(text) : []
-      setReviews(data || [])
+      const response = await axios.get(`${API_BASE}/QuickbiteReviews`)
+      const data = response.data || []
+      setReviews(data)
       setError(null)
     } catch (err) {
-      setError(err.message)
+      setError(err?.message || 'Nem sikerült betölteni a véleményeket')
       console.error('Hiba a vélemények betöltésekor:', err)
     } finally {
       setLoading(false)
@@ -88,21 +85,14 @@ export default function Opinions() {
     }
 
     try {
-      const response = await fetch(`${API_BASE}/QuickbiteReviews`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newReview)
+      const response = await axios.post(`${API_BASE}/QuickbiteReviews`, newReview, {
+        headers: { 'Content-Type': 'application/json' }
       })
-
-      if (response.ok) {
-        const addedReview = await response.json()
-        setReviews([addedReview, ...reviews])
-        setNewText('')
-        setNewStars(5)
-        showToast.success('Vélemény sikeresen hozzáadva!')
-      } else {
-        showToast.error('Hiba a vélemény hozzáadásakor')
-      }
+      const addedReview = response.data
+      setReviews([addedReview, ...reviews])
+      setNewText('')
+      setNewStars(5)
+      showToast.success('Vélemény sikeresen hozzáadva!')
     } catch (err) {
       console.error('Hiba:', err)
       showToast.error('Hiba a vélemény hozzáadásakor')

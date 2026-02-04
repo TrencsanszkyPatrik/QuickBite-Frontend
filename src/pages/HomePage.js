@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import axios from 'axios'
 import { Link, useNavigate } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
@@ -25,28 +26,26 @@ export default function HomePage({ favorites = [], onToggleFavorite }) {
     const [isLoading, setIsLoading] = useState(true)
 
     useEffect(() => {
-        const fetchRestaurants = async () => {
+        const loadRestaurantData = async () => {
             try {
-                const response = await fetch(`${API_BASE}/Restaurants`)
-                if (response.ok) {
-                    const data = await response.json()
-                    const mapped = data.map((r) => ({
-                        ...r,
-                        id: String(r.id),
-                        address: `${r.city}, ${r.address}`,
-                        img: r.image_url,
-                        freeDelivery: r.free_delivery,
-                        acceptCards: r.accept_cards
-                    }))
-                    setRestaurants(mapped)
-                }
+                const response = await axios.get(`${API_BASE}/Restaurants`)
+                const data = response.data || []
+                const mapped = data.map((r) => ({
+                    ...r,
+                    id: String(r.id),
+                    address: `${r.city}, ${r.address}`,
+                    img: r.image_url,
+                    freeDelivery: r.free_delivery,
+                    acceptCards: r.accept_cards
+                }))
+                setRestaurants(mapped)
             } catch (err) {
                 console.error('Hiba az éttermek betöltésekor:', err)
             } finally {
                 setIsLoading(false)
             }
         }
-        fetchRestaurants()
+        loadRestaurantData()
     }, [])
 
     useEffect(() => {

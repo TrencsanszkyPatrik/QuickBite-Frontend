@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import axios from 'axios'
 import { useParams, useNavigate } from 'react-router-dom'
 import '../styles/RestaurantDetails.css'
 import Navbar from '../components/Navbar'
@@ -125,21 +126,17 @@ export default function RestaurantDetails({ favorites = [], onToggleFavorite }) 
   }
 
   useEffect(() => {
-    const fetchRestaurantAndMenu = async () => {
+    const loadRestaurantAndMenuData = async () => {
       try {
         setIsLoading(true)
-        const [restaurantRes, menuRes] = await Promise.all([
-          fetch(`${API_BASE}/Restaurants/${id}`),
-          fetch(`${API_BASE}/MenuItems/restaurant/${id}`)
+        const [restaurantRes, menuRes, categoriesRes] = await Promise.all([
+          axios.get(`${API_BASE}/Restaurants/${id}`),
+          axios.get(`${API_BASE}/MenuItems/restaurant/${id}`),
+          axios.get(`${API_BASE}/Categories`)
         ])
 
-        if (!restaurantRes.ok) {
-          throw new Error('Nem sikerült betölteni az étterem adatait.')
-        }
-
-        const restaurantData = await restaurantRes.json()
-        const categoriesRes = await fetch(`${API_BASE}/Categories`)
-        const categories = await categoriesRes.json()
+        const restaurantData = restaurantRes.data
+        const categories = categoriesRes.data || []
         const cuisine = categories.find((c) => c.id === restaurantData.cuisine_id)
 
         const mappedRestaurant = {
@@ -153,25 +150,23 @@ export default function RestaurantDetails({ favorites = [], onToggleFavorite }) 
 
         setRestaurant(mappedRestaurant)
 
-        if (menuRes.ok) {
-          const menuData = await menuRes.json()
-          const mappedMenu = menuData.map((item) => ({
-            name: item.name,
-            price: item.price,
-            img: item.image_url || '/img/EtelKepek/default.png',
-            desc: item.description || '',
-            category: item.category
-          }))
-          setMenuItems(mappedMenu)
-        }
+        const menuData = menuRes.data || []
+        const mappedMenu = menuData.map((item) => ({
+          name: item.name,
+          price: item.price,
+          img: item.image_url || '/img/EtelKepek/default.png',
+          desc: item.description || '',
+          category: item.category
+        }))
+        setMenuItems(mappedMenu)
       } catch (err) {
         console.error(err)
-        setError(err.message || 'Hiba történt az adatok betöltése közben.')
+        setError(err?.message || 'Hiba történt az adatok betöltése közben.')
       } finally {
         setIsLoading(false)
       }
     }
-    fetchRestaurantAndMenu()
+    loadRestaurantAndMenuData()
   }, [id])
 
   usePageTitle(restaurant ? `${restaurant.name} - QuickBite` : 'Étterem részletek - QuickBite')

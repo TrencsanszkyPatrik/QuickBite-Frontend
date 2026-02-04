@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
@@ -37,23 +38,20 @@ export default function Login() {
 
     setIsLoading(true)
     try {
-      const response = await fetch('https://localhost:7236/api/Auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+      const response = await axios.post(
+        'https://localhost:7236/api/Auth/login',
+        {
           email: loginEmail,
           password: loginPassword
-        })
-      })
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
+      )
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ message: 'Bejelentkezés sikertelen' }))
-        throw new Error(errorData.message || 'Bejelentkezés sikertelen')
-      }
-
-      const data = await response.json()
+      const data = response.data
       if (data.token) {
         localStorage.setItem('quickbite_token', data.token)
         localStorage.setItem('quickbite_user', JSON.stringify({
@@ -66,11 +64,12 @@ export default function Login() {
 
       showToast.success('Sikeres bejelentkezés!')
       setTimeout(() => {
-        navigate('/')
+        navigate('/profilom')
       }, 1000)
     } catch (error) {
       console.error('Bejelentkezési hiba:', error)
-      showToast.error(error.message || 'Bejelentkezés sikertelen. Kérjük, ellenőrizze az adatokat!')
+      const message = error?.response?.data?.message || error?.message || 'Bejelentkezés sikertelen. Kérjük, ellenőrizze az adatokat!'
+      showToast.error(message)
     } finally {
       setIsLoading(false)
     }
@@ -101,24 +100,21 @@ export default function Login() {
 
     setIsLoading(true)
     try {
-      const response = await fetch(`${API_BASE}/Auth/register`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+      const response = await axios.post(
+        `${API_BASE}/Auth/register`,
+        {
           fullName: registerFullName,
           email: registerEmail,
           password: registerPassword
-        })
-      })
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
+      )
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ message: 'Regisztráció sikertelen' }))
-        throw new Error(errorData.message || 'Regisztráció sikertelen')
-      }
-
-      const data = await response.json()
+      const data = response.data
       if (data.token) {
         localStorage.setItem('quickbite_token', data.token)
         localStorage.setItem('quickbite_user', JSON.stringify({
@@ -131,11 +127,12 @@ export default function Login() {
 
       showToast.success('Sikeres regisztráció!')
       setTimeout(() => {
-        navigate('/')
+        navigate('/profilom')
       }, 1000)
     } catch (error) {
       console.error('Regisztrációs hiba:', error)
-      showToast.error(error.message || 'Regisztráció sikertelen. Kérjük, próbálja újra!')
+      const message = error?.response?.data?.message || error?.message || 'Regisztráció sikertelen. Kérjük, próbálja újra!'
+      showToast.error(message)
     } finally {
       setIsLoading(false)
     }

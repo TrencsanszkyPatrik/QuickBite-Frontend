@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
+import axios from 'axios'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import '../styles/homepage.css'
@@ -26,13 +27,10 @@ export default function AllRestaurantPage({ favorites = [], onToggleFavorite }) 
   const hasAppliedUrlFilters = useRef(false)
 
   useEffect(() => {
-    const fetchCategories = async () => {
+    const loadRestaurantCategories = async () => {
       try {
-        const response = await fetch(`${API_BASE}/Categories`)
-        if (!response.ok) {
-          throw new Error('Nem sikerült betölteni a kategóriákat.');
-        }
-        const data = await response.json()
+        const response = await axios.get(`${API_BASE}/Categories`)
+        const data = response.data || []
         setCategories(data)
       } catch (err) {
         console.error('Hiba történt a kategóriák betöltése közben:', err)
@@ -41,13 +39,10 @@ export default function AllRestaurantPage({ favorites = [], onToggleFavorite }) 
       }
     }
 
-    const fetchRestaurants = async () => {
+    const loadRestaurants = async () => {
       try {
-        const response = await fetch(`${API_BASE}/Restaurants`)
-        if (!response.ok) {
-          throw new Error('Nem sikerült betölteni az éttermeket.')
-        }
-        const data = await response.json()
+        const response = await axios.get(`${API_BASE}/Restaurants`)
+        const data = response.data || []
         const mapped = data.map((r) => ({
           ...r,
           id: String(r.id),
@@ -62,8 +57,8 @@ export default function AllRestaurantPage({ favorites = [], onToggleFavorite }) 
       }
     }
 
-    fetchCategories()
-    fetchRestaurants()
+    loadRestaurantCategories()
+    loadRestaurants()
   }, [])
 
   useEffect(() => {

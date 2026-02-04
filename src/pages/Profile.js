@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import axios from 'axios'
 import { useNavigate, Link } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
@@ -26,14 +27,17 @@ export default function Profile() {
   })
 
   const loadProfile = async () => {
-    const res = await fetch(`${API_BASE}/Profile/me`, { headers: getAuthHeaders() })
-    if (res.status === 401) {
-      showToast.error('Munkamenet lejárt. Jelentkezz be újra!')
-      navigate('/bejelentkezes')
-      return null
+    try {
+      const res = await axios.get(`${API_BASE}/Profile/me`, { headers: getAuthHeaders() })
+      return res.data
+    } catch (err) {
+      if (err?.response?.status === 401) {
+        showToast.error('Munkamenet lejárt. Jelentkezz be újra!')
+        navigate('/bejelentkezes')
+        return null
+      }
+      throw new Error('Profil betöltése sikertelen')
     }
-    if (!res.ok) throw new Error('Profil betöltése sikertelen')
-    return res.json()
   }
 
   useEffect(() => {
@@ -70,17 +74,16 @@ export default function Profile() {
     e.preventDefault()
     setIsSaving(true)
     try {
-      const res = await fetch(`${API_BASE}/Profile/me`, {
-        method: 'PATCH',
-        headers: getAuthHeaders(),
-        body: JSON.stringify({
+      const res = await axios.patch(
+        `${API_BASE}/Profile/me`,
+        {
           name: editForm.name || undefined,
           phone: editForm.phone || undefined,
           avatarUrl: editForm.avatarUrl || undefined
-        })
-      })
-      if (!res.ok) throw new Error('Mentés sikertelen')
-      const data = await res.json()
+        },
+        { headers: getAuthHeaders() }
+      )
+      const data = res.data
       setProfile(data)
       const stored = localStorage.getItem('quickbite_user')
       if (stored) {
