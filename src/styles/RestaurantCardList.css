@@ -59,6 +59,29 @@
   font-weight: 500;
 }
 
+.restaurant-rating-card {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0.2rem 0;
+}
+
+.rating-stars-small {
+  display: flex;
+  gap: 0.15rem;
+}
+
+.rating-star-small {
+  color: #ffd700;
+  font-size: 0.85rem;
+}
+
+.rating-value-small {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--primary-dark);
+}
+
 .restaurant-address {
   color: var(--text-light);
   font-size: 0.92rem;

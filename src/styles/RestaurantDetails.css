@@ -23,8 +23,8 @@
   margin-bottom: 2.5rem;
 }
 .restaurant-details-img {
-  width: 290px;
-  height: 250px;
+  width: 50%;
+  height: 600px;
   object-fit: cover;
   border-radius: 18px;
   box-shadow: 0 2px 12px rgba(59,51,85,0.10);
@@ -89,6 +89,209 @@
   flex-wrap: wrap;
   gap: 1rem;
   margin-top: 0.5rem;
+}
+
+/* Értékelési szekció stílusok - Új, szebb design */
+.restaurant-rating-section {
+  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+  border: 2px solid #e9ecef;
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.rating-overview {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.rating-score {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 150px;
+}
+
+.rating-number {
+  font-size: 3rem;
+  font-weight: 800;
+  color: var(--primary-dark);
+  line-height: 1;
+}
+
+.rating-stars-display {
+  display: flex;
+  gap: 0.3rem;
+}
+
+.rating-star {
+  color: #ffd700;
+  font-size: 1.3rem;
+}
+
+.rating-count {
+  font-size: 0.95rem;
+  color: var(--text-light);
+  font-weight: 500;
+}
+
+.rating-no-reviews {
+  font-size: 1.1rem;
+  color: var(--text-light);
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.rating-divider {
+  width: 2px;
+  height: 80px;
+  background: linear-gradient(to bottom, transparent, #dee2e6, transparent);
+}
+
+.user-rating-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  flex: 1;
+}
+
+.rating-label {
+  font-size: 1rem;
+  color: var(--primary-dark);
+  margin: 0;
+  font-weight: 700;
+}
+
+.rating-stars-interactive {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.star-wrapper {
+  position: relative;
+  display: inline-block;
+  width: 2.2rem;
+  height: 2.2rem;
+  cursor: pointer;
+}
+
+.star-half {
+  position: absolute;
+  top: 0;
+  width: 50%;
+  height: 100%;
+  z-index: 2;
+}
+
+.star-half.left {
+  left: 0;
+}
+
+.star-half.right {
+  right: 0;
+}
+
+.rating-star.interactive {
+  position: absolute;
+  top: 0;
+  left: 0;
+  font-size: 2.2rem;
+  color: #ffd700;
+  transition: transform 0.2s ease, filter 0.2s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.star-wrapper:hover .rating-star.interactive {
+  transform: scale(1.2);
+  filter: drop-shadow(0 2px 8px rgba(255, 215, 0, 0.5));
+}
+
+.current-user-rating {
+  font-size: 0.9rem;
+  color: var(--primary);
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  background: rgba(59, 51, 85, 0.05);
+  border-radius: 8px;
+  display: inline-block;
+  align-self: flex-start;
+}
+
+.current-user-rating strong {
+  color: #ffd700;
+  font-size: 1.1rem;
+}
+
+.rating-login-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  align-self: flex-start;
+  font-size: 0.95rem;
+}
+
+.rating-login-btn:hover {
+  background: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 51, 85, 0.3);
+}
+
+.rating-submitting {
+  font-size: 0.9rem;
+  color: var(--secondary);
+  font-weight: 600;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.rating-submitting i {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.restaurant-phone {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text);
+  font-size: 1rem;
+}
+
+.restaurant-phone i {
+  color: var(--primary);
+  font-size: 1.1rem;
+}
+
+.restaurant-phone a {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.2s ease;
+}
+
+.restaurant-phone a:hover {
+  color: var(--secondary);
+  text-decoration: underline;
 }
 
 .feature-badge {

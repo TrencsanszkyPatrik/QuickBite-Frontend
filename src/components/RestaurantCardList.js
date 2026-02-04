@@ -1,6 +1,8 @@
-import React, { useMemo } from 'react'
+import React, { useMemo, useEffect, useState } from 'react'
+import axios from 'axios'
 import '../styles/RestaurantCardList.css'
 import { useNavigate } from 'react-router-dom'
+import { API_BASE } from '../utils/api'
 
 export default function RestaurantCardList({
   restaurants = [],
@@ -18,6 +20,46 @@ export default function RestaurantCardList({
   isLoading = false
 }) {
   const navigate = useNavigate()
+  const [restaurantRatings, setRestaurantRatings] = useState({})
+
+  useEffect(() => {
+    // Minden étterem értékelésének betöltése
+    const loadRatings = async () => {
+      const ratings = {}
+      await Promise.all(
+        restaurants.map(async (restaurant) => {
+          try {
+            const res = await axios.get(`${API_BASE}/Reviews/restaurant/${restaurant.id}`)
+            ratings[restaurant.id] = res.data.averageRating
+          } catch (err) {
+            ratings[restaurant.id] = 0
+          }
+        })
+      )
+      setRestaurantRatings(ratings)
+    }
+    
+    if (restaurants.length > 0) {
+      loadRatings()
+    }
+  }, [restaurants])
+
+  const renderStars = (rating) => {
+    const stars = []
+    const fullStars = Math.floor(rating)
+    const hasHalfStar = rating % 1 >= 0.5
+    
+    for (let i = 1; i <= 5; i++) {
+      if (i <= fullStars) {
+        stars.push(<i key={i} className="bi bi-star-fill rating-star-small" />)
+      } else if (i === fullStars + 1 && hasHalfStar) {
+        stars.push(<i key={i} className="bi bi-star-half rating-star-small" />)
+      } else {
+        stars.push(<i key={i} className="bi bi-star rating-star-small" />)
+      }
+    }
+    return stars
+  }
 
   const filteredRestaurants = useMemo(() => {
     return restaurants.filter((restaurant) => {
@@ -88,6 +130,14 @@ export default function RestaurantCardList({
             <div className="restaurant-info">
               <h3 className="restaurant-name">{r.name}</h3>
               <span className="restaurant-cuisine">{r.cuisine}</span>
+              {restaurantRatings[r.id] !== undefined && restaurantRatings[r.id] > 0 && (
+                <div className="restaurant-rating-card">
+                  <div className="rating-stars-small">
+                    {renderStars(restaurantRatings[r.id])}
+                  </div>
+                  <span className="rating-value-small">{restaurantRatings[r.id].toFixed(1)}</span>
+                </div>
+              )}
               <span className="restaurant-address">{r.address}</span>
             </div>
           </div>

@@ -5,7 +5,7 @@ import '../styles/RestaurantDetails.css'
 import '../styles/modal.css'
 import Navbar from '../components/Navbar'
 import { usePageTitle } from '../utils/usePageTitle'
-import { API_BASE } from '../utils/api'
+import { API_BASE, getAuthHeaders } from '../utils/api'
 import { showToast } from '../utils/toast'
 
 export default function RestaurantDetails({ favorites = [], onToggleFavorite }) {
@@ -23,6 +23,12 @@ export default function RestaurantDetails({ favorites = [], onToggleFavorite }) 
   const [showItemModal, setShowItemModal] = useState(false)
   const [selectedItemIndex, setSelectedItemIndex] = useState(-1)
   const [selectedQuantity, setSelectedQuantity] = useState(1)
+  
+  const [reviewData, setReviewData] = useState(null)
+  const [userRating, setUserRating] = useState(0)
+  const [hoverRating, setHoverRating] = useState(0)
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [isSubmittingRating, setIsSubmittingRating] = useState(false)
 
   const openItemModal = (itemIndex) => {
     if (typeof itemIndex !== 'number') return
@@ -127,6 +133,11 @@ export default function RestaurantDetails({ favorites = [], onToggleFavorite }) 
   }
 
   useEffect(() => {
+    const token = localStorage.getItem('quickbite_token')
+    setIsLoggedIn(!!token)
+  }, [])
+
+  useEffect(() => {
     const loadRestaurantAndMenuData = async () => {
       try {
         setIsLoading(true)
@@ -160,6 +171,9 @@ export default function RestaurantDetails({ favorites = [], onToggleFavorite }) 
           category: item.category
         }))
         setMenuItems(mappedMenu)
+        
+        // Értékelések betöltése
+        loadReviews()
       } catch (err) {
         console.error(err)
         setError(err?.message || 'Hiba történt az adatok betöltése közben.')
@@ -169,6 +183,116 @@ export default function RestaurantDetails({ favorites = [], onToggleFavorite }) 
     }
     loadRestaurantAndMenuData()
   }, [id])
+
+  const loadReviews = async () => {
+    try {
+      const reviewsRes = await axios.get(`${API_BASE}/Reviews/restaurant/${id}`)
+      setReviewData(reviewsRes.data)
+      
+      // Felhasználó saját értékelésének betöltése ha be van jelentkezve
+      if (isLoggedIn) {
+        try {
+          const userReviewRes = await axios.get(
+            `${API_BASE}/Reviews/restaurant/${id}/user-review`,
+            { headers: getAuthHeaders() }
+          )
+          setUserRating(userReviewRes.data.rating)
+        } catch (err) {
+          // Nincs még értékelés
+          setUserRating(0)
+        }
+      }
+    } catch (err) {
+      console.error('Értékelések betöltése sikertelen:', err)
+    }
+  }
+
+  const handleRatingSubmit = async (rating) => {
+    if (!isLoggedIn) {
+      showToast.error('Bejelentkezés szükséges az értékeléshez!')
+      setTimeout(() => navigate('/bejelentkezes'), 1000)
+      return
+    }
+
+    setIsSubmittingRating(true)
+    try {
+      await axios.post(
+        `${API_BASE}/Reviews`,
+        {
+          restaurantId: parseInt(id),
+          rating: rating,
+          comment: null
+        },
+        { headers: getAuthHeaders() }
+      )
+      
+      setUserRating(rating)
+      showToast.success('Értékelés sikeresen elküldve!')
+      
+      // Értékelések újratöltése
+      loadReviews()
+    } catch (err) {
+      console.error('Értékelés hiba:', err)
+      showToast.error('Hiba az értékelés küldésekor')
+    } finally {
+      setIsSubmittingRating(false)
+    }
+  }
+
+  const renderStars = (rating, interactive = false) => {
+    const stars = []
+    
+    if (interactive) {
+      // Interaktív csillagok félcsillag támogatással
+      for (let i = 1; i <= 5; i++) {
+        const currentRating = hoverRating || userRating
+        const isFull = currentRating >= i
+        const isHalf = currentRating === i - 0.5
+        
+        let starClass = 'bi bi-star'
+        if (isFull) {
+          starClass = 'bi bi-star-fill'
+        } else if (isHalf) {
+          starClass = 'bi bi-star-half'
+        }
+        
+        stars.push(
+          <div 
+            key={i} 
+            className="star-wrapper"
+            onMouseLeave={() => setHoverRating(0)}
+          >
+            <div 
+              className="star-half left"
+              onMouseEnter={() => setHoverRating(i - 0.5)}
+              onClick={() => handleRatingSubmit(i - 0.5)}
+            />
+            <div 
+              className="star-half right"
+              onMouseEnter={() => setHoverRating(i)}
+              onClick={() => handleRatingSubmit(i)}
+            />
+            <i className={`${starClass} rating-star interactive`} />
+          </div>
+        )
+      }
+    } else {
+      // Statikus csillagok megjelenítéshez
+      const fullStars = Math.floor(rating)
+      const hasHalfStar = rating % 1 >= 0.5
+      
+      for (let i = 1; i <= 5; i++) {
+        if (i <= fullStars) {
+          stars.push(<i key={i} className="bi bi-star-fill rating-star" />)
+        } else if (i === fullStars + 1 && hasHalfStar) {
+          stars.push(<i key={i} className="bi bi-star-half rating-star" />)
+        } else {
+          stars.push(<i key={i} className="bi bi-star rating-star" />)
+        }
+      }
+    }
+    return stars
+  }
 
   usePageTitle(restaurant ? `${restaurant.name} - QuickBite` : 'Étterem részletek - QuickBite')
 
@@ -342,15 +466,65 @@ export default function RestaurantDetails({ favorites = [], onToggleFavorite }) 
           <div className="restaurant-details-meta">
             <span className="cuisine">{restaurant.cuisine}</span> • <span className="address">{restaurant.address}</span>
           </div>
+          
           {restaurant.phone && (
             <div className="restaurant-phone">
-              <strong>Telefonszám: </strong>
+              <i className="bi bi-telephone-fill"></i>
               <a href={`tel:${restaurant.phone}`}>{restaurant.phone}</a>
             </div>
           )}
+          
           {restaurant.description_long && (
             <p className="restaurant-description">{restaurant.description_long}</p>
           )}
+          
+          {/* Értékelés megjelenítése - új elrendezés */}
+          <div className="restaurant-rating-section">
+            <div className="rating-overview">
+              {reviewData && reviewData.totalReviews > 0 ? (
+                <>
+                  <div className="rating-score">
+                    <span className="rating-number">{reviewData.averageRating.toFixed(1)}</span>
+                    <div className="rating-stars-display">
+                      {renderStars(reviewData.averageRating)}
+                    </div>
+                    <span className="rating-count">{reviewData.totalReviews} értékelés</span>
+                  </div>
+                </>
+              ) : (
+                <div className="rating-score">
+                  <span className="rating-no-reviews">Még nincs értékelés</span>
+                  <div className="rating-stars-display">
+                    {renderStars(0)}
+                  </div>
+                </div>
+              )}
+              
+              <div className="rating-divider"></div>
+              
+              <div className="user-rating-section">
+                <p className="rating-label">
+                  {isLoggedIn ? (
+                    userRating > 0 ? 'Módosítsa értékelését:' : 'Értékelje az éttermet:'
+                  ) : (
+                    'Értékeléshez jelentkezzen be'
+                  )}
+                </p>
+                <div className="rating-stars-interactive">
+                  {renderStars(userRating, true)}
+                </div>
+                {userRating > 0 && isLoggedIn && (
+                  <p className="current-user-rating">Az Ön értékelése: <strong>{userRating}</strong> csillag</p>
+                )}
+                {!isLoggedIn && (
+                  <button className="rating-login-btn" onClick={() => navigate('/bejelentkezes')}>
+                    <i className="bi bi-box-arrow-in-right"></i> Bejelentkezés
+                  </button>
+                )}
+                {isSubmittingRating && <p className="rating-submitting"><i className="bi bi-hourglass-split"></i> Küldés...</p>}
+              </div>
+            </div>
+          </div>
           <div className="restaurant-features">
             {restaurant.free_delivery && (
               <div className="feature-badge feature-badge--delivery">
