@@ -16,6 +16,8 @@ import Login from './pages/Login'
 import Opinions from './pages/Opinions'
 import FavoritesPage from './pages/FavoritesPage'
 import Profile from './pages/Profile'
+import OrdersPage from './pages/OrdersPage'
+import OrderDetailsPage from './pages/OrderDetailsPage'
 import DataProtection from './pages/footerpages/DataProtection'
 import { API_BASE } from './utils/api'
 
@@ -133,6 +135,8 @@ export default function App() {
         />
         <Route path="*" element={<PageNotFound />} />
         <Route path="/kosar" element={<Cart />} />
+        <Route path="/rendelesek" element={<OrdersPage />} />
+        <Route path="/rendelesek/:id" element={<OrderDetailsPage />} />
         <Route path="/bejelentkezes" element={<Login />} />
         <Route path="/velemenyek" element={<Opinions />} />
         <Route path="/profilom" element={<Profile />} />

@@ -122,6 +122,7 @@ export default function Navbar() {
         <div className="header-actions desktop-menu">
           <Link to="/ettermek">Éttermeink</Link>
           {isLoggedIn && <Link to="/kedvencek">Kedvencek</Link>}
+          {isLoggedIn && <Link to="/rendelesek">Rendeléseim</Link>}
           <div className="dropdown" ref={dropdownRef}>
             <button
               className="btn btn-secondary dropdown-toggle"
@@ -209,6 +210,11 @@ export default function Navbar() {
             {isLoggedIn && (
               <Link to="/kedvencek" onClick={() => setIsMobileMenuOpen(false)}>
                 <i className="bi bi-heart"></i> Kedvencek
+              </Link>
+            )}
+            {isLoggedIn && (
+              <Link to="/rendelesek" onClick={() => setIsMobileMenuOpen(false)}>
+                <i className="bi bi-receipt"></i> Rendeléseim
               </Link>
             )}
             <Link to="/kosar" onClick={() => setIsMobileMenuOpen(false)}>

@@ -283,21 +283,44 @@ export default function Cart() {
       }
     }
 
-    const order = {
-      items: cartItems,
-      delivery: deliveryAddress,
-      payment: paymentMethod,
-      savedAddressId: selectedAddressId,
-      savedPaymentId: selectedPaymentId,
-      subtotal: calculateSubtotal(),
-      deliveryFee: calculateDeliveryFee(),
-      discount: appliedCoupon ? appliedCoupon.discountAmount : 0,
-      couponCode: appliedCoupon ? appliedCoupon.coupon.code : null,
-      total: calculateTotal(),
-      timestamp: new Date().toISOString()
+    if (isLoggedIn) {
+      try {
+        const orderPayload = {
+          items: cartItems.map(item => ({
+            menuItemId: item.id,
+            name: item.name,
+            price: item.price,
+            quantity: item.quantity,
+            imageUrl: item.img || null
+          })),
+          delivery: {
+            fullName: deliveryAddress.fullName,
+            address: deliveryAddress.address,
+            city: deliveryAddress.city,
+            zip: deliveryAddress.zip,
+            phone: deliveryAddress.phone,
+            instructions: deliveryAddress.instructions || null
+          },
+          paymentMethod: paymentMethod,
+          savedAddressId: selectedAddressId || null,
+          savedPaymentId: selectedPaymentId || null,
+          subtotal: calculateSubtotal(),
+          deliveryFee: calculateDeliveryFee(),
+          discount: appliedCoupon ? appliedCoupon.discountAmount : 0,
+          couponCode: appliedCoupon ? appliedCoupon.coupon.code : null,
+          total: calculateTotal(),
+          restaurantId: cartItems[0]?.restaurantId,
+          restaurantName: cartItems[0]?.restaurantName || ''
+        }
+        await axios.post(`${API_BASE}/Orders`, orderPayload, {
+          headers: getAuthHeaders()
+        })
+      } catch (error) {
+        console.error('Hiba a rendelés mentésekor:', error)
+        alert('A rendelés leadása sikertelen volt. Próbáld újra!')
+        return
+      }
     }
-
-    // TODO: ha lesz backend order endpoint, itt kell elküldeni az `order`-t.
     
     setCartItems([])
     setAppliedCoupon(null)
@@ -524,6 +547,11 @@ export default function Cart() {
             <div className="modal-body">
               <div className="modal-icon">✅</div>
               <p className="modal-text">Köszönjük a vásárlást! A rendelésedet rögzítettük.</p>
+              {isLoggedIn && (
+                <p className="modal-text">
+                  A <Link to="/rendelesek" onClick={closeOrderSuccessModal}>Rendeléseim</Link> oldalon megtekintheted a rendelést.
+                </p>
+              )}
               <p className="modal-question">Jó étvágyat!</p>
             </div>
             <div className="modal-actions">
