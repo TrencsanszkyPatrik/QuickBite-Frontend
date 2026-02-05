@@ -19,6 +19,7 @@ import Profile from './pages/Profile'
 import OrdersPage from './pages/OrdersPage'
 import OrderDetailsPage from './pages/OrderDetailsPage'
 import DataProtection from './pages/footerpages/DataProtection'
+import Cookies from './pages/footerpages/Cookies'
 import { API_BASE } from './utils/api'
 
 export default function App() {
@@ -106,6 +107,7 @@ export default function App() {
         <Route path="/rolunk" element={<AboutUs />} />
         <Route path="/aszf" element={<Aszf />} />
         <Route path="/kapcsolat" element={<Contact />} />
+        <Route path="/sütik" element={<Cookies />} />
         <Route
           path="/ettermek"
           element={
