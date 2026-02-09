@@ -45,7 +45,7 @@
 .restaurant-map-search {
     padding: 12px 16px;
     display: grid;
-    grid-template-columns: 1fr 1fr auto;
+    grid-template-columns: 1fr auto;
     gap: 8px;
 }
 
