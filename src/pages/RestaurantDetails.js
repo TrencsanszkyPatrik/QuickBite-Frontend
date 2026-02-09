@@ -7,6 +7,7 @@ import Navbar from '../components/Navbar'
 import { usePageTitle } from '../utils/usePageTitle'
 import { API_BASE, getAuthHeaders } from '../utils/api'
 import { showToast } from '../utils/toast'
+import { animateAddToCart } from '../utils/cartAnimation'
 
 export default function RestaurantDetails({ favorites = [], onToggleFavorite }) {
   const { id } = useParams()
@@ -61,7 +62,7 @@ export default function RestaurantDetails({ favorites = [], onToggleFavorite }) 
     setSelectedItemIndex((idx) => (idx >= menuItems.length - 1 ? 0 : idx + 1))
   }
 
-  const addToCart = (menuItem, quantity = 1) => {
+  const addToCart = (menuItem, quantity = 1, sourceElement = null) => {
     const savedCart = localStorage.getItem('quickbite_cart')
     let currentCart = []
     
@@ -102,6 +103,11 @@ export default function RestaurantDetails({ favorites = [], onToggleFavorite }) 
     localStorage.setItem('quickbite_cart', JSON.stringify(currentCart))
     
     window.dispatchEvent(new Event('cartUpdated'))
+    
+    // Animáció indítása
+    if (sourceElement) {
+      animateAddToCart(sourceElement, menuItem.img)
+    }
     
     showToast.success(`${menuItem.name} hozzáadva a kosárhoz!`)
   }
@@ -386,6 +392,7 @@ export default function RestaurantDetails({ favorites = [], onToggleFavorite }) 
             <div className="modal-body product-modal-body">
               <div className="product-modal-top">
                 <img
+                  id="product-modal-img-animated"
                   className="product-modal-img"
                   src={selectedItem.img}
                   alt={selectedItem.name}
@@ -431,9 +438,12 @@ export default function RestaurantDetails({ favorites = [], onToggleFavorite }) 
               </button>
               <button
                 className="modal-btn modal-btn-confirm"
-                onClick={() => {
-                  addToCart(selectedItem, selectedQuantity)
-                  closeItemModal()
+                onClick={(e) => {
+                  // Használjuk a kép elemet animációhoz
+                  const imageElement = document.getElementById('product-modal-img-animated')
+                  addToCart(selectedItem, selectedQuantity, imageElement || e.currentTarget)
+                  // Kis késleltetéssel zárjuk be, hogy az animáció elinduljon
+                  setTimeout(() => closeItemModal(), 100)
                 }}
               >
                 Kosárba teszem
