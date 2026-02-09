@@ -135,14 +135,21 @@
   border-radius: 16px;
   padding: 1.25rem 1.5rem;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-  cursor: pointer;
   transition: box-shadow 0.2s, transform 0.2s;
   position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .orders-card:hover {
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   transform: translateY(-2px);
+}
+
+.orders-card-clickable {
+  cursor: pointer;
+  flex: 1;
 }
 
 .orders-card-header {
@@ -185,12 +192,50 @@
   margin: 0;
 }
 
+.orders-card-actions {
+  display: flex;
+  gap: 0.75rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid #f0f0f0;
+}
+
+.orders-reorder-btn,
+.orders-details-btn {
+  flex: 1;
+  padding: 0.65rem 1rem;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+}
+
+.orders-reorder-btn {
+  background: var(--primary, #2d5016);
+  color: white;
+}
+
+.orders-reorder-btn:hover {
+  background: #3d6b20;
+  transform: translateY(-1px);
+}
+
+.orders-details-btn {
+  background: #f5f5f5;
+  color: var(--text, #1a1a1a);
+}
+
+.orders-details-btn:hover {
+  background: #e8e8e8;
+}
+
 .orders-card-arrow {
-  position: absolute;
-  right: 1rem;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--text-light, #999);
+  display: none;
 }
 
 /* Order detail */
@@ -372,4 +417,33 @@
 .order-detail-error p {
   margin-bottom: 1rem;
   color: var(--text-light, #666);
+}
+
+/* Reorder button */
+.order-detail-reorder-btn {
+  width: 100%;
+  padding: 1rem 1.5rem;
+  margin-top: 2rem;
+  background: var(--primary, #2d5016);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.order-detail-reorder-btn:hover {
+  background: #3d6b20;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(45, 80, 22, 0.3);
+}
+
+.order-detail-reorder-btn i {
+  font-size: 1.1rem;
 }
