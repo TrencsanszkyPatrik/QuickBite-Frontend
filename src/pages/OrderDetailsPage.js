@@ -5,6 +5,7 @@ import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import { usePageTitle } from '../utils/usePageTitle'
 import { API_BASE, getAuthHeaders } from '../utils/api'
+import { showToast } from '../utils/toast'
 import '../styles/OrdersPage.css'
 
 export default function OrderDetailsPage() {
@@ -15,6 +16,29 @@ export default function OrderDetailsPage() {
   const [order, setOrder] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(null)
+
+  const handleReorder = () => {
+    if (!order || !order.items) return
+
+    const cartItems = order.items.map(item => ({
+      name: item.name,
+      price: item.price,
+      quantity: item.quantity,
+      img: item.imageUrl || '/img/EtelKepek/default.png',
+      restaurantId: order.restaurantId,
+      restaurantName: order.restaurantName,
+      restaurantFreeDelivery: false
+    }))
+
+    localStorage.setItem('quickbite_cart', JSON.stringify(cartItems))
+    window.dispatchEvent(new Event('cartUpdated'))
+    
+    showToast.success('Rendelés betöltve a kosárba! 🛒')
+    
+    setTimeout(() => {
+      navigate('/kosar')
+    }, 1000)
+  }
 
   useEffect(() => {
     const token = localStorage.getItem('quickbite_token')
@@ -211,6 +235,13 @@ export default function OrderDetailsPage() {
                 <span>{order.total.toLocaleString()} Ft</span>
               </div>
             </div>
+
+            <button
+              className="order-detail-reorder-btn"
+              onClick={handleReorder}
+            >
+              <i className="bi bi-arrow-clockwise"></i> Újrarendelés
+            </button>
           </div>
         </div>
       </main>
