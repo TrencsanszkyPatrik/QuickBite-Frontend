@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 export const showToast = {
   success: (message) => {
     toast.success(message, {
-      position: "top-right",
+      position: "top-left",
       autoClose: 3000,
       hideProgressBar: false,
       closeOnClick: true,
@@ -15,7 +15,7 @@ export const showToast = {
 
   error: (message) => {
     toast.error(message, {
-      position: "top-right",
+      position: "top-left",
       autoClose: 4000,
       hideProgressBar: false,
       closeOnClick: true,
@@ -26,7 +26,7 @@ export const showToast = {
 
   info: (message) => {
     toast.info(message, {
-      position: "top-right",
+      position: "top-left",
       autoClose: 3000,
       hideProgressBar: false,
       closeOnClick: true,
@@ -37,7 +37,7 @@ export const showToast = {
 
   warning: (message) => {
     toast.warning(message, {
-      position: "top-right",
+      position: "top-left",
       autoClose: 3000,
       hideProgressBar: false,
       closeOnClick: true,

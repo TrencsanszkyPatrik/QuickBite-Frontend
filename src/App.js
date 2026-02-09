@@ -145,7 +145,7 @@ export default function App() {
         <Route path="/adatvedelem" element={<DataProtection />} />
       </Routes>
       <ToastContainer
-        position="top-right"
+        position="top-left"
         autoClose={3000}
         hideProgressBar={false}
         newestOnTop={false}
@@ -155,6 +155,7 @@ export default function App() {
         draggable
         pauseOnHover
         theme="light"
+        style={{ top: '150px' }}
       />
       <CookieBanner />
     </Router>
