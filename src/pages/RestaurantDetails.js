@@ -7,6 +7,49 @@ import Navbar from '../components/Navbar'
 import { usePageTitle } from '../utils/usePageTitle'
 import { API_BASE, getAuthHeaders } from '../utils/api'
 import { showToast } from '../utils/toast'
+import { animateAddToCart } from '../utils/cartAnimation'
+
+const CATEGORY_ORDER = [
+  'Előétel',
+  'Saláta',
+  'Leves',
+  'Főétel',
+  'Szendvics',
+  'Burger',
+  'Pizza',
+  'Tészta',
+  'Köret',
+  'Desszert',
+  'Édességek',
+  'Sütemény',
+  'Torta',
+  'Fagylalt',
+  'Ital',
+  'Italok',
+  'Forró ital',
+  'Kávé',
+  'Matcha Latte',
+  'Tea',
+  'Alkoholos ital',
+  'Alkoholos italok',
+  'Alkoholmentes ital',
+  'Üdítő',
+  'Limonádé',
+  'Víz',
+  'Sör',
+  'Bor',
+  'Egyéb'
+]
+
+const sortCategoriesByLogicalOrder = (categories) => {
+  return categories.sort((a, b) => {
+    const indexA = CATEGORY_ORDER.indexOf(a)
+    const indexB = CATEGORY_ORDER.indexOf(b)
+    const orderA = indexA === -1 ? CATEGORY_ORDER.length : indexA
+    const orderB = indexB === -1 ? CATEGORY_ORDER.length : indexB
+    return orderA - orderB
+  })
+}
 
 export default function RestaurantDetails({ favorites = [], onToggleFavorite }) {
   const { id } = useParams()
@@ -61,7 +104,7 @@ export default function RestaurantDetails({ favorites = [], onToggleFavorite }) 
     setSelectedItemIndex((idx) => (idx >= menuItems.length - 1 ? 0 : idx + 1))
   }
 
-  const addToCart = (menuItem, quantity = 1) => {
+  const addToCart = (menuItem, quantity = 1, sourceElement = null) => {
     const savedCart = localStorage.getItem('quickbite_cart')
     let currentCart = []
     
@@ -102,6 +145,11 @@ export default function RestaurantDetails({ favorites = [], onToggleFavorite }) 
     localStorage.setItem('quickbite_cart', JSON.stringify(currentCart))
     
     window.dispatchEvent(new Event('cartUpdated'))
+    
+    // Animáció indítása
+    if (sourceElement) {
+      animateAddToCart(sourceElement, menuItem.img)
+    }
     
     showToast.success(`${menuItem.name} hozzáadva a kosárhoz!`)
   }
@@ -386,6 +434,7 @@ export default function RestaurantDetails({ favorites = [], onToggleFavorite }) 
             <div className="modal-body product-modal-body">
               <div className="product-modal-top">
                 <img
+                  id="product-modal-img-animated"
                   className="product-modal-img"
                   src={selectedItem.img}
                   alt={selectedItem.name}
@@ -431,9 +480,12 @@ export default function RestaurantDetails({ favorites = [], onToggleFavorite }) 
               </button>
               <button
                 className="modal-btn modal-btn-confirm"
-                onClick={() => {
-                  addToCart(selectedItem, selectedQuantity)
-                  closeItemModal()
+                onClick={(e) => {
+                  // Használjuk a kép elemet animációhoz
+                  const imageElement = document.getElementById('product-modal-img-animated')
+                  addToCart(selectedItem, selectedQuantity, imageElement || e.currentTarget)
+                  // Kis késleltetéssel zárjuk be, hogy az animáció elinduljon
+                  setTimeout(() => closeItemModal(), 100)
                 }}
               >
                 Kosárba teszem
@@ -553,7 +605,20 @@ export default function RestaurantDetails({ favorites = [], onToggleFavorite }) 
               acc[category].push(item)
               return acc
             }, {})
-          ).map(([category, items], categoryIdx) => (
+          )
+            .sort((a, b) => {
+              const categories = Object.keys(
+                menuItems.reduce((acc, item) => {
+                  const category = item.category || 'Egyéb'
+                  if (!acc[category]) acc[category] = []
+                  acc[category].push(item)
+                  return acc
+                }, {})
+              )
+              const sortedCategories = sortCategoriesByLogicalOrder(categories)
+              return sortedCategories.indexOf(a[0]) - sortedCategories.indexOf(b[0])
+            })
+            .map(([category, items], categoryIdx) => (
             <div className="menu-category-section" key={category}>
               <h3 className="category-title">{category}</h3>
               <div className={`menu-grid menu-grid--${categoryIdx % 2 === 0 ? 'alternate' : 'standard'}`}>
