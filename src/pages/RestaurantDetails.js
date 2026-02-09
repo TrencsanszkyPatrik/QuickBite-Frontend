@@ -11,10 +11,13 @@ import { animateAddToCart } from '../utils/cartAnimation'
 
 const CATEGORY_ORDER = [
   'Előétel',
+  'Előételek',
   'Saláta',
+  "Saláták",
   'Leves',
   'Főétel',
-  'Szendvics',
+  'Főételek',
+  'Szendvicsek',
   'Burger',
   'Pizza',
   'Tészta',
