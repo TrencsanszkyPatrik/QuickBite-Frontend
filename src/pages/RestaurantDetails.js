@@ -36,6 +36,7 @@ const CATEGORY_ORDER = [
   'Alkoholos ital',
   'Alkoholos italok',
   'Alkoholmentes ital',
+  'Rövidital',
   'Üdítő',
   'Limonádé',
   'Víz',
