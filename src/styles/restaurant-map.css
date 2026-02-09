@@ -74,16 +74,17 @@
 
 /* Popup stilizálás */
 .restaurant-map-popup {
-    min-width: 350px;
-    max-width: 400px;
+    min-width: 280px;
+    max-width: 320px;
     overflow: hidden;
 }
 
 .restaurant-map-popup-img {
-    width: 100%;
+    width: 80%;
     height: 200px;
-    border-radius: 8px 8px 0 0;
+    border-radius: 8px;
     display: block;
+    margin: 8px auto;
 }
 
 .restaurant-map-popup-content {
@@ -168,7 +169,7 @@
 .leaflet-popup-content-wrapper {
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    width: 400px !important;
+    width: 320px !important;
     max-height: 780px;
     overflow: auto;
 }
@@ -187,12 +188,12 @@
     }
 
     .restaurant-map-popup {
-        min-width: 300px;
-        max-width: 360px;
+        min-width: 260px;
+        max-width: 300px;
     }
 
     .restaurant-map-popup-img {
-        height: 160px;
+        height: 120px;
     }
 }
 
