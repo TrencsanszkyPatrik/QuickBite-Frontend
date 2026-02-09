@@ -8,6 +8,48 @@ import { usePageTitle } from '../utils/usePageTitle'
 import { API_BASE, getAuthHeaders } from '../utils/api'
 import { showToast } from '../utils/toast'
 
+const CATEGORY_ORDER = [
+  'Előétel',
+  'Saláta',
+  'Leves',
+  'Főétel',
+  'Szendvics',
+  'Burger',
+  'Pizza',
+  'Tészta',
+  'Köret',
+  'Desszert',
+  'Édességek',
+  'Sütemény',
+  'Torta',
+  'Fagylalt',
+  'Ital',
+  'Italok',
+  'Forró ital',
+  'Kávé',
+  'Matcha Latte',
+  'Tea',
+  'Alkoholos ital',
+  'Alkoholos italok',
+  'Alkoholmentes ital',
+  'Üdítő',
+  'Limonádé',
+  'Víz',
+  'Sör',
+  'Bor',
+  'Egyéb'
+]
+
+const sortCategoriesByLogicalOrder = (categories) => {
+  return categories.sort((a, b) => {
+    const indexA = CATEGORY_ORDER.indexOf(a)
+    const indexB = CATEGORY_ORDER.indexOf(b)
+    const orderA = indexA === -1 ? CATEGORY_ORDER.length : indexA
+    const orderB = indexB === -1 ? CATEGORY_ORDER.length : indexB
+    return orderA - orderB
+  })
+}
+
 export default function RestaurantDetails({ favorites = [], onToggleFavorite }) {
   const { id } = useParams()
   const navigate = useNavigate()
@@ -553,7 +595,20 @@ export default function RestaurantDetails({ favorites = [], onToggleFavorite }) 
               acc[category].push(item)
               return acc
             }, {})
-          ).map(([category, items], categoryIdx) => (
+          )
+            .sort((a, b) => {
+              const categories = Object.keys(
+                menuItems.reduce((acc, item) => {
+                  const category = item.category || 'Egyéb'
+                  if (!acc[category]) acc[category] = []
+                  acc[category].push(item)
+                  return acc
+                }, {})
+              )
+              const sortedCategories = sortCategoriesByLogicalOrder(categories)
+              return sortedCategories.indexOf(a[0]) - sortedCategories.indexOf(b[0])
+            })
+            .map(([category, items], categoryIdx) => (
             <div className="menu-category-section" key={category}>
               <h3 className="category-title">{category}</h3>
               <div className={`menu-grid menu-grid--${categoryIdx % 2 === 0 ? 'alternate' : 'standard'}`}>
