@@ -15,6 +15,7 @@ const CATEGORY_ORDER = [
   'Saláta',
   "Saláták",
   'Leves',
+  'Főzelék',
   'Főétel',
   'Főételek',
   'Szendvicsek',
