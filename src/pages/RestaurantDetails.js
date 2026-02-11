@@ -4,6 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import '../styles/RestaurantDetails.css'
 import '../styles/modal.css'
 import Navbar from '../components/Navbar'
+import SpinnerOverlay from '../components/SpinnerOverlay'
 import { usePageTitle } from '../utils/usePageTitle'
 import { API_BASE, getAuthHeaders } from '../utils/api'
 import { showToast } from '../utils/toast'
@@ -355,9 +356,10 @@ export default function RestaurantDetails({ favorites = [], onToggleFavorite }) 
 
   if (isLoading) {
     return (
-      <div className="container">
-        <p>Betöltés...</p>
-      </div>
+      <>
+        <Navbar />
+        <SpinnerOverlay label="Étterem betöltése..." />
+      </>
     )
   }
 

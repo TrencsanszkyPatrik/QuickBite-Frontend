@@ -12,6 +12,7 @@ import Benefits from '../components/Benefits';
 import Cousines from '../components/Cousines';
 import BackToTopButton from '../components/BackToTopButton.js';
 import FloatingOpinions from '../components/FloatingOpinions';
+import SpinnerOverlay from '../components/SpinnerOverlay';
 import { usePageTitle } from '../utils/usePageTitle';
 import { API_BASE } from '../utils/api';
 
@@ -76,6 +77,7 @@ export default function HomePage({ favorites = [], onToggleFavorite }) {
     return (
         <>
             <Navbar />
+            {isLoading && <SpinnerOverlay label="Éttermek betöltése..." />}
 
             <section className={`hero ${isScrolled ? 'hero-scrolled' : ''}`}>
                 <div className="hero-content">

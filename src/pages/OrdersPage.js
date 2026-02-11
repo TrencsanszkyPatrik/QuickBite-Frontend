@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
+import SpinnerOverlay from '../components/SpinnerOverlay'
 import { usePageTitle } from '../utils/usePageTitle'
 import { API_BASE, getAuthHeaders } from '../utils/api'
 import { showToast } from '../utils/toast'
@@ -128,16 +129,12 @@ export default function OrdersPage() {
   return (
     <>
       <Navbar />
+      {isLoading && <SpinnerOverlay label="Rendelések betöltése..." />}
       <main className="orders-page">
         <div className="orders-container">
           <h1 className="orders-title">Rendeléseim</h1>
 
-          {isLoading ? (
-            <div className="orders-loading">
-              <div className="orders-spinner"></div>
-              <p>Rendelések betöltése...</p>
-            </div>
-          ) : orders.length === 0 ? (
+          {!isLoading && orders.length === 0 ? (
             <div className="orders-empty">
               <div className="orders-empty-icon">📋</div>
               <h2>Még nincs rendelésed</h2>
@@ -149,7 +146,7 @@ export default function OrdersPage() {
                 Éttermeink böngészése
               </button>
             </div>
-          ) : (
+          ) : !isLoading ? (
             <div className="orders-list">
               {orders.map((order) => (
                 <div
@@ -196,7 +193,7 @@ export default function OrdersPage() {
                 </div>
               ))}
             </div>
-          )}
+          ) : null}
         </div>
       </main>
       <Footer />

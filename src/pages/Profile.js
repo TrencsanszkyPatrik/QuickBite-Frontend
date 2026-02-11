@@ -4,6 +4,7 @@ import { useNavigate, Link } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import ProfileHeader from '../components/ProfileHeader'
+import SpinnerOverlay from '../components/SpinnerOverlay'
 import AddressSection from '../components/AddressSection'
 import PaymentMethodSection from '../components/PaymentMethodSection'
 import PasswordChangeSection from '../components/PasswordChangeSection'
@@ -113,16 +114,11 @@ export default function Profile() {
 
   if (isLoading) {
     return (
-      <div className="profile-page">
+      <>
         <Navbar />
-        <div className="profile-container">
-          <div className="profile-loading">
-            <div className="spinner" aria-hidden="true" />
-            <p>Profil betöltése...</p>
-          </div>
-        </div>
+        <SpinnerOverlay label="Profil betöltése..." />
         <Footer />
-      </div>
+      </>
     )
   }
 

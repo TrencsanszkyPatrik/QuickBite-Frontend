@@ -9,6 +9,7 @@ import '../styles/AllRestaurantPage.css'
 import { usePageTitle } from '../utils/usePageTitle'
 import { useLocation } from 'react-router-dom'
 import { API_BASE } from '../utils/api'
+import SpinnerOverlay from '../components/SpinnerOverlay'
 
 export default function AllRestaurantPage({ favorites = [], onToggleFavorite }) {
   usePageTitle('QuickBite - Éttermeink')
@@ -24,6 +25,7 @@ export default function AllRestaurantPage({ favorites = [], onToggleFavorite }) 
   const [selectedCategoryId, setSelectedCategoryId] = useState(null)
   const [categories, setCategories] = useState([])
   const [isLoadingCategories, setIsLoadingCategories] = useState(true)
+  const [isLoadingRestaurants, setIsLoadingRestaurants] = useState(true)
   const hasAppliedUrlFilters = useRef(false)
 
   useEffect(() => {
@@ -41,6 +43,7 @@ export default function AllRestaurantPage({ favorites = [], onToggleFavorite }) 
 
     const loadRestaurants = async () => {
       try {
+        setIsLoadingRestaurants(true)
         const response = await axios.get(`${API_BASE}/Restaurants`)
         const data = response.data || []
         const mapped = data.map((r) => ({
@@ -55,6 +58,8 @@ export default function AllRestaurantPage({ favorites = [], onToggleFavorite }) 
         setAllRestaurants(mapped)
       } catch (err) {
         console.error('Hiba történt az éttermek betöltése közben:', err)
+      } finally {
+        setIsLoadingRestaurants(false)
       }
     }
 
@@ -132,6 +137,9 @@ export default function AllRestaurantPage({ favorites = [], onToggleFavorite }) 
   return (
     <>
       <Navbar />
+      {(isLoadingCategories || isLoadingRestaurants) && (
+        <SpinnerOverlay label="Adatok betöltése..." />
+      )}
       <div className="all-restaurants-page container">
         <h1 className="section-title" style={{ marginTop: "1rem" }}>
           Böngéssz éttermeket, vagy keress kedvenceidre!

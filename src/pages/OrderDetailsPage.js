@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
+import SpinnerOverlay from '../components/SpinnerOverlay'
 import { usePageTitle } from '../utils/usePageTitle'
 import { API_BASE, getAuthHeaders } from '../utils/api'
 import { showToast } from '../utils/toast'
@@ -97,14 +98,7 @@ export default function OrderDetailsPage() {
     return (
       <>
         <Navbar />
-        <main className="orders-page">
-          <div className="orders-container">
-            <div className="orders-loading">
-              <div className="orders-spinner"></div>
-              <p>Rendelés betöltése...</p>
-            </div>
-          </div>
-        </main>
+        <SpinnerOverlay label="Rendelés betöltése..." />
         <Footer />
       </>
     )

@@ -3,6 +3,7 @@ import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
+import SpinnerOverlay from '../components/SpinnerOverlay'
 import '../styles/opinions.css'
 import { showToast } from '../utils/toast'
 import { usePageTitle } from '../utils/usePageTitle'
@@ -143,6 +144,7 @@ export default function Opinions() {
   return (
     <div>
       <Navbar />
+      {loading && <SpinnerOverlay label="Vélemények betöltése..." />}
 
       <div className="opinions-page">
         <div className="opinions-header">
