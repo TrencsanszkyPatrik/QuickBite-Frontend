@@ -49,7 +49,8 @@ export default function AllRestaurantPage({ favorites = [], onToggleFavorite }) 
           address: `${r.city}, ${r.address}`,
           img: r.image_url,
           freeDelivery: r.free_delivery,
-          acceptCards: r.accept_cards
+          acceptCards: r.accept_cards,
+          isOpen: r.is_open !== undefined ? r.is_open : true
         }))
         setAllRestaurants(mapped)
       } catch (err) {

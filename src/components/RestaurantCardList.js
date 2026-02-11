@@ -139,6 +139,12 @@ export default function RestaurantCardList({
                 </div>
               )}
               <span className="restaurant-address">{r.address}</span>
+              {r.isOpen !== undefined && (
+                <div className={`status-badge ${r.isOpen ? 'status-badge--open' : 'status-badge--closed'}`}>
+                  <span className={`status-dot ${r.isOpen ? 'status-dot--open' : 'status-dot--closed'}`}></span>
+                  <span className="status-text">{r.isOpen ? 'Nyitva' : 'Zárva'}</span>
+                </div>
+              )}
             </div>
           </div>
         ))}
