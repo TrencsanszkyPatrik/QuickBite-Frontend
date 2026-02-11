@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Space+Grotesk:wght@400;500;600&display=swap');
+
 /* Global Reset */
 * {
   margin: 0;
@@ -27,15 +29,24 @@
 /* Body Styles */
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: 'Space Grotesk', 'Segoe UI', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: var(--text);
   line-height: 1.6;
   background: linear-gradient(135deg, var(--bg-light) 0%, var(--bg-warm) 50%, var(--bg) 100%);
   background-attachment: fixed;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.section-title {
+  font-family: 'Fraunces', serif;
+  letter-spacing: -0.01em;
 }
 
 code {
