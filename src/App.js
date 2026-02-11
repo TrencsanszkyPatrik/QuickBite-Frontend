@@ -29,7 +29,7 @@ export default function App() {
   useEffect(() => {
     const fetchOpinions = async () => {
       try {
-        const response = await fetch(`${API_BASE}/quickbite_reviews`)
+        const response = await fetch(`${API_BASE}/QuickbiteReviews`)
         if (!response.ok) {
           throw new Error(`Failed to load opinions: ${response.status}`)
         }
@@ -60,6 +60,7 @@ export default function App() {
         }
       }
     } catch (err) {
+      
       console.error('Nem sikerült beolvasni a kedvenceket:', err)
     }
   }, [])

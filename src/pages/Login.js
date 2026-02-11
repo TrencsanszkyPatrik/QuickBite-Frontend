@@ -39,7 +39,7 @@ export default function Login() {
     setIsLoading(true)
     try {
       const response = await axios.post(
-        'https://localhost:7236/api/Auth/login',
+        `${API_BASE}/Auth/login`,
         {
           email: loginEmail,
           password: loginPassword
