@@ -5,10 +5,9 @@
 }
 
 .restaurant-cards-grid {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
   gap: 2rem;
-  justify-content: center;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
 .restaurant-card {
@@ -22,8 +21,26 @@
   flex-direction: column;
   align-items: stretch;
   outline: none;
-  width: 260px;
+  width: 100%;
   position: relative;
+}
+
+@media (max-width: 1200px) {
+  .restaurant-cards-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .restaurant-cards-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .restaurant-cards-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .restaurant-card:hover, .restaurant-card:focus {
