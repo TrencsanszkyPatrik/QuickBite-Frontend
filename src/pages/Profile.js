@@ -12,10 +12,9 @@ import DeleteAccountSection from '../components/DeleteAccountSection'
 import { usePageTitle } from '../utils/usePageTitle'
 import { showToast } from '../utils/toast'
 import { API_BASE, getAuthHeaders } from '../utils/api'
-import { getFavoritesCount } from '../utils/profileHelpers'
 import '../styles/profile.css'
 
-export default function Profile() {
+export default function Profile({ favorites = [] }) {
   usePageTitle('QuickBite - Profilom')
   const navigate = useNavigate()
   const [profile, setProfile] = useState(null)
@@ -132,7 +131,7 @@ export default function Profile() {
 
         <div className="profile-stats">
           <Link to="/kedvencek" className="profile-stat-card">
-            <span className="stat-value">{getFavoritesCount()}</span>
+            <span className="stat-value">{favorites.length}</span>
             <span className="stat-label">Kedvenc étterem</span>
           </Link>
           <Link to="/rendelesek" className="profile-stat-card">

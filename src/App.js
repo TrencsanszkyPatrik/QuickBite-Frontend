@@ -20,7 +20,8 @@ import OrdersPage from './pages/OrdersPage'
 import OrderDetailsPage from './pages/OrderDetailsPage'
 import DataProtection from './pages/footerpages/DataProtection'
 import Cookies from './pages/footerpages/Cookies'
-import { API_BASE } from './utils/api'
+import { API_BASE, getAuthHeaders } from './utils/api'
+import { showToast } from './utils/toast'
 
 export default function App() {
   const [opinions, setOpinions] = useState([])
@@ -50,45 +51,95 @@ export default function App() {
     fetchOpinions()
   }, [])
 
-  useEffect(() => {
+  const mapFavorite = (r) => ({
+    id: String(r.id),
+    name: r.name,
+    address: `${r.city}, ${r.address}`,
+    img: r.imageUrl || r.image_url,
+    freeDelivery: r.freeDelivery ?? r.free_delivery,
+    acceptCards: r.acceptCards ?? r.accept_cards,
+    cuisine_id: r.cuisineId ?? r.cuisine_id,
+    discount: r.discount ?? 0
+  })
+
+  const loadFavorites = async () => {
+    const token = localStorage.getItem('quickbite_token')
+    if (!token) {
+      setFavorites([])
+      return
+    }
     try {
-      const stored = localStorage.getItem('quickbite_favorites')
-      if (stored) {
-        const parsed = JSON.parse(stored)
-        if (Array.isArray(parsed)) {
-          setFavorites(parsed)
-        }
+      const res = await fetch(`${API_BASE}/Favorites`, { headers: getAuthHeaders() })
+      if (!res.ok) {
+        throw new Error(`Failed to load favorites: ${res.status}`)
       }
+      const data = await res.json()
+      const mapped = Array.isArray(data) ? data.map(mapFavorite) : []
+      setFavorites(mapped)
     } catch (err) {
-      
-      console.error('Nem sikerült beolvasni a kedvenceket:', err)
+      console.error('Nem sikerult betolteni a kedvenceket:', err)
+      setFavorites([])
+    }
+  }
+
+  useEffect(() => {
+    loadFavorites()
+
+    const handleLogin = () => loadFavorites()
+    const handleLogout = () => setFavorites([])
+
+    window.addEventListener('userLoggedIn', handleLogin)
+    window.addEventListener('userLoggedOut', handleLogout)
+
+    return () => {
+      window.removeEventListener('userLoggedIn', handleLogin)
+      window.removeEventListener('userLoggedOut', handleLogout)
     }
   }, [])
 
-  useEffect(() => {
-    try {
-      localStorage.setItem('quickbite_favorites', JSON.stringify(favorites))
-    } catch (err) {
-      console.error('Nem sikerült menteni a kedvenceket:', err)
-    }
-  }, [favorites])
-
-  const handleToggleFavorite = (restaurant) => {
+  const handleToggleFavorite = async (restaurant) => {
     if (!restaurant || !restaurant.id) return
+    const token = localStorage.getItem('quickbite_token')
+    if (!token) {
+      showToast.error('Kedvencekhez bejelentkezes szukseges.')
+      return
+    }
+
     const id = String(restaurant.id)
-    setFavorites((prev) => {
-      const exists = prev.find((r) => r.id === id)
+    const exists = favorites.some((r) => String(r.id) === id)
+
+    try {
       if (exists) {
-        return prev.filter((r) => r.id !== id)
+        const res = await fetch(`${API_BASE}/Favorites/${id}`, {
+          method: 'DELETE',
+          headers: getAuthHeaders()
+        })
+        if (!res.ok && res.status !== 404) {
+          throw new Error(`Failed to remove favorite: ${res.status}`)
+        }
+        setFavorites((prev) => prev.filter((r) => String(r.id) !== id))
+      } else {
+        const res = await fetch(`${API_BASE}/Favorites`, {
+          method: 'POST',
+          headers: getAuthHeaders(),
+          body: JSON.stringify({ restaurantId: Number(id) })
+        })
+        if (!res.ok) {
+          throw new Error(`Failed to add favorite: ${res.status}`)
+        }
+        const data = await res.json().catch(() => null)
+        const next = data ? mapFavorite(data) : {
+          id,
+          name: restaurant.name,
+          address: restaurant.address,
+          img: restaurant.img
+        }
+        setFavorites((prev) => [...prev, next])
       }
-      const simplified = {
-        id,
-        name: restaurant.name,
-        address: restaurant.address,
-        img: restaurant.img
-      }
-      return [...prev, simplified]
-    })
+    } catch (err) {
+      console.error('Kedvenc frissites sikertelen:', err)
+      showToast.error('Kedvenc frissitese sikertelen.')
+    }
   }
 
   return (
@@ -142,7 +193,7 @@ export default function App() {
         <Route path="/rendelesek/:id" element={<OrderDetailsPage />} />
         <Route path="/bejelentkezes" element={<Login />} />
         <Route path="/velemenyek" element={<Opinions />} />
-        <Route path="/profilom" element={<Profile />} />
+        <Route path="/profilom" element={<Profile favorites={favorites} />} />
         <Route path="/adatvedelem" element={<DataProtection />} />
       </Routes>
       <ToastContainer

@@ -12,13 +12,3 @@ export function getInitials(name) {
   }
   return name.slice(0, 2).toUpperCase()
 }
-
-export function getFavoritesCount() {
-  try {
-    const stored = localStorage.getItem('quickbite_favorites')
-    const arr = stored ? JSON.parse(stored) : []
-    return Array.isArray(arr) ? arr.length : 0
-  } catch {
-    return 0
-  }
-}
