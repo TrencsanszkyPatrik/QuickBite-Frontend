@@ -16,7 +16,7 @@ import SpinnerOverlay from '../components/SpinnerOverlay';
 import { usePageTitle } from '../utils/usePageTitle';
 import { API_BASE } from '../utils/api';
 
-export default function HomePage({ favorites = [], onToggleFavorite }) {
+export default function HomePage({ favorites = [], pendingFavoriteIds, onToggleFavorite }) {
     usePageTitle("QuickBite - Főoldal");
     const navigate = useNavigate()
     const [selectedCuisineId, setSelectedCuisineId] = useState(null)
@@ -140,6 +140,7 @@ export default function HomePage({ favorites = [], onToggleFavorite }) {
                     restaurants={restaurants}
                     selectedCuisineId={selectedCuisineId}
                     favorites={favorites}
+                    pendingFavoriteIds={pendingFavoriteIds}
                     onToggleFavorite={onToggleFavorite}
                     limit={4}
                     skip={Math.max(0, restaurants.length - 4)}

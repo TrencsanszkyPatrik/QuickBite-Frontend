@@ -26,6 +26,7 @@ import { showToast } from './utils/toast'
 export default function App() {
   const [opinions, setOpinions] = useState([])
   const [favorites, setFavorites] = useState([])
+  const [pendingFavoriteIds, setPendingFavoriteIds] = useState(() => new Set())
 
   useEffect(() => {
     const fetchOpinions = async () => {
@@ -97,6 +98,18 @@ export default function App() {
     }
   }, [])
 
+  const setFavoritePending = (id, isPending) => {
+    setPendingFavoriteIds((prev) => {
+      const next = new Set(prev)
+      if (isPending) {
+        next.add(id)
+      } else {
+        next.delete(id)
+      }
+      return next
+    })
+  }
+
   const handleToggleFavorite = async (restaurant) => {
     if (!restaurant || !restaurant.id) return
     const token = localStorage.getItem('quickbite_token')
@@ -106,9 +119,11 @@ export default function App() {
     }
 
     const id = String(restaurant.id)
+    if (pendingFavoriteIds.has(id)) return
     const exists = favorites.some((r) => String(r.id) === id)
 
     try {
+      setFavoritePending(id, true)
       if (exists) {
         const res = await fetch(`${API_BASE}/Favorites/${id}`, {
           method: 'DELETE',
@@ -139,6 +154,8 @@ export default function App() {
     } catch (err) {
       console.error('Kedvenc frissites sikertelen:', err)
       showToast.error('Kedvenc frissitese sikertelen.')
+    } finally {
+      setFavoritePending(id, false)
     }
   }
 
@@ -152,6 +169,7 @@ export default function App() {
             <HomePage
               opinions={opinions}
               favorites={favorites}
+              pendingFavoriteIds={pendingFavoriteIds}
               onToggleFavorite={handleToggleFavorite}
             />
           }
@@ -165,6 +183,7 @@ export default function App() {
           element={
             <AllRestaurantPage
               favorites={favorites}
+              pendingFavoriteIds={pendingFavoriteIds}
               onToggleFavorite={handleToggleFavorite}
             />
           }
@@ -174,6 +193,7 @@ export default function App() {
           element={
             <RestaurantDetails
               favorites={favorites}
+              pendingFavoriteIds={pendingFavoriteIds}
               onToggleFavorite={handleToggleFavorite}
             />
           }
@@ -183,6 +203,7 @@ export default function App() {
           element={
             <FavoritesPage
               favorites={favorites}
+              pendingFavoriteIds={pendingFavoriteIds}
               onToggleFavorite={handleToggleFavorite}
             />
           }

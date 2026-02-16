@@ -1,16 +1,15 @@
-import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
-import { showToast } from '../utils/toast';
-import '../styles/homepage.css';
-import '../styles/FavoritesPage.css';
-import '../styles/RestaurantCardList.css';
-import { usePageTitle } from '../utils/usePageTitle';
+import React from 'react'
+import { useNavigate } from 'react-router-dom'
+import Navbar from '../components/Navbar'
+import Footer from '../components/Footer'
+import '../styles/homepage.css'
+import '../styles/FavoritesPage.css'
+import '../styles/RestaurantCardList.css'
+import { usePageTitle } from '../utils/usePageTitle'
 
-export default function FavoritesPage({ favorites = [], onToggleFavorite }) {
-  usePageTitle("QuickBite - Kedvencek");
-  const navigate = useNavigate();
+export default function FavoritesPage({ favorites = [], pendingFavoriteIds, onToggleFavorite }) {
+  usePageTitle('QuickBite - Kedvencek')
+  const navigate = useNavigate()
 
 
   return (
@@ -46,18 +45,31 @@ export default function FavoritesPage({ favorites = [], onToggleFavorite }) {
                   tabIndex={0}
                   onClick={() => navigate(`/restaurant/${r.id}`)}
                 >
-                  <button
-                    className="favorite-btn favorite-btn--active favorite-btn--bounce"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      if (onToggleFavorite) {
-                        onToggleFavorite(r);
-                      }
-                    }}
-                    aria-label="Eltávolítás a kedvencek közül"
-                  >
-                    ♥
-                  </button>
+                  {(() => {
+                    const isPending = pendingFavoriteIds?.has(String(r.id))
+                    return (
+                      <button
+                        className={`favorite-btn favorite-btn--active favorite-btn--bounce ${
+                          isPending ? 'favorite-btn--loading' : ''
+                        }`}
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          if (onToggleFavorite) {
+                            onToggleFavorite(r)
+                          }
+                        }}
+                        aria-label="Eltávolítás a kedvencek közül"
+                        disabled={isPending}
+                        aria-busy={isPending}
+                      >
+                        {isPending ? (
+                          <span className="favorite-spinner" aria-hidden="true" />
+                        ) : (
+                          '♥'
+                        )}
+                      </button>
+                    )
+                  })()}
                   <img src={r.img} alt={r.name} className="restaurant-img" />
                   <div className="restaurant-info">
                     <h3 className="restaurant-name">{r.name}</h3>

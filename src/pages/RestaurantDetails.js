@@ -70,7 +70,7 @@ const sortCategoriesByLogicalOrder = (categories) => {
   })
 }
 
-export default function RestaurantDetails({ favorites = [], onToggleFavorite }) {
+export default function RestaurantDetails({ favorites = [], pendingFavoriteIds, onToggleFavorite }) {
   const { id } = useParams()
   const navigate = useNavigate()
   const [restaurant, setRestaurant] = useState(null)
@@ -366,6 +366,9 @@ export default function RestaurantDetails({ favorites = [], onToggleFavorite }) 
   const isFavorite = restaurant
     ? favorites.some((fav) => String(fav.id) === String(restaurant.id))
     : false
+  const isFavoritePending = restaurant
+    ? pendingFavoriteIds?.has(String(restaurant.id))
+    : false
 
   if (isLoading) {
     return (
@@ -531,8 +534,11 @@ export default function RestaurantDetails({ favorites = [], onToggleFavorite }) 
                 isFavorite ? 'favorite-btn--active' : ''
               }`}
               onClick={() => onToggleFavorite && onToggleFavorite(restaurant)}
+              disabled={isFavoritePending}
             >
-              {isFavorite ? '♥ Kedvenc' : '♡ Kedvencekhez'}
+              {isFavoritePending ? (
+                <span className="favorite-spinner" aria-hidden="true" />
+              ) : isFavorite ? '♥ Kedvenc' : '♡ Kedvencekhez'}
             </button>
           </div>
           <div className="restaurant-details-meta">

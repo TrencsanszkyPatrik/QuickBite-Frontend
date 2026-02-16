@@ -13,6 +13,7 @@ export default function RestaurantCardList({
   selectedCuisineId = null,
   searchQuery = '',
   favorites = [],
+  pendingFavoriteIds = new Set(),
   onToggleFavorite,
   limit = null,
   skip = 0,
@@ -106,26 +107,34 @@ export default function RestaurantCardList({
             tabIndex={0}
             onClick={() => navigate(`/restaurant/${r.id}`)}
           >
-            <button
-              className={`favorite-btn ${
-                favorites.some((fav) => String(fav.id) === String(r.id))
-                  ? 'favorite-btn--active'
-                  : ''
-              }`}
-              onClick={(e) => {
-                e.stopPropagation()
-                if (onToggleFavorite) {
-                  onToggleFavorite(r)
-                }
-              }}
-              aria-label={
-                favorites.some((fav) => String(fav.id) === String(r.id))
-                  ? 'Eltávolítás a kedvencek közül'
-                  : 'Hozzáadás a kedvencekhez'
-              }
-            >
-              {favorites.some((fav) => String(fav.id) === String(r.id)) ? '♥' : '♡'}
-            </button>
+            {(() => {
+              const isFavorited = favorites.some((fav) => String(fav.id) === String(r.id))
+              const isPending = pendingFavoriteIds.has(String(r.id))
+              return (
+                <button
+                  className={`favorite-btn ${
+                    isFavorited ? 'favorite-btn--active' : ''
+                  } ${isPending ? 'favorite-btn--loading' : ''}`}
+                  disabled={isPending}
+                  aria-busy={isPending}
+                  aria-label={
+                    isFavorited
+                      ? 'Eltávolítás a kedvencek közül'
+                      : 'Hozzáadás a kedvencekhez'
+                  }
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    if (onToggleFavorite) {
+                      onToggleFavorite(r)
+                    }
+                  }}
+                >
+                  {isPending ? (
+                    <span className="favorite-spinner" aria-hidden="true" />
+                  ) : isFavorited ? '♥' : '♡'}
+                </button>
+              )
+            })()}
             <img src={r.img} alt={r.name} className="restaurant-img" />
             <div className="restaurant-info">
               <h3 className="restaurant-name">{r.name}</h3>

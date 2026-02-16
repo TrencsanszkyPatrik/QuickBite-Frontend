@@ -11,7 +11,7 @@ import { useLocation } from 'react-router-dom'
 import { API_BASE } from '../utils/api'
 import SpinnerOverlay from '../components/SpinnerOverlay'
 
-export default function AllRestaurantPage({ favorites = [], onToggleFavorite }) {
+export default function AllRestaurantPage({ favorites = [], pendingFavoriteIds, onToggleFavorite }) {
   usePageTitle('QuickBite - Éttermeink')
   const location = useLocation()
   const [showDiscountOnly, setShowDiscountOnly] = useState(false)
@@ -244,6 +244,7 @@ export default function AllRestaurantPage({ favorites = [], onToggleFavorite }) 
             selectedCuisineId={selectedCategoryId}
             searchQuery={searchQuery}
             favorites={favorites}
+            pendingFavoriteIds={pendingFavoriteIds}
             onToggleFavorite={onToggleFavorite}
             menuItems={[]}
             isLoading={false}
