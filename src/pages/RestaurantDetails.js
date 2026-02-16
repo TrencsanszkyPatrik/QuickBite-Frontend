@@ -12,6 +12,8 @@ import { animateAddToCart } from '../utils/cartAnimation'
 
 const CATEGORY_ORDER = [
   'Előétel',
+  'Wrap',
+  'Lángos',
   'Előételek',
   'Saláta',
   "Saláták",
