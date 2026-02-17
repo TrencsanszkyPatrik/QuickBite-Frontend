@@ -10,9 +10,22 @@ export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isCartPreviewOpen, setIsCartPreviewOpen] = useState(false)
   const [cartItems, setCartItems] = useState([])
+  const [scrollProgress, setScrollProgress] = useState(0)
   const dropdownRef = useRef(null)
   const mobileMenuRef = useRef(null)
   const cartPreviewRef = useRef(null)
+  const scrollRafRef = useRef(null)
+  const lastProgressRef = useRef(0)
+  const foodEmojis = ['🍔', '🍕', '🍟', '🌭', '🌮', '🍣', '🍩', '🍗']
+  const foodStart = 8
+  const foodEnd = 92
+  const foodStep = foodEmojis.length > 1 ? (foodEnd - foodStart) / (foodEmojis.length - 1) : 0
+  const foodPositions = foodEmojis.map((_, index) => foodStart + index * foodStep)
+  const visualStart = 2
+  const visualEnd = 98
+  const visualProgress = visualStart + (Math.min(Math.max(scrollProgress, 0), 100) / 100) * (visualEnd - visualStart)
+  const pacmanPosition = visualProgress
+  const isAtScrollEnd = scrollProgress >= 99
 
   const updateCartCount = () => {
     try {
@@ -97,6 +110,50 @@ export default function Navbar() {
     document.addEventListener('mousedown', handleClickOutside)
     return () => {
       document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [])
+
+  useEffect(() => {
+    const getScrollProgress = () => {
+      const scrollTop = window.scrollY || document.documentElement.scrollTop
+      const scrollableHeight = document.documentElement.scrollHeight - window.innerHeight
+
+      if (scrollableHeight <= 0) {
+        return 0
+      }
+
+      return Math.min((scrollTop / scrollableHeight) * 100, 100)
+    }
+
+    const commitProgress = (nextProgress) => {
+      if (Math.abs(nextProgress - lastProgressRef.current) < 0.2) return
+      lastProgressRef.current = nextProgress
+      setScrollProgress(nextProgress)
+    }
+
+    const handleScroll = () => {
+      if (scrollRafRef.current !== null) return
+
+      scrollRafRef.current = window.requestAnimationFrame(() => {
+        scrollRafRef.current = null
+        commitProgress(getScrollProgress())
+      })
+    }
+
+    const handleResize = () => {
+      commitProgress(getScrollProgress())
+    }
+
+    handleResize()
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    window.addEventListener('resize', handleResize)
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+      window.removeEventListener('resize', handleResize)
+      if (scrollRafRef.current !== null) {
+        window.cancelAnimationFrame(scrollRafRef.current)
+      }
     }
   }, [])
 
@@ -243,6 +300,45 @@ export default function Navbar() {
                 <i className="bi bi-person-circle"></i> Bejelentkezés
               </Link>
             )}
+          </div>
+        </div>
+      </div>
+
+      <div
+        className="navbar-scroll-progress"
+        role="progressbar"
+        aria-label="Oldal görgetési állapot"
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-valuenow={Math.round(scrollProgress)}
+      >
+        <div className="navbar-scroll-track">
+          <div className="navbar-scroll-fill" style={{ width: `${visualProgress}%` }}></div>
+          <div className="navbar-scroll-foods">
+            {foodEmojis.map((emoji, index) => (
+              <span
+                key={`${emoji}-${index}`}
+                className={`navbar-food-emoji ${pacmanPosition >= foodPositions[index] ? 'eaten' : ''}`}
+                style={{ left: `${foodPositions[index]}%` }}
+              >
+                {emoji}
+              </span>
+            ))}
+          </div>
+          <div
+            className={`navbar-pacman ${isAtScrollEnd ? 'celebrate' : ''}`}
+            style={{ left: `${pacmanPosition}%` }}
+          >
+            <svg
+              className="navbar-pacman-svg"
+              viewBox="0 0 100 100"
+              xmlns="http://www.w3.org/2000/svg"
+              aria-hidden="true"
+            >
+              <path className="pacman-jaw-top pacman-body" d="M50 50 L95 50 A45 45 0 0 0 5 50 Z" />
+              <path className="pacman-jaw-bottom pacman-body" d="M50 50 L95 50 A45 45 0 0 1 5 50 Z" />
+              <circle className="pacman-eye" cx="56" cy="30" r="4" />
+            </svg>
           </div>
         </div>
       </div>

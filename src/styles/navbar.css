@@ -26,6 +26,143 @@ header {
     border-bottom: 1px solid rgba(139, 122, 107, 0.25);
 }
 
+.navbar-scroll-progress {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 22px;
+    padding: 0 0.75rem 0.3rem;
+    pointer-events: none;
+}
+
+.navbar-scroll-track {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 999px;
+    border: 1px solid var(--border-light);
+    background: rgba(255, 255, 255, 0.45);
+    overflow: hidden;
+}
+
+.navbar-scroll-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, rgba(246, 212, 84, 0.2) 0%, rgba(246, 212, 84, 0.5) 100%);
+}
+
+.navbar-scroll-foods {
+    position: absolute;
+    inset: 0;
+}
+
+.navbar-food-emoji {
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 0.9rem;
+    line-height: 1;
+    transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.navbar-food-emoji.eaten {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.15);
+}
+
+.navbar-pacman {
+    position: absolute;
+    top: 50%;
+    width: 22px;
+    height: 22px;
+    transform: translate(-50%, -50%);
+    will-change: left, transform;
+    z-index: 2;
+    filter: drop-shadow(0 0 0 rgba(24, 28, 20, 0.24));
+}
+
+.navbar-pacman::after {
+    content: '';
+    position: absolute;
+    inset: -5px;
+    border-radius: 50%;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    pointer-events: none;
+}
+
+.navbar-pacman-svg {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+}
+
+.pacman-body {
+    fill: #f6d454;
+}
+
+.pacman-eye {
+    fill: rgba(24, 28, 20, 0.9);
+}
+
+.pacman-jaw-top,
+.pacman-jaw-bottom {
+    transform-box: fill-box;
+    transform-origin: 50% 50%;
+}
+
+.pacman-jaw-top {
+    animation: pacman-jaw-top 0.24s infinite ease-in-out;
+}
+
+.pacman-jaw-bottom {
+    animation: pacman-jaw-bottom 0.24s infinite ease-in-out;
+}
+
+.navbar-pacman.celebrate {
+    animation: pacman-celebrate 0.55s ease-in-out infinite;
+    filter: drop-shadow(0 0 8px rgba(246, 212, 84, 0.75));
+}
+
+.navbar-pacman.celebrate::after {
+    opacity: 1;
+    box-shadow: -8px -7px 0 -1px #ffd166, 7px -8px 0 -1px #ffe39a, 0 -10px 0 -1px #fff0a8;
+}
+
+@keyframes pacman-jaw-top {
+    0%, 100% {
+        transform: rotate(-24deg);
+    }
+    50% {
+        transform: rotate(-6deg);
+    }
+}
+
+@keyframes pacman-jaw-bottom {
+    0%, 100% {
+        transform: rotate(24deg);
+    }
+    50% {
+        transform: rotate(6deg);
+    }
+}
+
+@keyframes pacman-celebrate {
+    0%,
+    100% {
+        transform: translate(-50%, -50%) scale(1) rotate(0deg);
+    }
+    35% {
+        transform: translate(-50%, -60%) scale(1.15) rotate(-8deg);
+    }
+    70% {
+        transform: translate(-50%, -45%) scale(1.1) rotate(8deg);
+    }
+}
+
 .header-content {
     max-width: 1700px;
     margin: 0 auto;
@@ -497,6 +634,20 @@ header {
     /* Mobil menü megjelenítése */
     .mobile-menu {
         display: block;
+    }
+
+    .navbar-scroll-progress {
+        height: 18px;
+        padding: 0 0.5rem 0.2rem;
+    }
+
+    .navbar-food-emoji {
+        font-size: 0.75rem;
+    }
+
+    .navbar-pacman {
+        width: 18px;
+        height: 18px;
     }
 }
 
