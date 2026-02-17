@@ -16,8 +16,8 @@ export default function Aszf() {
 
                 <h2 className="h2-aszf">1. ÁLTALÁNOS RENDELKEZÉSEK</h2>
                 <p className="p-aszf"><strong className="strong-aszf">1.1.</strong> A jelen Általános Szerződési Feltételek (továbbiakban: ÁSZF) a QuickBite (továbbiakban: Szolgáltató) és a felhasználók (továbbiakban: Felhasználó) közötti jogviszonyokat szabályozzák.</p>
-                <p className="p-aszf"><strong className="strong-aszf">1.2.</strong> A Szolgáltató címe: [Itt add meg a cég címet]</p>
-                <p className="p-aszf"><strong className="strong-aszf">1.3.</strong> A Szolgáltató adószáma: [Itt add meg az adószámot]</p>
+                <p className="p-aszf"><strong className="strong-aszf">1.2.</strong> A Szolgáltató címe: 3525 Miskolc, Palóczy László utca 3.</p>
+                <p className="p-aszf"><strong className="strong-aszf">1.3.</strong> A Szolgáltató adószáma: 12345678-1-12</p>
                 <p className="p-aszf"><strong className="strong-aszf">1.4.</strong> A Szolgáltató e-mail címe: info@quickbite.hu</p>
 
                 <h2 className="h2-aszf">2. SZOLGÁLTATÁS LEÍRÁSA</h2>
