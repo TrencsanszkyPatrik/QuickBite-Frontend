@@ -1,3 +1,5 @@
+@import url('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css');
+
 :root {
     --primary: #3C3D37;           /* Sötétszürke/zöldes - fő szín */
     --primary-dark: #181C14;      /* Legsötétebb zöldes/fekete */
@@ -131,11 +133,77 @@
   font-weight: 500;
 }
 
+.category-scroll-wrapper {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  position: relative;
+}
+
+.category-scroll-arrow {
+  background: linear-gradient(135deg, var(--bg-light) 60%, var(--bg-warm) 100%);
+  border:none;
+  border-radius: 50%;
+  width: 42px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.45rem;
+  color: var(--primary);
+  cursor: pointer;
+  margin: 0 8px;
+  box-shadow: 0 4px 16px rgba(139, 122, 107, 0.13), 0 1.5px 0.5px rgba(139, 122, 107, 0.10);
+  transition: background 0.2s, border 0.2s, color 0.2s, box-shadow 0.2s;
+  z-index: 2;
+  outline: none;
+  position: relative;
+  overflow: hidden;
+}
+.category-scroll-arrow::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: linear-gradient(120deg, rgba(139,122,107,0.08) 0%, rgba(236,223,204,0.13) 100%);
+  z-index: 0;
+}
+.category-scroll-arrow span {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.category-scroll-arrow:hover {
+  background: linear-gradient(135deg, var(--accent) 60%, var(--primary) 100%);
+  color: var(--bg);
+  border-color: var(--primary);
+  box-shadow: 0 6px 18px rgba(139, 122, 107, 0.18), 0 2px 1px rgba(139, 122, 107, 0.13);
+}
+.category-scroll-arrow:active {
+  background: var(--primary-dark);
+  color: var(--bg);
+  border-color: var(--primary-dark);
+}
+.category-scroll-arrow:focus {
+  box-shadow: 0 0 0 3px var(--accent), 0 6px 18px rgba(139, 122, 107, 0.18);
+}
+
 .category-buttons {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: row;
   gap: 0.75rem;
-  justify-content: center;
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE 10+ */
+  flex: 1 1 auto;
+  padding-bottom: 4px;
+}
+.category-buttons::-webkit-scrollbar {
+  display: none;
 }
 
 .category-btn {
@@ -152,12 +220,13 @@
   cursor: pointer;
   transition: all 0.2s ease;
   white-space: nowrap;
+  box-sizing: border-box;
 }
 
 .category-btn:hover {
   border-color: var(--accent);
   background: linear-gradient(135deg, rgba(245, 237, 224, 0.7) 0%, rgba(236, 223, 204, 0.6) 100%);
-  transform: translateY(-2px);
+  transform: translateY(-0.5px);
   box-shadow: 0 4px 12px rgba(24, 28, 20, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.3);
 }
 

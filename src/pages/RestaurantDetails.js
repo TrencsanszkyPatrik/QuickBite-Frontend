@@ -60,6 +60,8 @@ const CATEGORY_ORDER = [
   'Wrapek',
   'Köret',
   'Köretek',
+  'Hot-dog',
+  'Szósz',
   'Desszert',
   'Édességek',
   'Sütemény',
