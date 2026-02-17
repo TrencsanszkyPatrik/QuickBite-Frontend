@@ -10,6 +10,32 @@ import { API_BASE, getAuthHeaders } from '../utils/api'
 import { showToast } from '../utils/toast'
 import { animateAddToCart } from '../utils/cartAnimation'
 
+const parseTimeToMinutes = (timeValue) => {
+  if (!timeValue) return null
+  const normalized = String(timeValue).slice(0, 8)
+  const [hour, minute] = normalized.split(':').map(Number)
+  if (Number.isNaN(hour) || Number.isNaN(minute)) return null
+  return (hour * 60) + minute
+}
+
+const isRestaurantOpenNow = (openingTime, closingTime) => {
+  const openMinutes = parseTimeToMinutes(openingTime)
+  const closeMinutes = parseTimeToMinutes(closingTime)
+
+  if (openMinutes === null || closeMinutes === null) {
+    return true
+  }
+
+  const now = new Date()
+  const currentMinutes = (now.getHours() * 60) + now.getMinutes()
+
+  if (openMinutes <= closeMinutes) {
+    return currentMinutes >= openMinutes && currentMinutes < closeMinutes
+  }
+
+  return currentMinutes >= openMinutes || currentMinutes < closeMinutes
+}
+
 const CATEGORY_ORDER = [
   'Előétel',
   'Wrap',
@@ -224,7 +250,12 @@ export default function RestaurantDetails({ favorites = [], pendingFavoriteIds, 
           address: `${restaurantData.city}, ${restaurantData.address}`,
           img: restaurantData.image_url,
           cuisine: cuisine?.name || 'Ismeretlen',
-          phone: restaurantData.phonenumber
+          phone: restaurantData.phonenumber,
+          openingTime: restaurantData.opening_time,
+          closingTime: restaurantData.closing_time,
+          isOpen: restaurantData.is_open !== undefined
+            ? restaurantData.is_open
+            : isRestaurantOpenNow(restaurantData.opening_time, restaurantData.closing_time)
         }
 
         setRestaurant(mappedRestaurant)
@@ -549,6 +580,17 @@ export default function RestaurantDetails({ favorites = [], pendingFavoriteIds, 
             <div className="restaurant-phone">
               <i className="bi bi-telephone-fill"></i>
               <a href={`tel:${restaurant.phone}`}>{restaurant.phone}</a>
+            </div>
+          )}
+
+          {restaurant.openingTime && restaurant.closingTime && (
+            <div className="restaurant-phone">
+              <i className="bi bi-clock-fill"></i>
+              <span>
+                Nyitvatartás: {String(restaurant.openingTime).slice(0, 5)} - {String(restaurant.closingTime).slice(0, 5)}
+                {' • '}
+                {restaurant.isOpen ? 'Nyitva most' : 'Jelenleg zárva'}
+              </span>
             </div>
           )}
           

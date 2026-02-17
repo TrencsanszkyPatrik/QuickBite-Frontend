@@ -148,6 +148,11 @@ export default function RestaurantCardList({
                 </div>
               )}
               <span className="restaurant-address">{r.address}</span>
+              {r.openingTime && r.closingTime && (
+                <span className="restaurant-address">
+                  Nyitvatartás: {String(r.openingTime).slice(0, 5)} - {String(r.closingTime).slice(0, 5)}
+                </span>
+              )}
               {r.isOpen !== undefined && (
                 <div className={`status-badge ${r.isOpen ? 'status-badge--open' : 'status-badge--closed'}`}>
                   <span className={`status-dot ${r.isOpen ? 'status-dot--open' : 'status-dot--closed'}`}></span>
