@@ -211,25 +211,47 @@ export default function AllRestaurantPage({ favorites = [], pendingFavoriteIds, 
           </div>
 
           <div className="category-filter">
-            <div className="category-buttons">
+            <div className="category-scroll-wrapper">
               <button
-                className={`category-btn ${selectedCategoryId === null ? 'selected' : ''}`}
-                onClick={() => setSelectedCategoryId(null)}
+                className="category-scroll-arrow left"
+                onClick={() => {
+                  const el = document.querySelector('.category-buttons');
+                  if (el) el.scrollBy({ left: -220, behavior: 'smooth' });
+                }}
+                aria-label="Balra görgetés"
               >
-                Összes
+                <i className="bi bi-arrow-left-circle"></i>
               </button>
-              {!isLoadingCategories && categories.map((category) => (
+              <div className="category-buttons" tabIndex={0}>
                 <button
-                  key={category.id}
-                  className={`category-btn ${selectedCategoryId === category.id ? 'selected' : ''}`}
-                  onClick={() => setSelectedCategoryId(
-                    selectedCategoryId === category.id ? null : category.id
-                  )}
+                  className={`category-btn ${selectedCategoryId === null ? 'selected' : ''}`}
+                  onClick={() => setSelectedCategoryId(null)}
                 >
-                  <span className="category-icon">{category.icon}</span>
-                  <span className="category-name">{category.name}</span>
+                  Összes
                 </button>
-              ))}
+                {!isLoadingCategories && categories.map((category) => (
+                  <button
+                    key={category.id}
+                    className={`category-btn ${selectedCategoryId === category.id ? 'selected' : ''}`}
+                    onClick={() => setSelectedCategoryId(
+                      selectedCategoryId === category.id ? null : category.id
+                    )}
+                  >
+                    <span className="category-icon">{category.icon}</span>
+                    <span className="category-name">{category.name}</span>
+                  </button>
+                ))}
+              </div>
+              <button
+                className="category-scroll-arrow right"
+                onClick={() => {
+                  const el = document.querySelector('.category-buttons');
+                  if (el) el.scrollBy({ left: 220, behavior: 'smooth' });
+                }}
+                aria-label="Jobbra görgetés"
+              >
+                <i className="bi bi-arrow-right-circle"></i>
+              </button>
             </div>
           </div>
         </div>
