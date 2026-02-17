@@ -71,8 +71,8 @@ export default function Aszf() {
                 <p className="p-aszf"><strong className="strong-aszf">11.2.</strong> A vitás ügyeket a Budapest Környéki Törvényszék bíráskodik.</p>
                 <p className="p-aszf"><strong className="strong-aszf">11.3.</strong> Kapcsolat:</p>
                 <p className="p-list-aszf">- E-mail: info@quickbite.hu</p>
-                <p className="p-list-aszf">- Telefon: [Itt add meg a telefonszámot]</p>
-                <p className="p-list-aszf">- Cím: [Itt add meg a teljes címet]</p>
+                <p className="p-list-aszf">- Telefon: +36 30 123 4567</p>
+                <p className="p-list-aszf">- Cím: 3525 Miskolc, Palóczy László utca 3.</p>
 
                 <p className="p-aszf"><em className="em-aszf">Ez a dokumentum 2025. január 1-jén lépett hatályba.</em></p>
             </div>
