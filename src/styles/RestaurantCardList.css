@@ -48,6 +48,19 @@
   transform: translateY(-4px) scale(1.03);
 }
 
+.restaurant-card--closed {
+  filter: grayscale(0.45);
+  opacity: 0.75;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.restaurant-card--closed:hover,
+.restaurant-card--closed:focus {
+  box-shadow: 0 2px 12px rgba(59,51,85,0.08);
+  transform: none;
+}
+
 .restaurant-img {
   width: 100%;
   height: 280px;

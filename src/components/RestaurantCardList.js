@@ -100,12 +100,19 @@ export default function RestaurantCardList({
   return (
     <div className="restaurant-list-section container">
       <div className="restaurant-cards-grid">
-        {visibleRestaurants.map((r) => (
+        {visibleRestaurants.map((r) => {
+          const isClosed = r.isOpen === false
+
+          return (
           <div
-            className="restaurant-card"
+            className={`restaurant-card ${isClosed ? 'restaurant-card--closed' : ''}`}
             key={r.id}
-            tabIndex={0}
-            onClick={() => navigate(`/restaurant/${r.id}`)}
+            tabIndex={isClosed ? -1 : 0}
+            onClick={() => {
+              if (!isClosed) {
+                navigate(`/restaurant/${r.id}`)
+              }
+            }}
           >
             {(() => {
               const isFavorited = favorites.some((fav) => String(fav.id) === String(r.id))
@@ -161,7 +168,8 @@ export default function RestaurantCardList({
               )}
             </div>
           </div>
-        ))}
+          )
+        })}
         {filteredRestaurants.length === 0 && (
           <p>Nincs találat a megadott keresésre.</p>
         )}
