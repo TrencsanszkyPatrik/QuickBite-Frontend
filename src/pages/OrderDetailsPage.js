@@ -8,6 +8,7 @@ import { usePageTitle } from '../utils/usePageTitle'
 import { API_BASE, getAuthHeaders } from '../utils/api'
 import { showToast } from '../utils/toast'
 import '../styles/OrdersPage.css'
+import '../styles/modal.css'
 
 export default function OrderDetailsPage() {
   const { id } = useParams()
@@ -17,6 +18,37 @@ export default function OrderDetailsPage() {
   const [order, setOrder] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [isCancelModalOpen, setIsCancelModalOpen] = useState(false)
+  const [isCancelling, setIsCancelling] = useState(false)
+
+  const canCancelOrder = (status) => status === 'pending'
+
+  const closeCancelModal = () => {
+    if (isCancelling) return
+    setIsCancelModalOpen(false)
+  }
+
+  const confirmCancelOrder = async () => {
+    if (!order) return
+
+    try {
+      setIsCancelling(true)
+      const res = await axios.post(
+        `${API_BASE}/Orders/${order.id}/cancel`,
+        {},
+        { headers: getAuthHeaders() }
+      )
+
+      setOrder(res.data)
+      showToast.success('A rendelés lemondva.')
+      setIsCancelModalOpen(false)
+    } catch (err) {
+      const message = err.response?.data?.message || 'Nem sikerült lemondani a rendelést.'
+      showToast.error(message)
+    } finally {
+      setIsCancelling(false)
+    }
+  }
 
   const handleReorder = () => {
     if (!order || !order.items) return
@@ -77,7 +109,7 @@ export default function OrderDetailsPage() {
       preparing: 'Elkészül',
       delivering: 'Kiszállítás alatt',
       delivered: 'Kiszállítva',
-      cancelled: 'Törölve'
+      cancelled: 'Lemondva'
     }
     return labels[status] || status
   }
@@ -230,15 +262,61 @@ export default function OrderDetailsPage() {
               </div>
             </div>
 
-            <button
-              className="order-detail-reorder-btn"
-              onClick={handleReorder}
-            >
-              <i className="bi bi-arrow-clockwise"></i> Újrarendelés
-            </button>
+            <div className="order-detail-actions">
+              <button
+                className={`order-detail-cancel-btn ${!canCancelOrder(order.status) ? 'order-detail-cancel-btn-disabled' : ''}`}
+                onClick={() => setIsCancelModalOpen(true)}
+                disabled={!canCancelOrder(order.status)}
+              >
+                <i className="bi bi-x-circle"></i> Lemondás
+              </button>
+              <button
+                className="order-detail-reorder-btn"
+                onClick={handleReorder}
+              >
+                <i className="bi bi-arrow-clockwise"></i> Újrarendelés
+              </button>
+            </div>
           </div>
         </div>
       </main>
+      {isCancelModalOpen && order && (
+        <div className="modal-overlay" onClick={closeCancelModal}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>Rendelés lemondása</h2>
+              <button className="modal-close" onClick={closeCancelModal} aria-label="Bezárás">
+                ×
+              </button>
+            </div>
+            <div className="modal-body">
+              <p className="modal-text">Biztosan lemondod ezt a rendelést?</p>
+              <p className="modal-text">
+                <strong>{order.restaurantName}</strong>
+              </p>
+              <p className="modal-text">
+                A művelet után a rendelés állapota <strong>Lemondva</strong> lesz.
+              </p>
+            </div>
+            <div className="modal-actions">
+              <button
+                className="modal-btn modal-btn-cancel"
+                onClick={closeCancelModal}
+                disabled={isCancelling}
+              >
+                Mégse
+              </button>
+              <button
+                className="modal-btn modal-btn-confirm"
+                onClick={confirmCancelOrder}
+                disabled={isCancelling}
+              >
+                {isCancelling ? 'Lemondás...' : 'Igen, lemondom'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       <Footer />
     </>
   )

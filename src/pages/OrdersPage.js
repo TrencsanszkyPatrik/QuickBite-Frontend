@@ -8,6 +8,7 @@ import { usePageTitle } from '../utils/usePageTitle'
 import { API_BASE, getAuthHeaders } from '../utils/api'
 import { showToast } from '../utils/toast'
 import '../styles/OrdersPage.css'
+import '../styles/modal.css'
 
 export default function OrdersPage() {
   usePageTitle('QuickBite - Rendeléseim')
@@ -15,6 +16,52 @@ export default function OrdersPage() {
   const [orders, setOrders] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [isCancelModalOpen, setIsCancelModalOpen] = useState(false)
+  const [orderToCancel, setOrderToCancel] = useState(null)
+  const [isCancelling, setIsCancelling] = useState(false)
+
+  const canCancelOrder = (status) => status === 'pending'
+
+  const openCancelModal = (order, e) => {
+    e.stopPropagation()
+    setOrderToCancel(order)
+    setIsCancelModalOpen(true)
+  }
+
+  const closeCancelModal = () => {
+    if (isCancelling) return
+    setIsCancelModalOpen(false)
+    setOrderToCancel(null)
+  }
+
+  const confirmCancelOrder = async () => {
+    if (!orderToCancel) return
+
+    try {
+      setIsCancelling(true)
+      const res = await axios.post(
+        `${API_BASE}/Orders/${orderToCancel.id}/cancel`,
+        {},
+        { headers: getAuthHeaders() }
+      )
+
+      const updatedOrder = res.data
+      setOrders((prev) => prev.map((order) => (
+        order.id === updatedOrder.id
+          ? { ...order, status: updatedOrder.status }
+          : order
+      )))
+
+      showToast.success('A rendelés lemondva.')
+      setIsCancelModalOpen(false)
+      setOrderToCancel(null)
+    } catch (err) {
+      const message = err.response?.data?.message || 'Nem sikerült lemondani a rendelést.'
+      showToast.error(message)
+    } finally {
+      setIsCancelling(false)
+    }
+  }
 
   const handleReorder = async (orderId, e) => {
     e.stopPropagation() 
@@ -85,7 +132,7 @@ export default function OrdersPage() {
       preparing: 'Elkészül',
       delivering: 'Kiszállítás alatt',
       delivered: 'Kiszállítva',
-      cancelled: 'Törölve'
+      cancelled: 'Lemondva'
     }
     return labels[status] || status
   }
@@ -189,6 +236,13 @@ export default function OrdersPage() {
                     >
                       Részletek <i className="bi bi-chevron-right"></i>
                     </button>
+                    <button
+                      className={`orders-cancel-btn ${!canCancelOrder(order.status) ? 'orders-cancel-btn-disabled' : ''}`}
+                      onClick={(e) => openCancelModal(order, e)}
+                      disabled={!canCancelOrder(order.status)}
+                    >
+                      <i className="bi bi-x-circle"></i> Lemondás
+                    </button>
                   </div>
                 </div>
               ))}
@@ -196,6 +250,45 @@ export default function OrdersPage() {
           ) : null}
         </div>
       </main>
+      {isCancelModalOpen && orderToCancel && (
+        <div className="modal-overlay" onClick={closeCancelModal}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>Rendelés lemondása</h2>
+              <button className="modal-close" onClick={closeCancelModal} aria-label="Bezárás">
+                ×
+              </button>
+            </div>
+            <div className="modal-body">
+              <p className="modal-text">
+                Biztosan lemondod ezt a rendelést?
+              </p>
+              <p className="modal-text">
+                <strong>{orderToCancel.restaurantName}</strong>
+              </p>
+              <p className="modal-text">
+                A művelet után a rendelés állapota <strong>Lemondva</strong> lesz.
+              </p>
+            </div>
+            <div className="modal-actions">
+              <button
+                className="modal-btn modal-btn-cancel"
+                onClick={closeCancelModal}
+                disabled={isCancelling}
+              >
+                Mégse
+              </button>
+              <button
+                className="modal-btn modal-btn-confirm"
+                onClick={confirmCancelOrder}
+                disabled={isCancelling}
+              >
+                {isCancelling ? 'Lemondás...' : 'Igen, lemondom'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       <Footer />
     </>
   )
