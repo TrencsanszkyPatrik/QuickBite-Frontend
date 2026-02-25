@@ -37,6 +37,10 @@ const isRestaurantOpenNow = (openingTime, closingTime) => {
 }
 
 const CATEGORY_ORDER = [
+  'Sós palacsinta',
+  'Édes palacsinta',
+  'Gofri',
+  'Különlegességek',
   'Előétel',
   'Wrap',
   'Lángos',
@@ -82,6 +86,7 @@ const CATEGORY_ORDER = [
   'Limonádé',
   'Kávé & Meleg italok',
   'Hűsítők',
+  'Ásványvíz',
   'Víz',
   'Sör',
   'Bor',
