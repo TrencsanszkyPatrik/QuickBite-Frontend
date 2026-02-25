@@ -290,7 +290,8 @@ export default function RestaurantDetails({ favorites = [], pendingFavoriteIds, 
       setReviewData(reviewsRes.data)
       
       // Felhasználó saját értékelésének betöltése ha be van jelentkezve
-      if (isLoggedIn) {
+      const token = localStorage.getItem('quickbite_token')
+      if (token) {
         try {
           const userReviewRes = await axios.get(
             `${API_BASE}/Reviews/restaurant/${id}/user-review`,
