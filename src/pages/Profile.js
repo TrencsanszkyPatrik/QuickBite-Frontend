@@ -15,6 +15,23 @@ import { API_BASE, getAuthHeaders } from '../utils/api'
 import '../styles/profile.css'
 import '../styles/modal.css'
 
+const isValidPhoneNumber = (value) => {
+  if (!value) return false
+  const cleaned = value.replace(/[\s-]/g, '')
+
+  if (cleaned.startsWith('+36')) {
+    const digits = cleaned.slice(3)
+    return /^\d{9}$/.test(digits)
+  }
+
+  if (cleaned.startsWith('06')) {
+    const digits = cleaned.slice(2)
+    return /^\d{9}$/.test(digits)
+  }
+
+  return false
+}
+
 export default function Profile({ favorites = [] }) {
   usePageTitle('QuickBite - Profilom')
   const navigate = useNavigate()
@@ -73,6 +90,10 @@ export default function Profile({ favorites = [] }) {
 
   const handleSave = async (e) => {
     e.preventDefault()
+    if (editForm.phone && !isValidPhoneNumber(editForm.phone)) {
+      showToast.error('Kérjük, érvényes telefonszámot adj meg (pl. +36 30 123 4567)!')
+      return
+    }
     setIsSaving(true)
     try {
       const res = await axios.patch(

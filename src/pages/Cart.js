@@ -46,6 +46,68 @@ export default function Cart() {
     cardName: ''
   })
 
+  const isValidPhoneNumber = (value) => {
+    if (!value) return false
+    const cleaned = value.replace(/[\s-]/g, '')
+
+    if (cleaned.startsWith('+36')) {
+      const digits = cleaned.slice(3)
+      // pl. +36 30 123 4567 -> +36 + 9 számjegy
+      return /^\d{9}$/.test(digits)
+    }
+
+    if (cleaned.startsWith('06')) {
+      const digits = cleaned.slice(2)
+      // pl. 06 30 123 4567 -> 06 + 9 számjegy
+      return /^\d{9}$/.test(digits)
+    }
+
+    return false
+  }
+
+  const isValidCardNumber = (value) => {
+    if (!value) return false
+    // Távolítsunk el minden nem számjegy karaktert (szóköz, kötőjel, stb.)
+    const cleaned = value.replace(/\D/g, '')
+    // Legalább 16, legfeljebb 19 számjegy
+    return /^\d{16,19}$/.test(cleaned)
+  }
+
+  const isValidExpiry = (value) => {
+    if (!value) return false
+    const trimmed = value.trim()
+    const match = trimmed.match(/^(\d{2})\s*[\/\-.]\s*(\d{2}|\d{4})$/)
+    if (!match) return false
+
+    const month = Number(match[1])
+    let year = Number(match[2])
+    if (Number.isNaN(month) || Number.isNaN(year) || month < 1 || month > 12) return false
+
+    // Ha 4 jegyű évet adtak meg (pl. 2028), alakítsuk 2 jegyűvé
+    if (year >= 100) {
+      year = year % 100
+    }
+
+    const now = new Date()
+    const currentYear = now.getFullYear() % 100
+    const currentMonth = now.getMonth() + 1
+
+    if (year < currentYear) return false
+    if (year === currentYear && month < currentMonth) return false
+    return true
+  }
+
+  const isValidCvv = (value) => {
+    if (!value) return false
+    return /^\d{3,4}$/.test(value.trim())
+  }
+
+  const isValidCardName = (value) => {
+    if (!value) return false
+    const trimmed = value.trim()
+    return trimmed.length >= 5 && /\s/.test(trimmed)
+  }
+
   useEffect(() => {
     const token = localStorage.getItem('quickbite_token')
     const userData = localStorage.getItem('quickbite_user')
@@ -248,10 +310,36 @@ export default function Cart() {
       return
     }
 
-    if (paymentMethod === 'credit-card' && !selectedPaymentId && 
-        (!cardDetails.cardNumber || !cardDetails.expiry || !cardDetails.cvv || !cardDetails.cardName)) {
-      alert('Kérjük, add meg a bankkártya adatait vagy válassz mentett fizetési módot!')
+    if (!isValidPhoneNumber(deliveryAddress.phone)) {
+      alert('Kérjük, érvényes telefonszámot adj meg (pl. +36 30 123 4567)!')
       return
+    }
+
+    if (paymentMethod === 'credit-card' && !selectedPaymentId) {
+      if (!cardDetails.cardNumber || !cardDetails.expiry || !cardDetails.cvv || !cardDetails.cardName) {
+        alert('Kérjük, add meg a bankkártya adatait vagy válassz mentett fizetési módot!')
+        return
+      }
+
+      if (!isValidCardNumber(cardDetails.cardNumber)) {
+        alert('Kérjük, érvényes kártyaszámot adj meg!')
+        return
+      }
+
+      if (!isValidExpiry(cardDetails.expiry)) {
+        alert('Kérjük, érvényes lejárati dátumot adj meg (MM/ÉÉ) formátumban!')
+        return
+      }
+
+      if (!isValidCvv(cardDetails.cvv)) {
+        alert('A CVC/CVV kód 3 vagy 4 számjegy legyen!')
+        return
+      }
+
+      if (!isValidCardName(cardDetails.cardName)) {
+        alert('Kérjük, a kártyán szereplő nevet add meg!')
+        return
+      }
     }
 
     setShowCheckoutConfirmModal(true)
