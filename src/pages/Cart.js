@@ -88,6 +88,9 @@ export default function Cart() {
   const [selectedPhoneCountryCode, setSelectedPhoneCountryCode] = useState(DEFAULT_PHONE_CODE)
   const [isPhoneCodeListOpen, setIsPhoneCodeListOpen] = useState(false)
   const phoneCodeDropdownRef = useRef(null)
+  const phoneCodeOptionRefs = useRef({})
+  const phoneCodeTypeBufferRef = useRef('')
+  const phoneCodeTypeTimeoutRef = useRef(null)
   const [deliveryAddress, setDeliveryAddress] = useState({
     fullName: '',
     address: '',
@@ -105,6 +108,72 @@ export default function Cart() {
 
   const getPhoneConfig = (countryCode) => {
     return PHONE_CODE_OPTIONS.find((option) => option.value === countryCode) || PHONE_CODE_OPTIONS[0]
+  }
+
+  const resetPhoneCodeTypeAhead = () => {
+    phoneCodeTypeBufferRef.current = ''
+    if (phoneCodeTypeTimeoutRef.current) {
+      clearTimeout(phoneCodeTypeTimeoutRef.current)
+      phoneCodeTypeTimeoutRef.current = null
+    }
+  }
+
+  const closePhoneCodeList = () => {
+    setIsPhoneCodeListOpen(false)
+    resetPhoneCodeTypeAhead()
+  }
+
+  const applyPhoneCountryCode = (countryCode) => {
+    const parsedPhone = parsePhoneValue(deliveryAddress.phone, selectedPhoneCountryCode)
+    const nextValue = buildPhoneValue(countryCode, parsedPhone.localDigits)
+    setSelectedPhoneCountryCode(countryCode)
+    setDeliveryAddress((prev) => ({ ...prev, phone: nextValue }))
+  }
+
+  const handlePhoneCodeTypeAhead = (character) => {
+    const normalized = character.toLowerCase()
+    const nextBuffer = `${phoneCodeTypeBufferRef.current}${normalized}`
+
+    phoneCodeTypeBufferRef.current = nextBuffer
+    if (phoneCodeTypeTimeoutRef.current) {
+      clearTimeout(phoneCodeTypeTimeoutRef.current)
+    }
+    phoneCodeTypeTimeoutRef.current = setTimeout(() => {
+      phoneCodeTypeBufferRef.current = ''
+      phoneCodeTypeTimeoutRef.current = null
+    }, 700)
+
+    const matchedOption = PHONE_CODE_OPTIONS.find((option) => {
+      const label = option.label.toLowerCase()
+      const dial = option.value.toLowerCase()
+      return label.startsWith(nextBuffer) || dial.startsWith(nextBuffer)
+    })
+
+    if (!matchedOption) return
+
+    applyPhoneCountryCode(matchedOption.value)
+
+    requestAnimationFrame(() => {
+      const el = phoneCodeOptionRefs.current[matchedOption.value]
+      if (el) {
+        el.scrollIntoView({ block: 'nearest' })
+      }
+    })
+  }
+
+  const handlePhoneCodeTriggerKeyDown = (e) => {
+    if (e.key === 'Escape') {
+      closePhoneCodeList()
+      return
+    }
+
+    if (e.key.length === 1 && /[a-zA-Z0-9+]/.test(e.key)) {
+      e.preventDefault()
+      if (!isPhoneCodeListOpen) {
+        setIsPhoneCodeListOpen(true)
+      }
+      handlePhoneCodeTypeAhead(e.key)
+    }
   }
 
   const findCountryCodeFromDigits = (digits) => {
@@ -261,13 +330,13 @@ export default function Cart() {
 
     const handleOutsideClick = (event) => {
       if (!phoneCodeDropdownRef.current?.contains(event.target)) {
-        setIsPhoneCodeListOpen(false)
+        closePhoneCodeList()
       }
     }
 
     const handleEscape = (event) => {
       if (event.key === 'Escape') {
-        setIsPhoneCodeListOpen(false)
+        closePhoneCodeList()
       }
     }
 
@@ -279,6 +348,12 @@ export default function Cart() {
       document.removeEventListener('keydown', handleEscape)
     }
   }, [isPhoneCodeListOpen])
+
+  useEffect(() => {
+    return () => {
+      resetPhoneCodeTypeAhead()
+    }
+  }, [])
 
   const loadUserProfile = async () => {
     try {
@@ -1097,6 +1172,7 @@ export default function Cart() {
                           aria-haspopup="listbox"
                           aria-expanded={isPhoneCodeListOpen}
                           onClick={() => setIsPhoneCodeListOpen((prev) => !prev)}
+                          onKeyDown={handlePhoneCodeTriggerKeyDown}
                         >
                           {getPhoneConfig(selectedPhoneCountryCode).label}
                         </button>
@@ -1107,13 +1183,15 @@ export default function Cart() {
                               <button
                                 type="button"
                                 key={option.value}
+                                ref={(el) => {
+                                  phoneCodeOptionRefs.current[option.value] = el
+                                }}
                                 className={`phone-code-option ${selectedPhoneCountryCode === option.value ? 'active' : ''}`}
                                 onClick={() => {
-                                  setSelectedPhoneCountryCode(option.value)
-                                  const nextValue = buildPhoneValue(option.value, parsedPhone.localDigits)
-                                  setDeliveryAddress({ ...deliveryAddress, phone: nextValue })
-                                  setIsPhoneCodeListOpen(false)
+                                  applyPhoneCountryCode(option.value)
+                                  closePhoneCodeList()
                                 }}
+                                onKeyDown={handlePhoneCodeTriggerKeyDown}
                                 role="option"
                                 aria-selected={selectedPhoneCountryCode === option.value}
                               >
