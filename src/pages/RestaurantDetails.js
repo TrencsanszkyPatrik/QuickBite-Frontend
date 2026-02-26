@@ -513,45 +513,51 @@ export default function RestaurantDetails({ favorites = [], pendingFavoriteIds, 
                 </div>
               </div>
 
-              <div className="product-modal-qty">
-                <span className="product-modal-qty-label">Mennyiség</span>
-                <div className="product-modal-qty-controls">
-                  <button
-                    type="button"
-                    className="product-modal-qty-btn"
-                    onClick={() => setSelectedQuantity((q) => Math.max(1, q - 1))}
-                    aria-label="Mennyiség csökkentése"
-                  >
-                    −
-                  </button>
-                  <span className="product-modal-qty-value">{selectedQuantity}</span>
-                  <button
-                    type="button"
-                    className="product-modal-qty-btn"
-                    onClick={() => setSelectedQuantity((q) => Math.min(99, q + 1))}
-                    aria-label="Mennyiség növelése"
-                  >
-                    +
-                  </button>
+              {restaurant.isOpen && (
+                <div className="product-modal-qty">
+                  <span className="product-modal-qty-label">Mennyiség</span>
+                  <div className="product-modal-qty-controls">
+                    <button
+                      type="button"
+                      className="product-modal-qty-btn"
+                      onClick={() => setSelectedQuantity((q) => Math.max(1, q - 1))}
+                      aria-label="Mennyiség csökkentése"
+                    >
+                      −
+                    </button>
+                    <span className="product-modal-qty-value">{selectedQuantity}</span>
+                    <button
+                      type="button"
+                      className="product-modal-qty-btn"
+                      onClick={() => setSelectedQuantity((q) => Math.min(99, q + 1))}
+                      aria-label="Mennyiség növelése"
+                    >
+                      +
+                    </button>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
             <div className="modal-actions">
-              <button className="modal-btn modal-btn-cancel" onClick={closeItemModal}>
-                Mégse
-              </button>
-              <button
-                className="modal-btn modal-btn-confirm"
-                onClick={(e) => {
-                  // Használjuk a kép elemet animációhoz
-                  const imageElement = document.getElementById('product-modal-img-animated')
-                  addToCart(selectedItem, selectedQuantity, imageElement || e.currentTarget)
-                  // Kis késleltetéssel zárjuk be, hogy az animáció elinduljon
-                  setTimeout(() => closeItemModal(), 100)
-                }}
-              >
-                Kosárba teszem
-              </button>
+              {restaurant.isOpen ? (
+                <>
+                  <button className="modal-btn modal-btn-cancel" onClick={closeItemModal}>
+                    Mégse
+                  </button>
+                  <button
+                    className="modal-btn modal-btn-confirm"
+                    onClick={(e) => {
+                      const imageElement = document.getElementById('product-modal-img-animated')
+                      addToCart(selectedItem, selectedQuantity, imageElement || e.currentTarget)
+                      setTimeout(() => closeItemModal(), 100)
+                    }}
+                  >
+                    Kosárba teszem
+                  </button>
+                </>
+              ) : (
+                <span className="product-modal-closed-text">Jelenleg zárva vagyunk</span>
+              )}
             </div>
           </div>
         </div>

@@ -107,11 +107,9 @@ export default function RestaurantCardList({
           <div
             className={`restaurant-card ${isClosed ? 'restaurant-card--closed' : ''}`}
             key={r.id}
-            tabIndex={isClosed ? -1 : 0}
+            tabIndex={0}
             onClick={() => {
-              if (!isClosed) {
-                navigate(`/restaurant/${r.id}`)
-              }
+              navigate(`/restaurant/${r.id}`)
             }}
           >
             {(() => {

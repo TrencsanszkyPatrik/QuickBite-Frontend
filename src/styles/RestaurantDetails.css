@@ -685,6 +685,15 @@
   transform: none;
 }
 
+.product-modal-closed-text {
+  flex: 1;
+  align-self: center;
+  text-align: center;
+  font-weight: 700;
+  color: #ef4444;
+  font-size: 1.4rem;
+}
+
 /* Responsive design */
 @media (max-width: 768px) {
   .restaurant-details-header {

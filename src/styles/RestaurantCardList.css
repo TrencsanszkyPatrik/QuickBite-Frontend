@@ -51,8 +51,6 @@
 .restaurant-card--closed {
   filter: grayscale(0.45);
   opacity: 0.75;
-  cursor: not-allowed;
-  pointer-events: none;
 }
 
 .restaurant-card--closed:hover,
