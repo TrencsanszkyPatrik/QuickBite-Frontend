@@ -39,7 +39,6 @@
 .modal-content--small {
   max-width: 420px;
   padding: 1rem 1.25rem;
-  margin-top: -4rem;
   max-height: none;
   overflow-y: visible;
 }

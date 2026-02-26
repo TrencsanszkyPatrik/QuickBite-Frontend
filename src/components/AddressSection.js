@@ -1,7 +1,9 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { API_BASE, getAuthHeaders } from '../utils/api'
 import { showToast } from '../utils/toast'
 import AddressAutocomplete from './AddressAutocomplete'
+import '../styles/modal.css'
 
 const ADDRESS_LABELS = [
   { value: 'Otthon', label: 'Otthon' },
@@ -22,6 +24,18 @@ export default function AddressSection({ addresses, onUpdate }) {
   const [editingId, setEditingId] = useState(null)
   const [form, setForm] = useState(emptyForm)
   const [busyId, setBusyId] = useState(null)
+  const [deleteTarget, setDeleteTarget] = useState(null)
+
+  useEffect(() => {
+    if (!deleteTarget) return
+
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+
+    return () => {
+      document.body.style.overflow = previousOverflow
+    }
+  }, [deleteTarget])
 
   const loadProfile = async () => {
     const res = await fetch(`${API_BASE}/Profile/me`, { headers: getAuthHeaders() })
@@ -104,8 +118,9 @@ export default function AddressSection({ addresses, onUpdate }) {
     }
   }
 
-  const handleDelete = async (id) => {
-    if (!window.confirm('Biztosan törölni szeretnéd ezt a címet?')) return
+  const handleDeleteConfirm = async () => {
+    if (!deleteTarget) return
+    const id = deleteTarget.id
     setBusyId(id)
     try {
       const res = await fetch(`${API_BASE}/Profile/addresses/${id}`, {
@@ -125,6 +140,7 @@ export default function AddressSection({ addresses, onUpdate }) {
       showToast.error('Törlés sikertelen.')
     } finally {
       setBusyId(null)
+      setDeleteTarget(null)
     }
   }
 
@@ -133,6 +149,8 @@ export default function AddressSection({ addresses, onUpdate }) {
     setEditingId(null)
     setForm(emptyForm())
   }
+
+  const isDeletingSelectedAddress = Boolean(deleteTarget && busyId === deleteTarget.id)
 
   return (
     <div className="profile-section-card">
@@ -177,7 +195,7 @@ export default function AddressSection({ addresses, onUpdate }) {
               <button
                 type="button"
                 className="profile-btn profile-btn-sm profile-btn-ghost"
-                onClick={() => handleDelete(a.id)}
+                onClick={() => setDeleteTarget(a)}
                 disabled={busyId !== null}
               >
                 <i className="bi bi-trash" /> Törlés
@@ -270,6 +288,62 @@ export default function AddressSection({ addresses, onUpdate }) {
         >
           <i className="bi bi-plus-lg" /> Új cím
         </button>
+      )}
+      {deleteTarget && createPortal(
+        <div
+          className="modal-overlay"
+          onClick={() => {
+            if (!isDeletingSelectedAddress) setDeleteTarget(null)
+          }}
+        >
+          <div className="modal-content modal-content--small" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>Mentett cím törlése</h2>
+              <button
+                className="modal-close"
+                onClick={() => !isDeletingSelectedAddress && setDeleteTarget(null)}
+                aria-label="Bezárás"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="modal-body">
+              <div className="modal-icon">⚠️</div>
+              <p className="modal-text">Biztosan törölni szeretnéd ezt a mentett címet?</p>
+              <p className="modal-text">
+                <strong>{deleteTarget.label}</strong>
+              </p>
+              <p className="modal-text">
+                {deleteTarget.addressLine}, {deleteTarget.zipCode} {deleteTarget.city}
+              </p>
+              <p className="modal-question">A művelet nem vonható vissza.</p>
+              {isDeletingSelectedAddress && (
+                <p className="modal-text" aria-live="polite">
+                  Törlés folyamatban... Kérlek várj, frissítjük az adatokat.
+                </p>
+              )}
+            </div>
+            <div className="modal-actions">
+              <button
+                type="button"
+                className="modal-btn modal-btn-cancel"
+                onClick={() => !isDeletingSelectedAddress && setDeleteTarget(null)}
+                disabled={isDeletingSelectedAddress}
+              >
+                Mégse
+              </button>
+              <button
+                type="button"
+                className="modal-btn modal-btn-confirm"
+                onClick={handleDeleteConfirm}
+                disabled={isDeletingSelectedAddress}
+              >
+                {isDeletingSelectedAddress ? 'Törlés...' : 'Törlés'}
+              </button>
+            </div>
+          </div>
+        </div>,
+        document.body
       )}
     </div>
   )

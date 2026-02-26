@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { API_BASE, getAuthHeaders } from '../utils/api'
 import { showToast } from '../utils/toast'
 import '../styles/modal.css'
@@ -24,6 +25,17 @@ export default function PaymentMethodSection({ paymentMethods, onUpdate }) {
   const [form, setForm] = useState(emptyForm)
   const [busyId, setBusyId] = useState(null)
   const [deleteTarget, setDeleteTarget] = useState(null)
+
+  useEffect(() => {
+    if (!deleteTarget) return
+
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+
+    return () => {
+      document.body.style.overflow = previousOverflow
+    }
+  }, [deleteTarget])
 
   const loadProfile = async () => {
     const res = await fetch(`${API_BASE}/Profile/me`, { headers: getAuthHeaders() })
@@ -136,6 +148,8 @@ export default function PaymentMethodSection({ paymentMethods, onUpdate }) {
     setEditingId(null)
     setForm(emptyForm())
   }
+
+  const isDeletingSelectedPayment = Boolean(deleteTarget && busyId === deleteTarget.id)
 
   return (
     <div className="profile-section-card">
@@ -269,19 +283,19 @@ export default function PaymentMethodSection({ paymentMethods, onUpdate }) {
           <i className="bi bi-plus-lg" /> Új fizetési mód
         </button>
       )}
-      {deleteTarget && (
+      {deleteTarget && createPortal(
         <div
-          className="modal-overlay modal-overlay--top"
+          className="modal-overlay"
           onClick={() => {
             if (busyId === null) setDeleteTarget(null)
           }}
         >
           <div className="modal-content modal-content--small" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h2>Fizetési mód törlése</h2>
+              <h2>Mentett fizetési mód törlése</h2>
               <button
                 className="modal-close"
-                onClick={() => busyId === null && setDeleteTarget(null)}
+                onClick={() => !isDeletingSelectedPayment && setDeleteTarget(null)}
                 aria-label="Bezárás"
               >
                 ✕
@@ -290,20 +304,25 @@ export default function PaymentMethodSection({ paymentMethods, onUpdate }) {
             <div className="modal-body">
               <div className="modal-icon">⚠️</div>
               <p className="modal-text">
-                Biztosan törölni szeretnéd ezt a fizetési módot?
+                Biztosan törölni szeretnéd ezt a mentett fizetési módot?
               </p>
               <p className="modal-text">
                 <strong>{deleteTarget.displayName}</strong>
                 {deleteTarget.lastFourDigits && ` •••• ${deleteTarget.lastFourDigits}`}
               </p>
               <p className="modal-question">A művelet nem vonható vissza.</p>
+              {isDeletingSelectedPayment && (
+                <p className="modal-text" aria-live="polite">
+                  Törlés folyamatban... Kérlek várj, frissítjük az adatokat.
+                </p>
+              )}
             </div>
             <div className="modal-actions">
               <button
                 type="button"
                 className="modal-btn modal-btn-cancel"
                 onClick={() => busyId === null && setDeleteTarget(null)}
-                disabled={busyId !== null}
+                disabled={isDeletingSelectedPayment}
               >
                 Mégse
               </button>
@@ -311,13 +330,14 @@ export default function PaymentMethodSection({ paymentMethods, onUpdate }) {
                 type="button"
                 className="modal-btn modal-btn-confirm"
                 onClick={handleDeleteConfirm}
-                disabled={busyId !== null}
+                disabled={isDeletingSelectedPayment}
               >
-                Törlés
+                {isDeletingSelectedPayment ? 'Törlés...' : 'Törlés'}
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   )
