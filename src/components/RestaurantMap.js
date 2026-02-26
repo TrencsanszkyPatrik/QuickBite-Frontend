@@ -36,6 +36,11 @@ function MapContent({ restaurants, navigate, setMapInstance, searchPosition }) {
     })
   }
 
+  const getSanitizedImageUrl = (imageUrl) => {
+    if (typeof imageUrl !== 'string') return ''
+    return imageUrl.trim()
+  }
+
   return (
     <>
       <TileLayer
@@ -52,52 +57,56 @@ function MapContent({ restaurants, navigate, setMapInstance, searchPosition }) {
           fillOpacity={0.7}
         />
       )}
-      {restaurants.map((restaurant) => (
-        <Marker 
-          key={restaurant.id} 
-          position={restaurant.position}
-          icon={restaurant.image_url ? createRestaurantIcon(restaurant.image_url) : undefined}
-        >
-          <Popup>
-            <div className="restaurant-map-popup">
-              {restaurant.image_url && (
-                <img 
-                  src={restaurant.image_url} 
-                  alt={restaurant.name}
-                  className="restaurant-map-popup-img"
-                />
-              )}
-              <div className="restaurant-map-popup-content">
-                <h3 className="restaurant-map-popup-name">{restaurant.name}</h3>
-                <p className="restaurant-map-popup-description">{restaurant.description}</p>
-                <div className="restaurant-map-popup-info">
-                  {restaurant.rating && (
-                    <span className="restaurant-map-popup-rating">⭐ {restaurant.rating}</span>
-                  )}
-                  {restaurant.delivery_time && (
-                    <span className="restaurant-map-popup-delivery">🚚 {restaurant.delivery_time} perc</span>
-                  )}
-                </div>
-                <div className="restaurant-map-popup-details">
-                  <p><strong>Cím:</strong> {restaurant.city}, {restaurant.address}</p>
-                  {restaurant.phone && <p><strong>Telefon:</strong> {restaurant.phone}</p>}
-                  {restaurant.email && <p><strong>Email:</strong> {restaurant.email}</p>}
-                  {restaurant.min_order_value && (
-                    <p><strong>Minimális rendelés:</strong> {restaurant.min_order_value} Ft</p>
-                  )}
-                  
-                  <button 
-                    className="restaurant-map-popup-button"
-                    onClick={() => navigate(`/restaurant/${restaurant.id}`)}
-                  >
-                    Étterem oldala →
-                  </button>
+      {restaurants.map((restaurant) => {
+        const imageUrl = getSanitizedImageUrl(restaurant.image_url)
+
+        return (
+          <Marker
+            key={restaurant.id}
+            position={restaurant.position}
+            icon={imageUrl ? createRestaurantIcon(imageUrl) : undefined}
+          >
+            <Popup>
+              <div className="restaurant-map-popup">
+                {imageUrl && (
+                  <img
+                    src={imageUrl}
+                    alt={restaurant.name}
+                    className="restaurant-map-popup-img"
+                  />
+                )}
+                <div className="restaurant-map-popup-content">
+                  <h3 className="restaurant-map-popup-name">{restaurant.name}</h3>
+                  <p className="restaurant-map-popup-description">{restaurant.description}</p>
+                  <div className="restaurant-map-popup-info">
+                    {restaurant.rating && (
+                      <span className="restaurant-map-popup-rating">⭐ {restaurant.rating}</span>
+                    )}
+                    {restaurant.delivery_time && (
+                      <span className="restaurant-map-popup-delivery">🚚 {restaurant.delivery_time} perc</span>
+                    )}
+                  </div>
+                  <div className="restaurant-map-popup-details">
+                    <p><strong>Cím:</strong> {restaurant.city}, {restaurant.address}</p>
+                    {restaurant.phone && <p><strong>Telefon:</strong> {restaurant.phone}</p>}
+                    {restaurant.email && <p><strong>Email:</strong> {restaurant.email}</p>}
+                    {restaurant.min_order_value && (
+                      <p><strong>Minimális rendelés:</strong> {restaurant.min_order_value} Ft</p>
+                    )}
+
+                    <button
+                      className="restaurant-map-popup-button"
+                      onClick={() => navigate(`/restaurant/${restaurant.id}`)}
+                    >
+                      Étterem oldala →
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          </Popup>
-        </Marker>
-      ))}
+            </Popup>
+          </Marker>
+        )
+      })}
     </>
   )
 }
