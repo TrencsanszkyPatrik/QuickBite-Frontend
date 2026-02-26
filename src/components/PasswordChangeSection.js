@@ -17,6 +17,16 @@ export default function PasswordChangeSection() {
       showToast.error('Az új jelszónak legalább 6 karakter hosszúnak kell lennie.')
       return
     }
+
+    const hasLowercase = /[a-z]/.test(form.newPassword)
+    const hasUppercase = /[A-Z]/.test(form.newPassword)
+    const hasNumber = /[0-9]/.test(form.newPassword)
+    const hasSpecial = /[^A-Za-z0-9]/.test(form.newPassword)
+
+    if (!hasLowercase || !hasUppercase || !hasNumber || !hasSpecial) {
+      showToast.error('Az új jelszónak tartalmaznia kell kis- és nagybetűt, számot és speciális karaktert.')
+      return
+    }
     if (form.newPassword !== form.newPasswordConfirm) {
       showToast.error('Az új jelszavak nem egyeznek meg.')
       return

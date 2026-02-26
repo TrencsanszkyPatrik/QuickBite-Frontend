@@ -93,6 +93,16 @@ export default function Login() {
       return
     }
 
+    const hasLowercase = /[a-z]/.test(registerPassword)
+    const hasUppercase = /[A-Z]/.test(registerPassword)
+    const hasNumber = /[0-9]/.test(registerPassword)
+    const hasSpecial = /[^A-Za-z0-9]/.test(registerPassword)
+
+    if (!hasLowercase || !hasUppercase || !hasNumber || !hasSpecial) {
+      showToast.error('A jelszónak tartalmaznia kell kis- és nagybetűt, számot és speciális karaktert.')
+      return
+    }
+
     if (registerPassword !== registerConfirmPassword) {
       showToast.error('A jelszavak nem egyeznek meg!')
       return
