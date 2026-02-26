@@ -13,6 +13,7 @@ import { usePageTitle } from '../utils/usePageTitle'
 import { showToast } from '../utils/toast'
 import { API_BASE, getAuthHeaders } from '../utils/api'
 import '../styles/profile.css'
+import '../styles/modal.css'
 
 export default function Profile({ favorites = [] }) {
   usePageTitle('QuickBite - Profilom')

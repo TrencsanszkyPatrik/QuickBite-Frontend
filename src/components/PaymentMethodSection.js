@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { API_BASE, getAuthHeaders } from '../utils/api'
 import { showToast } from '../utils/toast'
+import '../styles/modal.css'
 
 const PAYMENT_TYPES = [
   { value: 'card', label: 'Bankkártya' },
@@ -22,6 +23,7 @@ export default function PaymentMethodSection({ paymentMethods, onUpdate }) {
   const [editingId, setEditingId] = useState(null)
   const [form, setForm] = useState(emptyForm)
   const [busyId, setBusyId] = useState(null)
+  const [deleteTarget, setDeleteTarget] = useState(null)
 
   const loadProfile = async () => {
     const res = await fetch(`${API_BASE}/Profile/me`, { headers: getAuthHeaders() })
@@ -103,8 +105,9 @@ export default function PaymentMethodSection({ paymentMethods, onUpdate }) {
     }
   }
 
-  const handleDelete = async (id) => {
-    if (!window.confirm('Biztosan törölni szeretnéd ezt a fizetési módot?')) return
+  const handleDeleteConfirm = async () => {
+    if (!deleteTarget) return
+    const id = deleteTarget.id
     setBusyId(id)
     try {
       const res = await fetch(`${API_BASE}/Profile/payment-methods/${id}`, {
@@ -124,6 +127,7 @@ export default function PaymentMethodSection({ paymentMethods, onUpdate }) {
       showToast.error('Törlés sikertelen.')
     } finally {
       setBusyId(null)
+      setDeleteTarget(null)
     }
   }
 
@@ -180,7 +184,7 @@ export default function PaymentMethodSection({ paymentMethods, onUpdate }) {
               <button
                 type="button"
                 className="profile-btn profile-btn-sm profile-btn-ghost"
-                onClick={() => handleDelete(p.id)}
+                onClick={() => setDeleteTarget(p)}
                 disabled={busyId !== null}
               >
                 <i className="bi bi-trash" /> Törlés
@@ -264,6 +268,56 @@ export default function PaymentMethodSection({ paymentMethods, onUpdate }) {
         >
           <i className="bi bi-plus-lg" /> Új fizetési mód
         </button>
+      )}
+      {deleteTarget && (
+        <div
+          className="modal-overlay modal-overlay--top"
+          onClick={() => {
+            if (busyId === null) setDeleteTarget(null)
+          }}
+        >
+          <div className="modal-content modal-content--small" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>Fizetési mód törlése</h2>
+              <button
+                className="modal-close"
+                onClick={() => busyId === null && setDeleteTarget(null)}
+                aria-label="Bezárás"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="modal-body">
+              <div className="modal-icon">⚠️</div>
+              <p className="modal-text">
+                Biztosan törölni szeretnéd ezt a fizetési módot?
+              </p>
+              <p className="modal-text">
+                <strong>{deleteTarget.displayName}</strong>
+                {deleteTarget.lastFourDigits && ` •••• ${deleteTarget.lastFourDigits}`}
+              </p>
+              <p className="modal-question">A művelet nem vonható vissza.</p>
+            </div>
+            <div className="modal-actions">
+              <button
+                type="button"
+                className="modal-btn modal-btn-cancel"
+                onClick={() => busyId === null && setDeleteTarget(null)}
+                disabled={busyId !== null}
+              >
+                Mégse
+              </button>
+              <button
+                type="button"
+                className="modal-btn modal-btn-confirm"
+                onClick={handleDeleteConfirm}
+                disabled={busyId !== null}
+              >
+                Törlés
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   )
