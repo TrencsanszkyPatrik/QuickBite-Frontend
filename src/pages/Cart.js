@@ -8,63 +8,18 @@ import '../styles/modal.css'
 import { usePageTitle } from '../utils/usePageTitle'
 import { API_BASE, getAuthHeaders } from '../utils/api'
 import { Link } from 'react-router-dom'
+import { AsYouType, parsePhoneNumberFromString, validatePhoneNumberLength } from 'libphonenumber-js'
+
+const FALLBACK_PHONE_CODE_OPTIONS = [
+  { value: '+36', label: 'HU +36', countryCodes: ['HU'], defaultCountry: 'HU' }
+]
+
+const DEFAULT_PHONE_CODE = FALLBACK_PHONE_CODE_OPTIONS[0].value
 
 export default function Cart() {
   usePageTitle('QuickBite - Kosár')
 
-  const PHONE_CODE_OPTIONS = [
-    { value: '+36', label: 'HU +36', localMinLength: 9, localMaxLength: 9, groupSizes: [2, 3, 4] },
-    { value: '+43', label: 'AT +43', localMinLength: 7, localMaxLength: 12, groupSizes: [3, 3, 3, 3] },
-    { value: '+32', label: 'BE +32', localMinLength: 8, localMaxLength: 9, groupSizes: [3, 3, 3] },
-    { value: '+359', label: 'BG +359', localMinLength: 8, localMaxLength: 9, groupSizes: [3, 3, 3] },
-    { value: '+40', label: 'RO +40', localMinLength: 9, localMaxLength: 9, groupSizes: [3, 3, 3] },
-    { value: '+421', label: 'SK +421', localMinLength: 9, localMaxLength: 9, groupSizes: [3, 3, 3] },
-    { value: '+385', label: 'HR +385', localMinLength: 8, localMaxLength: 9, groupSizes: [3, 3, 3] },
-    { value: '+357', label: 'CY +357', localMinLength: 8, localMaxLength: 8, groupSizes: [4, 4] },
-    { value: '+420', label: 'CZ +420', localMinLength: 9, localMaxLength: 9, groupSizes: [3, 3, 3] },
-    { value: '+45', label: 'DK +45', localMinLength: 8, localMaxLength: 8, groupSizes: [4, 4] },
-    { value: '+372', label: 'EE +372', localMinLength: 7, localMaxLength: 8, groupSizes: [3, 3, 2] },
-    { value: '+358', label: 'FI +358', localMinLength: 7, localMaxLength: 12, groupSizes: [3, 3, 3, 3] },
-    { value: '+33', label: 'FR +33', localMinLength: 9, localMaxLength: 9, groupSizes: [1, 2, 2, 2, 2] },
-    { value: '+49', label: 'DE +49', localMinLength: 7, localMaxLength: 13, groupSizes: [3, 3, 3, 4] },
-    { value: '+30', label: 'GR +30', localMinLength: 10, localMaxLength: 10, groupSizes: [3, 3, 4] },
-    { value: '+353', label: 'IE +353', localMinLength: 7, localMaxLength: 9, groupSizes: [3, 3, 3] },
-    { value: '+39', label: 'IT +39', localMinLength: 8, localMaxLength: 11, groupSizes: [3, 3, 3, 2] },
-    { value: '+371', label: 'LV +371', localMinLength: 8, localMaxLength: 8, groupSizes: [4, 4] },
-    { value: '+370', label: 'LT +370', localMinLength: 8, localMaxLength: 8, groupSizes: [3, 3, 2] },
-    { value: '+352', label: 'LU +352', localMinLength: 6, localMaxLength: 11, groupSizes: [3, 3, 3, 2] },
-    { value: '+356', label: 'MT +356', localMinLength: 8, localMaxLength: 8, groupSizes: [4, 4] },
-    { value: '+31', label: 'NL +31', localMinLength: 9, localMaxLength: 9, groupSizes: [2, 3, 4] },
-    { value: '+47', label: 'NO +47', localMinLength: 8, localMaxLength: 8, groupSizes: [3, 3, 2] },
-    { value: '+48', label: 'PL +48', localMinLength: 9, localMaxLength: 9, groupSizes: [3, 3, 3] },
-    { value: '+351', label: 'PT +351', localMinLength: 9, localMaxLength: 9, groupSizes: [3, 3, 3] },
-    { value: '+386', label: 'SI +386', localMinLength: 8, localMaxLength: 8, groupSizes: [3, 3, 2] },
-    { value: '+34', label: 'ES +34', localMinLength: 9, localMaxLength: 9, groupSizes: [3, 3, 3] },
-    { value: '+46', label: 'SE +46', localMinLength: 7, localMaxLength: 10, groupSizes: [3, 3, 4] },
-    { value: '+41', label: 'CH +41', localMinLength: 9, localMaxLength: 9, groupSizes: [2, 3, 2, 2] },
-    { value: '+44', label: 'UK +44', localMinLength: 10, localMaxLength: 10, groupSizes: [4, 3, 3] },
-    { value: '+1', label: 'US/CA +1', localMinLength: 10, localMaxLength: 10, groupSizes: [3, 3, 4] },
-    { value: '+52', label: 'MX +52', localMinLength: 10, localMaxLength: 10, groupSizes: [3, 3, 4] },
-    { value: '+55', label: 'BR +55', localMinLength: 10, localMaxLength: 11, groupSizes: [2, 4, 4, 1] },
-    { value: '+54', label: 'AR +54', localMinLength: 10, localMaxLength: 10, groupSizes: [3, 3, 4] },
-    { value: '+90', label: 'TR +90', localMinLength: 10, localMaxLength: 10, groupSizes: [3, 3, 4] },
-    { value: '+380', label: 'UA +380', localMinLength: 9, localMaxLength: 9, groupSizes: [2, 3, 4] },
-    { value: '+7', label: 'KZ/RU +7', localMinLength: 10, localMaxLength: 10, groupSizes: [3, 3, 4] },
-    { value: '+81', label: 'JP +81', localMinLength: 9, localMaxLength: 10, groupSizes: [2, 4, 4] },
-    { value: '+82', label: 'KR +82', localMinLength: 9, localMaxLength: 10, groupSizes: [2, 4, 4] },
-    { value: '+86', label: 'CN +86', localMinLength: 11, localMaxLength: 11, groupSizes: [3, 4, 4] },
-    { value: '+91', label: 'IN +91', localMinLength: 10, localMaxLength: 10, groupSizes: [5, 5] },
-    { value: '+92', label: 'PK +92', localMinLength: 10, localMaxLength: 10, groupSizes: [3, 3, 4] },
-    { value: '+94', label: 'LK +94', localMinLength: 9, localMaxLength: 9, groupSizes: [2, 3, 4] },
-    { value: '+971', label: 'AE +971', localMinLength: 8, localMaxLength: 9, groupSizes: [2, 3, 4] },
-    { value: '+972', label: 'IL +972', localMinLength: 8, localMaxLength: 9, groupSizes: [2, 3, 4] },
-    { value: '+20', label: 'EG +20', localMinLength: 10, localMaxLength: 10, groupSizes: [3, 3, 4] },
-    { value: '+27', label: 'ZA +27', localMinLength: 9, localMaxLength: 9, groupSizes: [2, 3, 4] },
-    { value: '+61', label: 'AU +61', localMinLength: 9, localMaxLength: 9, groupSizes: [1, 4, 4] },
-    { value: '+64', label: 'NZ +64', localMinLength: 8, localMaxLength: 10, groupSizes: [2, 3, 4, 1] }
-  ]
-
-  const DEFAULT_PHONE_CODE = PHONE_CODE_OPTIONS[0].value
+  const [phoneCodeOptions, setPhoneCodeOptions] = useState(FALLBACK_PHONE_CODE_OPTIONS)
   
   const [cartItems, setCartItems] = useState([])
   const [paymentMethod, setPaymentMethod] = useState('cash')
@@ -91,6 +46,7 @@ export default function Cart() {
   const phoneCodeOptionRefs = useRef({})
   const phoneCodeTypeBufferRef = useRef('')
   const phoneCodeTypeTimeoutRef = useRef(null)
+  const phoneLengthBoundsCacheRef = useRef({})
   const [deliveryAddress, setDeliveryAddress] = useState({
     fullName: '',
     address: '',
@@ -107,7 +63,70 @@ export default function Cart() {
   })
 
   const getPhoneConfig = (countryCode) => {
-    return PHONE_CODE_OPTIONS.find((option) => option.value === countryCode) || PHONE_CODE_OPTIONS[0]
+    const selectedOption =
+      phoneCodeOptions.find((option) => option.value === countryCode) ||
+      phoneCodeOptions[0] ||
+      FALLBACK_PHONE_CODE_OPTIONS[0]
+
+    const defaultCountry = selectedOption.defaultCountry || selectedOption.countryCodes?.[0]
+
+    if (selectedOption.value === '+36') {
+      return {
+        ...selectedOption,
+        defaultCountry,
+        localMinLength: 9,
+        localMaxLength: 9
+      }
+    }
+
+    if (defaultCountry) {
+      if (!phoneLengthBoundsCacheRef.current[defaultCountry]) {
+        let minLength = 6
+        let maxLength = 12
+
+        for (let len = 1; len <= 15; len += 1) {
+          const sample = '9'.repeat(len)
+          const lengthCheck = validatePhoneNumberLength(sample, defaultCountry)
+
+          if (lengthCheck !== 'TOO_SHORT' && minLength === 6) {
+            minLength = len
+          }
+
+          if (lengthCheck === 'TOO_LONG') {
+            maxLength = len - 1
+            break
+          }
+
+          if (len === 15) {
+            maxLength = len
+          }
+        }
+
+        if (maxLength < minLength) {
+          maxLength = minLength
+        }
+
+        phoneLengthBoundsCacheRef.current[defaultCountry] = { minLength, maxLength }
+      }
+
+      const bounds = phoneLengthBoundsCacheRef.current[defaultCountry]
+      return {
+        ...selectedOption,
+        defaultCountry,
+        localMinLength: bounds.minLength,
+        localMaxLength: bounds.maxLength
+      }
+    }
+
+    const dialCodeDigitsLength = selectedOption.value.replace(/\D/g, '').length
+    const localMaxLength = Math.max(6, 15 - dialCodeDigitsLength)
+
+    return {
+      ...selectedOption,
+      defaultCountry,
+      localMinLength: 6,
+      localMaxLength
+    }
   }
 
   const resetPhoneCodeTypeAhead = () => {
@@ -143,7 +162,7 @@ export default function Cart() {
       phoneCodeTypeTimeoutRef.current = null
     }, 700)
 
-    const matchedOption = PHONE_CODE_OPTIONS.find((option) => {
+    const matchedOption = phoneCodeOptions.find((option) => {
       const label = option.label.toLowerCase()
       const dial = option.value.toLowerCase()
       return label.startsWith(nextBuffer) || dial.startsWith(nextBuffer)
@@ -177,7 +196,7 @@ export default function Cart() {
   }
 
   const findCountryCodeFromDigits = (digits) => {
-    const sortedByLength = [...PHONE_CODE_OPTIONS]
+    const sortedByLength = [...phoneCodeOptions]
       .map((option) => option.value.replace('+', ''))
       .sort((a, b) => b.length - a.length)
 
@@ -190,42 +209,40 @@ export default function Cart() {
     return null
   }
 
-  const parsePhoneValue = (value, fallbackCountryCode = DEFAULT_PHONE_CODE) => {
+  const parsePhoneValue = (value, fallbackCountryCode = DEFAULT_PHONE_CODE, allowCountryCodeDetection = false) => {
     const raw = typeof value === 'string' ? value.trim() : ''
     let countryCode = fallbackCountryCode
     let digits = raw.replace(/\D/g, '')
 
-    const plusMatch = raw.match(/^\s*(\+\d{1,3})/)
-    if (plusMatch && PHONE_CODE_OPTIONS.some((option) => option.value === plusMatch[1])) {
-      countryCode = plusMatch[1]
-      const countryDigits = countryCode.replace('+', '')
-      if (digits.startsWith(countryDigits)) {
-        digits = digits.slice(countryDigits.length)
+    if (allowCountryCodeDetection) {
+      const plusMatch = raw.match(/^\s*(\+\d{1,3})/)
+      if (plusMatch && phoneCodeOptions.some((option) => option.value === plusMatch[1])) {
+        countryCode = plusMatch[1]
+        const countryDigits = countryCode.replace('+', '')
+        if (digits.startsWith(countryDigits)) {
+          digits = digits.slice(countryDigits.length)
+        }
+      } else if (digits.startsWith('00')) {
+        const withoutPrefix = digits.slice(2)
+        const detectedCode = findCountryCodeFromDigits(withoutPrefix)
+        if (detectedCode) {
+          countryCode = detectedCode
+          digits = withoutPrefix.slice(detectedCode.replace('+', '').length)
+        }
       }
-    } else if (digits.startsWith('00')) {
-      const withoutPrefix = digits.slice(2)
-      const detectedCode = findCountryCodeFromDigits(withoutPrefix)
-      if (detectedCode) {
-        countryCode = detectedCode
-        digits = withoutPrefix.slice(detectedCode.replace('+', '').length)
-      }
-    } else {
-      const detectedCode = findCountryCodeFromDigits(digits)
-      if (detectedCode) {
-        countryCode = detectedCode
-        digits = digits.slice(detectedCode.replace('+', '').length)
-      }
+    }
+
+    const selectedCountryDigits = countryCode.replace('+', '')
+    if (raw.startsWith(countryCode) && digits.startsWith(selectedCountryDigits)) {
+      digits = digits.slice(selectedCountryDigits.length)
+    } else if (raw.startsWith(`00${selectedCountryDigits}`) && digits.startsWith(`00${selectedCountryDigits}`)) {
+      digits = digits.slice(2 + selectedCountryDigits.length)
     }
 
     if (countryCode === '+36' && digits.startsWith('06')) {
       digits = digits.slice(2)
     } else if (countryCode === '+36' && digits.startsWith('0')) {
       digits = digits.slice(1)
-    } else if (countryCode !== '+36' && digits.startsWith('0') && digits.length > 7) {
-      digits = digits.slice(1)
-    } else if (digits.startsWith('06')) {
-      countryCode = '+36'
-      digits = digits.slice(2)
     }
 
     const config = getPhoneConfig(countryCode)
@@ -235,19 +252,25 @@ export default function Cart() {
   }
 
   const formatPhoneLocal = (localDigits, countryCode) => {
-    const config = getPhoneConfig(countryCode)
     if (!localDigits) return ''
 
-    const chunks = []
-    let index = 0
-
-    for (const groupSize of config.groupSizes) {
-      if (index >= localDigits.length) break
-      chunks.push(localDigits.slice(index, index + groupSize))
-      index += groupSize
+    if (countryCode === '+36') {
+      const part1 = localDigits.slice(0, 2)
+      const part2 = localDigits.slice(2, 5)
+      const part3 = localDigits.slice(5, 9)
+      return [part1, part2, part3].filter(Boolean).join(' ')
     }
 
-    return chunks.join(' ')
+    const phoneConfig = getPhoneConfig(countryCode)
+    if (phoneConfig.defaultCountry) {
+      const nationalFormatter = new AsYouType(phoneConfig.defaultCountry)
+      return nationalFormatter.input(localDigits)
+    }
+
+    const formatter = new AsYouType()
+    const formatted = formatter.input(`${countryCode}${localDigits}`)
+    const escapedCountryCode = countryCode.replace('+', '\\+')
+    return formatted.replace(new RegExp(`^${escapedCountryCode}\\s*`), '').trim()
   }
 
   const buildPhoneValue = (countryCode, localDigits) => {
@@ -257,9 +280,29 @@ export default function Cart() {
 
   const isValidPhoneNumber = (value) => {
     if (!value) return false
-    const { countryCode, localDigits } = parsePhoneValue(value, selectedPhoneCountryCode)
-    const config = getPhoneConfig(countryCode)
-    return localDigits.length >= config.localMinLength && localDigits.length <= config.localMaxLength
+    if (selectedPhoneCountryCode === '+36') {
+      const normalized = value.replace(/^\+36\s*/, '').trim()
+      return /^\d{2}\s\d{3}\s\d{4}$/.test(normalized)
+    }
+
+    const { localDigits } = parsePhoneValue(value, selectedPhoneCountryCode)
+    if (!localDigits) return false
+
+    const phoneConfig = getPhoneConfig(selectedPhoneCountryCode)
+    if (phoneConfig.defaultCountry) {
+      if (validatePhoneNumberLength(localDigits, phoneConfig.defaultCountry)) {
+        return false
+      }
+
+      const nationalPhoneNumber = parsePhoneNumberFromString(localDigits, phoneConfig.defaultCountry)
+      return Boolean(
+        nationalPhoneNumber?.isValid() &&
+        `+${nationalPhoneNumber.countryCallingCode}` === selectedPhoneCountryCode
+      )
+    }
+
+    const phoneNumber = parsePhoneNumberFromString(`${selectedPhoneCountryCode}${localDigits}`)
+    return Boolean(phoneNumber?.isValid())
   }
 
   const isValidCardNumber = (value) => {
@@ -306,6 +349,65 @@ export default function Cart() {
   }
 
   useEffect(() => {
+    const loadPhoneCodeOptions = async () => {
+      try {
+        const response = await axios.get('https://restcountries.com/v3.1/all?fields=cca2,idd')
+        const countries = Array.isArray(response.data) ? response.data : []
+        const groupedByDialCode = new Map()
+
+        countries.forEach((country) => {
+          const root = country?.idd?.root
+          const suffixes = Array.isArray(country?.idd?.suffixes) ? country.idd.suffixes : []
+          const cca2 = typeof country?.cca2 === 'string' ? country.cca2.toUpperCase() : null
+          if (!root || !suffixes.length || !cca2) return
+
+          suffixes.forEach((suffix) => {
+            const dialCode = `${root}${suffix}`
+            if (!/^\+\d{1,4}$/.test(dialCode)) return
+
+            const existing = groupedByDialCode.get(dialCode)
+            if (existing) {
+              existing.countryCodes.add(cca2)
+              return
+            }
+
+            groupedByDialCode.set(dialCode, {
+              value: dialCode,
+              countryCodes: new Set([cca2])
+            })
+          })
+        })
+
+        const fetchedOptions = [...groupedByDialCode.values()]
+          .map((item) => ({
+            value: item.value,
+            label: `${[...item.countryCodes].sort().join('/')} ${item.value}`,
+            countryCodes: [...item.countryCodes].sort(),
+            defaultCountry: [...item.countryCodes].sort()[0]
+          }))
+          .sort((a, b) => a.label.localeCompare(b.label))
+
+        if (fetchedOptions.length > 0) {
+          setPhoneCodeOptions(fetchedOptions)
+          return
+        }
+      } catch (error) {
+        console.error('Országkódok API betöltése sikertelen, fallback lista marad:', error)
+      }
+
+      setPhoneCodeOptions(FALLBACK_PHONE_CODE_OPTIONS)
+    }
+
+    loadPhoneCodeOptions()
+  }, [])
+
+  useEffect(() => {
+    if (!phoneCodeOptions.some((option) => option.value === selectedPhoneCountryCode)) {
+      setSelectedPhoneCountryCode(phoneCodeOptions[0]?.value || DEFAULT_PHONE_CODE)
+    }
+  }, [phoneCodeOptions, selectedPhoneCountryCode])
+
+  useEffect(() => {
     const token = localStorage.getItem('quickbite_token')
     const userData = localStorage.getItem('quickbite_user')
     
@@ -316,14 +418,6 @@ export default function Cart() {
       setIsLoggedIn(false)
     }
   }, [])
-
-  useEffect(() => {
-    if (!deliveryAddress.phone?.trim()) return
-    const parsed = parsePhoneValue(deliveryAddress.phone, selectedPhoneCountryCode)
-    if (parsed.countryCode !== selectedPhoneCountryCode) {
-      setSelectedPhoneCountryCode(parsed.countryCode)
-    }
-  }, [deliveryAddress.phone, selectedPhoneCountryCode])
 
   useEffect(() => {
     if (!isPhoneCodeListOpen) return
@@ -372,8 +466,12 @@ export default function Cart() {
         }))
 
         if (data.phone) {
-          const parsedPhone = parsePhoneValue(data.phone, selectedPhoneCountryCode)
+          const parsedPhone = parsePhoneValue(data.phone, selectedPhoneCountryCode, true)
           setSelectedPhoneCountryCode(parsedPhone.countryCode)
+          setDeliveryAddress(prev => ({
+            ...prev,
+            phone: buildPhoneValue(parsedPhone.countryCode, parsedPhone.localDigits)
+          }))
         }
         
         if (defaultAddress) {
@@ -1162,6 +1260,11 @@ export default function Cart() {
                       {(() => {
                         const parsedPhone = parsePhoneValue(deliveryAddress.phone, selectedPhoneCountryCode)
                         const phoneConfig = getPhoneConfig(parsedPhone.countryCode)
+                        const phonePlaceholder =
+                          parsedPhone.countryCode === '+36'
+                            ? '30 123 4567'
+                            : formatPhoneLocal('9'.repeat(phoneConfig.localMaxLength), parsedPhone.countryCode)
+                        const phoneInputMaxLength = phonePlaceholder.length
                         return (
                           <>
                       <div className="phone-code-dropdown" ref={phoneCodeDropdownRef}>
@@ -1179,7 +1282,7 @@ export default function Cart() {
 
                         {isPhoneCodeListOpen && (
                           <div className="phone-code-dropdown-list" role="listbox" aria-label="Országkód lista">
-                            {PHONE_CODE_OPTIONS.map((option) => (
+                            {phoneCodeOptions.map((option) => (
                               <button
                                 type="button"
                                 key={option.value}
@@ -1206,6 +1309,7 @@ export default function Cart() {
                         id="phone"
                         inputMode="numeric"
                         value={formatPhoneLocal(parsedPhone.localDigits, parsedPhone.countryCode)}
+                        maxLength={phoneInputMaxLength}
                         onChange={(e) => {
                           const numericOnly = e.target.value.replace(/\D/g, '')
                           const maxLength = phoneConfig.localMaxLength
@@ -1213,7 +1317,7 @@ export default function Cart() {
                           const nextValue = buildPhoneValue(parsedPhone.countryCode, localDigits)
                           setDeliveryAddress({ ...deliveryAddress, phone: nextValue })
                         }}
-                        placeholder={formatPhoneLocal('301234567', DEFAULT_PHONE_CODE)}
+                        placeholder={phonePlaceholder}
                         required
                       />
                           </>
