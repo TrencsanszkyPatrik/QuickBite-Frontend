@@ -181,6 +181,14 @@
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 
+.profile-form-group input[inputmode="numeric"],
+.profile-phone-input-row input[inputmode="numeric"] {
+  font-weight: 500;
+  font-variant-numeric: lining-nums tabular-nums;
+  font-feature-settings: 'lnum' 1, 'tnum' 1;
+  text-rendering: geometricPrecision;
+}
+
 .profile-form-group input:focus {
   outline: none;
   border-color: var(--secondary);

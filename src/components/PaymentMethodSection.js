@@ -13,11 +13,23 @@ const PAYMENT_TYPES = [
 const emptyForm = () => ({
   type: 'card',
   displayName: '',
+  cardNumber: '',
   lastFourDigits: '',
   isDefault: false
 })
 
 const getTypeLabel = (type) => PAYMENT_TYPES.find((t) => t.value === type)?.label || type
+
+const formatCardNumber = (value) => {
+  const digits = value.replace(/\D/g, '').slice(0, 16)
+  return digits.replace(/(\d{4})(?=\d)/g, '$1 ').trim()
+}
+
+const isValidCardNumber = (value) => {
+  const cleaned = value.replace(/\D/g, '')
+
+  return /^\d{16}$/.test(cleaned)
+}
 
 export default function PaymentMethodSection({ paymentMethods, onUpdate }) {
   const [showForm, setShowForm] = useState(false)
@@ -54,6 +66,7 @@ export default function PaymentMethodSection({ paymentMethods, onUpdate }) {
     setForm({
       type: p.type,
       displayName: p.displayName,
+      cardNumber: '',
       lastFourDigits: p.lastFourDigits || '',
       isDefault: p.isDefault
     })
@@ -67,6 +80,18 @@ export default function PaymentMethodSection({ paymentMethods, onUpdate }) {
       showToast.error('Megjelenített név kötelező.')
       return
     }
+
+    const cleanedCardNumber = form.cardNumber.replace(/\D/g, '')
+    if (form.type === 'card' && cleanedCardNumber && !isValidCardNumber(cleanedCardNumber)) {
+      showToast.error('A bankkártyaszám 16 számjegyből álljon.')
+      return
+    }
+
+    const computedLastFourDigits =
+      form.type === 'card'
+        ? (cleanedCardNumber ? cleanedCardNumber.slice(-4) : form.lastFourDigits?.trim() || null)
+        : null
+
     setBusyId('payment')
     try {
       const url = editingId
@@ -79,7 +104,7 @@ export default function PaymentMethodSection({ paymentMethods, onUpdate }) {
         body: JSON.stringify({
           type: form.type,
           displayName,
-          lastFourDigits: form.lastFourDigits?.trim() || null,
+          lastFourDigits: computedLastFourDigits,
           isDefault: form.isDefault
         })
       })
@@ -234,19 +259,24 @@ export default function PaymentMethodSection({ paymentMethods, onUpdate }) {
               />
             </div>
             {form.type === 'card' && (
-              <div className="profile-form-group">
-                <label>Utolsó 4 számjegy (opcionális)</label>
+              <div className="profile-form-group full-width">
+                <label>Kártyaszám (16 számjegy)</label>
                 <input
                   type="text"
                   inputMode="numeric"
-                  maxLength={4}
-                  value={form.lastFourDigits}
+                  maxLength={19}
+                  value={formatCardNumber(form.cardNumber)}
                   onChange={(e) => {
-                    const v = e.target.value.replace(/\D/g, '').slice(0, 4)
-                    setForm((f) => ({ ...f, lastFourDigits: v }))
+                    const v = e.target.value.replace(/\D/g, '').slice(0, 16)
+                    setForm((f) => ({ ...f, cardNumber: v }))
                   }}
-                  placeholder="1234"
+                  placeholder="1234 5678 9012 3456"
                 />
+                {form.lastFourDigits && !form.cardNumber && (
+                  <small style={{ color: '#6b7280' }}>
+                    Jelenlegi mentett kártya: •••• {form.lastFourDigits}. Új kártyaszám csak cseréhez szükséges.
+                  </small>
+                )}
               </div>
             )}
             <div className="profile-form-group full-width">

@@ -669,6 +669,14 @@
   font-family: inherit;
 }
 
+.form-group input[inputmode="numeric"],
+.phone-input-row input[inputmode="numeric"] {
+  font-weight: 500;
+  font-variant-numeric: lining-nums tabular-nums;
+  font-feature-settings: 'lnum' 1, 'tnum' 1;
+  text-rendering: geometricPrecision;
+}
+
 .form-group input:focus,
 .form-group textarea:focus {
   outline: none;

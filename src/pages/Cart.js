@@ -7,12 +7,16 @@ import '../styles/cart.css'
 import '../styles/modal.css'
 import { usePageTitle } from '../utils/usePageTitle'
 import { API_BASE, getAuthHeaders } from '../utils/api'
+import { showToast } from '../utils/toast'
 import { Link } from 'react-router-dom'
 import { AsYouType, parsePhoneNumberFromString, validatePhoneNumberLength } from 'libphonenumber-js'
 
 const FALLBACK_PHONE_CODE_OPTIONS = [
   { value: '+36', label: 'HU +36', countryCodes: ['HU'], defaultCountry: 'HU' }
 ]
+
+const CARD_NAME_LETTERS_REGEX = /^[A-Za-zÁÉÍÓÖŐÚÜŰáéíóöőúüű]+(?:\s+[A-Za-zÁÉÍÓÖŐÚÜŰáéíóöőúüű]+)+$/
+const CARD_NAME_FILTER_REGEX = /[^A-Za-zÁÉÍÓÖŐÚÜŰáéíóöőúüű\s]/g
 
 const DEFAULT_PHONE_CODE = FALLBACK_PHONE_CODE_OPTIONS[0].value
 
@@ -305,28 +309,26 @@ export default function Cart() {
     return Boolean(phoneNumber?.isValid())
   }
 
+  const formatCardNumber = (value) => {
+    const digits = value.replace(/\D/g, '').slice(0, 16)
+    return digits.replace(/(\d{4})(?=\d)/g, '$1 ').trim()
+  }
+
   const isValidCardNumber = (value) => {
     if (!value) return false
-    // Távolítsunk el minden nem számjegy karaktert (szóköz, kötőjel, stb.)
     const cleaned = value.replace(/\D/g, '')
-    // Legalább 16, legfeljebb 19 számjegy
-    return /^\d{16,19}$/.test(cleaned)
+    return /^\d{16}$/.test(cleaned)
   }
 
   const isValidExpiry = (value) => {
     if (!value) return false
     const trimmed = value.trim()
-    const match = trimmed.match(/^(\d{2})\s*[\/\-.]\s*(\d{2}|\d{4})$/)
+    const match = trimmed.match(/^(\d{2})\/(\d{2})$/)
     if (!match) return false
 
     const month = Number(match[1])
     let year = Number(match[2])
     if (Number.isNaN(month) || Number.isNaN(year) || month < 1 || month > 12) return false
-
-    // Ha 4 jegyű évet adtak meg (pl. 2028), alakítsuk 2 jegyűvé
-    if (year >= 100) {
-      year = year % 100
-    }
 
     const now = new Date()
     const currentYear = now.getFullYear() % 100
@@ -339,13 +341,13 @@ export default function Cart() {
 
   const isValidCvv = (value) => {
     if (!value) return false
-    return /^\d{3,4}$/.test(value.trim())
+    return /^\d{3}$/.test(value.trim())
   }
 
   const isValidCardName = (value) => {
     if (!value) return false
     const trimmed = value.trim()
-    return trimmed.length >= 5 && /\s/.test(trimmed)
+    return trimmed.length >= 5 && CARD_NAME_LETTERS_REGEX.test(trimmed)
   }
 
   useEffect(() => {
@@ -651,33 +653,38 @@ export default function Cart() {
     }
 
     if (!isValidPhoneNumber(deliveryAddress.phone)) {
-      alert('Kérjük, érvényes telefonszámot adj meg a kiválasztott országkódhoz!')
+      showToast.error('Érvénytelen telefonszám. Kérlek ellenőrizd a kiválasztott országkódnak megfelelő formátumot!')
       return
     }
 
     if (paymentMethod === 'credit-card' && !selectedPaymentId) {
-      if (!cardDetails.cardNumber || !cardDetails.expiry || !cardDetails.cvv || !cardDetails.cardName) {
-        alert('Kérjük, add meg a bankkártya adatait vagy válassz mentett fizetési módot!')
+      if (!cardDetails.cardName?.trim()) {
+        showToast.error('Kérlek add meg a kártyabirtokos nevét!')
+        return
+      }
+
+      if (!cardDetails.cardNumber || !cardDetails.expiry || !cardDetails.cvv) {
+        showToast.error('Kérjük, add meg a bankkártya adatait vagy válassz mentett fizetési módot!')
         return
       }
 
       if (!isValidCardNumber(cardDetails.cardNumber)) {
-        alert('Kérjük, érvényes kártyaszámot adj meg!')
+        showToast.error('Érvénytelen kártyaszám. Kérlek ellenőrizd a 16 számjegyet!')
         return
       }
 
       if (!isValidExpiry(cardDetails.expiry)) {
-        alert('Kérjük, érvényes lejárati dátumot adj meg (MM/ÉÉ) formátumban!')
+        showToast.error('Érvénytelen lejárati dátum. A helyes formátum: MM/YY (pl. 03/29).')
         return
       }
 
       if (!isValidCvv(cardDetails.cvv)) {
-        alert('A CVC/CVV kód 3 vagy 4 számjegy legyen!')
+        showToast.error('Érvénytelen CVC/CVV kód. Pontosan 3 számjegyet adj meg!')
         return
       }
 
       if (!isValidCardName(cardDetails.cardName)) {
-        alert('Kérjük, a kártyán szereplő nevet add meg!')
+        showToast.error('A kártyabirtokos név csak betűket tartalmazhat, legalább két szóban.')
         return
       }
     }
@@ -1466,8 +1473,12 @@ export default function Cart() {
                         <input
                           type="text"
                           id="cardNumber"
-                          value={cardDetails.cardNumber}
-                          onChange={(e) => setCardDetails({...cardDetails, cardNumber: e.target.value})}
+                          inputMode="numeric"
+                          value={formatCardNumber(cardDetails.cardNumber)}
+                          onChange={(e) => {
+                            const numericOnly = e.target.value.replace(/\D/g, '').slice(0, 16)
+                            setCardDetails({ ...cardDetails, cardNumber: numericOnly })
+                          }}
                           placeholder="1234 5678 9012 3456"
                           maxLength="19"
                           required={paymentMethod === 'credit-card' && !selectedPaymentId}
@@ -1475,24 +1486,35 @@ export default function Cart() {
                       </div>
                       <div className="form-row">
                         <div className="form-group">
-                          <label htmlFor="expiry">Lejárat *</label>
+                          <label htmlFor="expiry">Lejárati dátum *</label>
                           <input
                             type="text"
                             id="expiry"
+                            inputMode="numeric"
                             value={cardDetails.expiry}
-                            onChange={(e) => setCardDetails({...cardDetails, expiry: e.target.value})}
-                            placeholder="MM/ÉÉ"
+                            onChange={(e) => {
+                              const digits = e.target.value.replace(/\D/g, '').slice(0, 4)
+                              const formatted = digits.length > 2
+                                ? `${digits.slice(0, 2)}/${digits.slice(2)}`
+                                : digits
+                              setCardDetails({ ...cardDetails, expiry: formatted })
+                            }}
+                            placeholder="00/00"
                             maxLength="5"
                             required={paymentMethod === 'credit-card' && !selectedPaymentId}
                           />
                         </div>
                         <div className="form-group">
-                          <label htmlFor="cvv">CVV *</label>
+                          <label htmlFor="cvv">CVV/CVC *</label>
                           <input
                             type="text"
                             id="cvv"
+                            inputMode="numeric"
                             value={cardDetails.cvv}
-                            onChange={(e) => setCardDetails({...cardDetails, cvv: e.target.value})}
+                            onChange={(e) => {
+                              const digits = e.target.value.replace(/\D/g, '').slice(0, 3)
+                              setCardDetails({ ...cardDetails, cvv: digits })
+                            }}
                             placeholder="123"
                             maxLength="3"
                             required={paymentMethod === 'credit-card' && !selectedPaymentId}
@@ -1505,7 +1527,11 @@ export default function Cart() {
                           type="text"
                           id="cardName"
                           value={cardDetails.cardName}
-                          onChange={(e) => setCardDetails({...cardDetails, cardName: e.target.value})}
+                          onChange={(e) => {
+                            const lettersOnly = e.target.value.replace(CARD_NAME_FILTER_REGEX, '')
+                            const normalized = lettersOnly.replace(/\s{2,}/g, ' ').replace(/^\s+/, '')
+                            setCardDetails({ ...cardDetails, cardName: normalized })
+                          }}
                           placeholder="Név a kártyán"
                           required={paymentMethod === 'credit-card' && !selectedPaymentId}
                         />
