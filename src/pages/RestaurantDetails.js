@@ -36,6 +36,54 @@ const isRestaurantOpenNow = (openingTime, closingTime) => {
   return currentMinutes >= openMinutes || currentMinutes < closeMinutes
 }
 
+const getMinutesUntilNextStatusChange = (openingTime, closingTime, isOpen) => {
+  const openMinutes = parseTimeToMinutes(openingTime)
+  const closeMinutes = parseTimeToMinutes(closingTime)
+
+  if (openMinutes === null || closeMinutes === null) {
+    return null
+  }
+
+  const now = new Date()
+  const currentMinutes = (now.getHours() * 60) + now.getMinutes()
+
+  if (openMinutes <= closeMinutes) {
+    if (isOpen) {
+      return closeMinutes - currentMinutes
+    }
+
+    if (currentMinutes < openMinutes) {
+      return openMinutes - currentMinutes
+    }
+
+    return (24 * 60 - currentMinutes) + openMinutes
+  }
+
+  if (isOpen) {
+    if (currentMinutes >= openMinutes) {
+      return (24 * 60 - currentMinutes) + closeMinutes
+    }
+
+    return closeMinutes - currentMinutes
+  }
+
+  return openMinutes - currentMinutes
+}
+
+const getRestaurantSoonStatusLabel = (openingTime, closingTime, isOpen) => {
+  const minutesUntilChange = getMinutesUntilNextStatusChange(openingTime, closingTime, isOpen)
+
+  if (minutesUntilChange === null || minutesUntilChange <= 0 || minutesUntilChange > 60) {
+    return null
+  }
+
+  if (isOpen) {
+    return `Lassan zárunk (${minutesUntilChange} perc múlva)`
+  }
+
+  return `Lassan nyitunk (${minutesUntilChange} perc múlva)`
+}
+
 const CATEGORY_ORDER = [
   'Sós palacsinta',
   'Édes palacsinta',
@@ -143,6 +191,10 @@ export default function RestaurantDetails({ favorites = [], pendingFavoriteIds, 
     selectedItemIndex >= 0 && selectedItemIndex < menuItems.length
       ? menuItems[selectedItemIndex]
       : null
+
+  const soonStatusLabel = restaurant
+    ? getRestaurantSoonStatusLabel(restaurant.openingTime, restaurant.closingTime, restaurant.isOpen)
+    : null
 
   const goToPrevItem = () => {
     if (menuItems.length <= 1) return
@@ -613,6 +665,9 @@ export default function RestaurantDetails({ favorites = [], pendingFavoriteIds, 
               <span>
                 Nyitvatartás: {String(restaurant.openingTime).slice(0, 5)} - {String(restaurant.closingTime).slice(0, 5)}
               </span>
+              {soonStatusLabel && (
+                <span className="restaurant-soon-status">• {soonStatusLabel}</span>
+              )}
             </div>
           )}
           

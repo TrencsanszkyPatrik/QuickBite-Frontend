@@ -332,6 +332,11 @@
   text-decoration: underline;
 }
 
+.restaurant-soon-status {
+  font-weight: 700;
+  color: var(--secondary);
+}
+
 .feature-badge {
   display: flex;
   align-items: center;
