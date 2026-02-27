@@ -556,7 +556,10 @@ export default function RestaurantDetails({ favorites = [], pendingFavoriteIds, 
                   </button>
                 </>
               ) : (
-                <span className="product-modal-closed-text">Jelenleg zárva vagyunk</span>
+                <span className="product-modal-closed-text" role="status" aria-live="polite">
+                  <i className="bi bi-moon-stars-fill"></i>
+                  <span>Jelenleg zárva vagyunk</span>
+                </span>
               )}
             </div>
           </div>
@@ -589,6 +592,13 @@ export default function RestaurantDetails({ favorites = [], pendingFavoriteIds, 
           <div className="restaurant-details-meta">
             <span className="cuisine">{restaurant.cuisine}</span> • <span className="address">{restaurant.address}</span>
           </div>
+
+          {!restaurant.isOpen && (
+            <div className="restaurant-status-alert" role="status" aria-live="polite">
+              <i className="bi bi-exclamation-circle-fill"></i>
+              <span>Jelenleg zárva</span>
+            </div>
+          )}
           
           {restaurant.phone && (
             <div className="restaurant-phone">
@@ -602,8 +612,6 @@ export default function RestaurantDetails({ favorites = [], pendingFavoriteIds, 
               <i className="bi bi-clock-fill"></i>
               <span>
                 Nyitvatartás: {String(restaurant.openingTime).slice(0, 5)} - {String(restaurant.closingTime).slice(0, 5)}
-                {' • '}
-                {restaurant.isOpen ? 'Nyitva most' : 'Jelenleg zárva'}
               </span>
             </div>
           )}

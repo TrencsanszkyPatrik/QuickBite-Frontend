@@ -292,8 +292,26 @@
 .restaurant-phone {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 0.5rem;
   color: var(--text);
+  font-size: 1rem;
+}
+
+.restaurant-status-alert {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 1rem;
+  border-radius: 999px;
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  color: #b91c1c;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+}
+
+.restaurant-status-alert i {
   font-size: 1rem;
 }
 
@@ -688,10 +706,24 @@
 .product-modal-closed-text {
   flex: 1;
   align-self: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
   text-align: center;
-  font-weight: 700;
-  color: #ef4444;
-  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--primary-dark);
+  font-size: 1.1rem;
+  padding: 0.85rem 1.2rem;
+  border-radius: 14px;
+  border: 2px solid var(--secondary);
+  background: linear-gradient(135deg, rgba(255, 107, 157, 0.18), rgba(59, 51, 85, 0.1));
+  box-shadow: 0 10px 24px rgba(59, 51, 85, 0.2);
+}
+
+.product-modal-closed-text i {
+  font-size: 1.1rem;
+  color: var(--secondary);
 }
 
 /* Responsive design */
