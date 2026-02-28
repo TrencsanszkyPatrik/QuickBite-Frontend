@@ -218,7 +218,7 @@ export default function Navbar() {
                   <span className="mini-cart-count">{cartItemsCount} tétel</span>
                 </div>
                 <div className="mini-cart-items">
-                  {cartItems.slice(0, 3).map((item, index) => (
+                  {cartItems.map((item, index) => (
                     <div key={index} className="mini-cart-item">
                       <img src={item.img || '/img/EtelKepek/default.png'} alt={item.name} />
                       <div className="mini-cart-item-details">
@@ -227,9 +227,6 @@ export default function Navbar() {
                       </div>
                     </div>
                   ))}
-                  {cartItems.length > 3 && (
-                    <div className="mini-cart-more">+{cartItems.length - 3} további tétel</div>
-                  )}
                 </div>
                 <div className="mini-cart-footer">
                   <div className="mini-cart-total">
