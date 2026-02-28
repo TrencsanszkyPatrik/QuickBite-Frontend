@@ -10,6 +10,21 @@ import { showToast } from '../utils/toast'
 import '../styles/OrdersPage.css'
 import '../styles/modal.css'
 
+const parseApiDateTime = (value) => {
+  if (!value) return null
+  if (value instanceof Date) return value
+
+  const str = String(value)
+  const hasTimezone = /([zZ]|[+-]\d{2}:?\d{2})$/.test(str)
+  const normalized = hasTimezone ? str : `${str}Z`
+
+  const parsed = new Date(normalized)
+  if (Number.isNaN(parsed.getTime())) {
+    return new Date(str)
+  }
+  return parsed
+}
+
 export default function OrdersPage() {
   usePageTitle('QuickBite - Rendeléseim')
   const navigate = useNavigate()
@@ -209,13 +224,13 @@ export default function OrdersPage() {
                         {getStatusLabel(order.status)}
                       </span>
                       <span className="orders-date">
-                        {new Date(order.createdAt).toLocaleDateString('hu-HU', {
+                        {parseApiDateTime(order.createdAt)?.toLocaleDateString('hu-HU', {
                           year: 'numeric',
                           month: 'short',
                           day: 'numeric',
                           hour: '2-digit',
                           minute: '2-digit'
-                        })}
+                        }) || ''}
                       </span>
                     </div>
                     <h3 className="orders-restaurant">{order.restaurantName}</h3>
