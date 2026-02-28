@@ -40,6 +40,7 @@ const isRestaurantOpenNow = (openingTime, closingTime) => {
 export default function AllRestaurantPage({ favorites = [], pendingFavoriteIds, onToggleFavorite }) {
   usePageTitle('QuickBite - Éttermeink')
   const location = useLocation()
+  const categoryButtonsRef = useRef(null)
   const [showDiscountOnly, setShowDiscountOnly] = useState(false)
   const [showFreeDeliveryOnly, setShowFreeDeliveryOnly] = useState(false)
   const [showCardPaymentOnly, setShowCardPaymentOnly] = useState(false)
@@ -52,7 +53,17 @@ export default function AllRestaurantPage({ favorites = [], pendingFavoriteIds, 
   const [categories, setCategories] = useState([])
   const [isLoadingCategories, setIsLoadingCategories] = useState(true)
   const [isLoadingRestaurants, setIsLoadingRestaurants] = useState(true)
+  const [categoryScrollValue, setCategoryScrollValue] = useState(0)
+  const [categoryScrollMax, setCategoryScrollMax] = useState(0)
   const hasAppliedUrlFilters = useRef(false)
+
+  const syncCategoryScrollState = () => {
+    const el = categoryButtonsRef.current
+    if (!el) return
+    const maxScroll = Math.max(0, el.scrollWidth - el.clientWidth)
+    setCategoryScrollMax(maxScroll)
+    setCategoryScrollValue(Math.min(el.scrollLeft, maxScroll))
+  }
 
   useEffect(() => {
     const loadRestaurantCategories = async () => {
@@ -164,6 +175,38 @@ export default function AllRestaurantPage({ favorites = [], pendingFavoriteIds, 
     setShowSuggestions(true)
   }, [searchQuery, allRestaurants])
 
+  useEffect(() => {
+    syncCategoryScrollState()
+
+    const el = categoryButtonsRef.current
+    if (!el) return
+
+    const handleScroll = () => {
+      setCategoryScrollValue(el.scrollLeft)
+    }
+
+    const handleResize = () => {
+      syncCategoryScrollState()
+    }
+
+    el.addEventListener('scroll', handleScroll, { passive: true })
+    window.addEventListener('resize', handleResize)
+
+    return () => {
+      el.removeEventListener('scroll', handleScroll)
+      window.removeEventListener('resize', handleResize)
+    }
+  }, [categories])
+
+  const handleCategorySliderChange = (e) => {
+    const el = categoryButtonsRef.current
+    if (!el) return
+
+    const value = Number(e.target.value)
+    el.scrollTo({ left: value, behavior: 'auto' })
+    setCategoryScrollValue(value)
+  }
+
   return (
     <>
       <Navbar />
@@ -245,14 +288,14 @@ export default function AllRestaurantPage({ favorites = [], pendingFavoriteIds, 
               <button
                 className="category-scroll-arrow left"
                 onClick={() => {
-                  const el = document.querySelector('.category-buttons');
+                  const el = categoryButtonsRef.current
                   if (el) el.scrollBy({ left: -220, behavior: 'smooth' });
                 }}
                 aria-label="Balra görgetés"
               >
                 <i className="bi bi-arrow-left-circle"></i>
               </button>
-              <div className="category-buttons" tabIndex={0}>
+              <div className="category-buttons" tabIndex={0} ref={categoryButtonsRef}>
                 <button
                   className={`category-btn ${selectedCategoryId === null ? 'selected' : ''}`}
                   onClick={() => setSelectedCategoryId(null)}
@@ -275,7 +318,7 @@ export default function AllRestaurantPage({ favorites = [], pendingFavoriteIds, 
               <button
                 className="category-scroll-arrow right"
                 onClick={() => {
-                  const el = document.querySelector('.category-buttons');
+                  const el = categoryButtonsRef.current
                   if (el) el.scrollBy({ left: 220, behavior: 'smooth' });
                 }}
                 aria-label="Jobbra görgetés"
@@ -283,6 +326,20 @@ export default function AllRestaurantPage({ favorites = [], pendingFavoriteIds, 
                 <i className="bi bi-arrow-right-circle"></i>
               </button>
             </div>
+            {categoryScrollMax > 0 && (
+              <div className="category-slider-wrap">
+                <input
+                  type="range"
+                  className="category-scroll-slider"
+                  min={0}
+                  max={categoryScrollMax}
+                  step={1}
+                  value={categoryScrollValue}
+                  onChange={handleCategorySliderChange}
+                  aria-label="Kategória lista görgetése"
+                />
+              </div>
+            )}
           </div>
         </div>
 
