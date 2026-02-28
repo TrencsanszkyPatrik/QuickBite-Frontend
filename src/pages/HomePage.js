@@ -16,6 +16,32 @@ import SpinnerOverlay from '../components/SpinnerOverlay';
 import { usePageTitle } from '../utils/usePageTitle';
 import { API_BASE } from '../utils/api';
 
+const parseTimeToMinutes = (timeValue) => {
+    if (!timeValue) return null
+    const normalized = String(timeValue).slice(0, 8)
+    const [hour, minute] = normalized.split(':').map(Number)
+    if (Number.isNaN(hour) || Number.isNaN(minute)) return null
+    return (hour * 60) + minute
+}
+
+const isRestaurantOpenNow = (openingTime, closingTime) => {
+    const openMinutes = parseTimeToMinutes(openingTime)
+    const closeMinutes = parseTimeToMinutes(closingTime)
+
+    if (openMinutes === null || closeMinutes === null) {
+        return true
+    }
+
+    const now = new Date()
+    const currentMinutes = (now.getHours() * 60) + now.getMinutes()
+
+    if (openMinutes <= closeMinutes) {
+        return currentMinutes >= openMinutes && currentMinutes < closeMinutes
+    }
+
+    return currentMinutes >= openMinutes || currentMinutes < closeMinutes
+}
+
 export default function HomePage({ favorites = [], pendingFavoriteIds, onToggleFavorite }) {
     usePageTitle("QuickBite - Főoldal");
     const navigate = useNavigate()
@@ -38,7 +64,11 @@ export default function HomePage({ favorites = [], pendingFavoriteIds, onToggleF
                     img: r.image_url,
                     freeDelivery: r.free_delivery,
                     acceptCards: r.accept_cards,
-                    isOpen: r.is_open !== undefined ? r.is_open : true
+                    openingTime: r.opening_time,
+                    closingTime: r.closing_time,
+                    isOpen: r.is_open !== undefined
+                        ? r.is_open
+                        : isRestaurantOpenNow(r.opening_time, r.closing_time)
                 }))
                 setRestaurants(mapped)
             } catch (err) {
