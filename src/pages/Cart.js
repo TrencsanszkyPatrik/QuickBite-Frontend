@@ -516,8 +516,6 @@ export default function Cart() {
   useEffect(() => {
     localStorage.setItem('quickbite_cart', JSON.stringify(cartItems))
     window.dispatchEvent(new Event('cartUpdated'))
-    
-    // Javasolt ételek betöltése ha van étterem a kosárban
     if (cartItems.length > 0 && cartItems[0].restaurantId) {
       loadSuggestedItems(cartItems[0].restaurantId)
     } else {
@@ -573,12 +571,18 @@ export default function Cart() {
       const data = response.data
       console.log('Kupon válasz:', data)
 
-      if (data.isValid) {
-        setAppliedCoupon(data)
-        setCouponSuccess(data.message)
+      const isValid = data.isValid ?? data.IsValid
+      const message = data.message ?? data.Message
+      const discountAmount = data.discountAmount ?? data.DiscountAmount ?? 0
+      const finalAmount = data.finalAmount ?? data.FinalAmount ?? (orderAmount - discountAmount)
+      const couponObj = data.coupon ?? data.Coupon ?? null
+
+      if (isValid) {
+        setAppliedCoupon({ coupon: couponObj, discountAmount, finalAmount, message, isValid: true })
+        setCouponSuccess(message)
         setCouponError('')
       } else {
-        setCouponError(data.message)
+        setCouponError(message || 'A kupon érvénytelen')
         setCouponSuccess('')
         setAppliedCoupon(null)
       }
@@ -645,7 +649,6 @@ export default function Cart() {
       return
     }
 
-    // Cím ellenőrzés
     if (!deliveryAddress.fullName || !deliveryAddress.address || !deliveryAddress.city ||
         !deliveryAddress.zip || !phoneLocalDigits) {
       alert('Kérjük, töltsd ki az összes kötelező mezőt!')
@@ -693,13 +696,13 @@ export default function Cart() {
   }
 
   const processOrder = async () => {
-    // Ha van alkalmazott kupon és be van jelentkezve, felhasználjuk a kupont
+    
     if (appliedCoupon && isLoggedIn) {
       try {
         const orderAmount = calculateSubtotal() + calculateDeliveryFee()
         const restaurantId = cartItems.length > 0 ? cartItems[0].restaurantId : null
-        
-        await axios.post(
+
+        const applyRes = await axios.post(
           `${API_BASE}/Coupons/apply`,
           {
             code: appliedCoupon.coupon.code,
@@ -713,8 +716,21 @@ export default function Cart() {
             }
           }
         )
+
+        const applyData = applyRes.data
+        const applyIsValid = applyData?.isValid ?? applyData?.IsValid
+        const applyMessage = applyData?.message ?? applyData?.Message
+
+        if (!applyIsValid) {
+          setCouponError(applyMessage || 'A kupon alkalmazása sikertelen volt')
+          setIsPlacingOrder(false)
+          return
+        }
       } catch (error) {
         console.error('Hiba a kupon felhasználása során:', error)
+        setCouponError('Hiba történt a kupon alkalmazása során')
+        setIsPlacingOrder(false)
+        return
       }
     }
 
@@ -843,7 +859,6 @@ export default function Cart() {
           suggestions.push(...randomPopular)
         }
         
-        // Ha kevés az ajánlat, töltsük fel véletlenszerű ételekkel
         if (suggestions.length < 4 && filtered.length > suggestions.length) {
           const remaining = shuffled.filter(item => !suggestions.includes(item))
           const randomRemaining = remaining.slice(0, 4 - suggestions.length)
@@ -874,7 +889,6 @@ export default function Cart() {
     setCartItems([...cartItems, newItem])
   }
 
-  // Csak egy etterembol rendeles
   const restaurantId = cartItems.length > 0 ? cartItems[0].restaurantId : null
   const restaurantName = cartItems.length > 0 ? cartItems[0].restaurantName : null
 
