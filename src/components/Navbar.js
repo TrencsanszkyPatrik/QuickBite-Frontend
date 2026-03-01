@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import '../styles/navbar.css'
+import { isTokenExpired, scheduleTokenExpiryCheck, logout } from '../utils/auth'
 
 export default function Navbar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
@@ -54,6 +55,13 @@ export default function Navbar() {
     const checkAuth = () => {
       const token = localStorage.getItem('quickbite_token')
       const user = localStorage.getItem('quickbite_user')
+
+      // log out immediately if the stored token has already expired
+      if (token && isTokenExpired(token)) {
+        logout()
+        return
+      }
+
       if (token && user) {
         setIsLoggedIn(true)
         try {
@@ -70,18 +78,37 @@ export default function Navbar() {
 
     checkAuth()
     updateCartCount()
-    
+
+    // any time someone logs in (even from another tab) make sure we
+    // schedule the expiration watcher
+    const handleLoginEvent = () => {
+      checkAuth()
+      scheduleTokenExpiryCheck()
+    }
+
     const handleStorageChange = () => {
       checkAuth()
       updateCartCount()
     }
-    
+
     window.addEventListener('storage', handleStorageChange)
-    window.addEventListener('userLoggedIn', checkAuth)
+    window.addEventListener('userLoggedIn', handleLoginEvent)
     window.addEventListener('userLoggedOut', checkAuth)
     window.addEventListener('cartUpdated', updateCartCount)
 
+    // schedule expiry when the component mounts
+    const cancelExpiry = scheduleTokenExpiryCheck()
+
     const cartInterval = setInterval(updateCartCount, 1000)
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange)
+      window.removeEventListener('userLoggedIn', handleLoginEvent)
+      window.removeEventListener('userLoggedOut', checkAuth)
+      window.removeEventListener('cartUpdated', updateCartCount)
+      clearInterval(cartInterval)
+      cancelExpiry()
+    }
 
     return () => {
       window.removeEventListener('storage', handleStorageChange)

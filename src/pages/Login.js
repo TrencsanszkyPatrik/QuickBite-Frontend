@@ -7,6 +7,7 @@ import '../styles/login.css'
 import { usePageTitle } from '../utils/usePageTitle'
 import { showToast } from '../utils/toast'
 import { API_BASE } from '../utils/api'
+import { scheduleTokenExpiryCheck } from '../utils/auth'
 
 export default function Login() {
   usePageTitle('QuickBite - Bejelentkezés')
@@ -60,6 +61,7 @@ export default function Login() {
           name: data.name || loginEmail
         }))
         window.dispatchEvent(new Event('userLoggedIn'))
+        scheduleTokenExpiryCheck()
       }
 
       showToast.success('Sikeres bejelentkezés!')
@@ -133,6 +135,7 @@ export default function Login() {
           name: registerFullName
         }))
         window.dispatchEvent(new Event('userLoggedIn'))
+        scheduleTokenExpiryCheck()
       }
 
       showToast.success('Sikeres regisztráció!')
