@@ -249,7 +249,10 @@ export default function Navbar() {
                     <div key={index} className="mini-cart-item">
                       <img src={item.img || '/img/EtelKepek/default.png'} alt={item.name} />
                       <div className="mini-cart-item-details">
-                        <span className="mini-cart-item-name">{item.name}</span>
+                        <span className="mini-cart-item-name">
+                          {item.name}
+                          {item.is18Plus && <span className="mini-cart-item-18plus-badge">18+</span>}
+                        </span>
                         <span className="mini-cart-item-price">{item.quantity}x {item.price.toLocaleString()} Ft</span>
                       </div>
                     </div>
