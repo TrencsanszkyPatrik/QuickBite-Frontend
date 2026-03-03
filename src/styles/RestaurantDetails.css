@@ -490,6 +490,20 @@
   transform: scale(1.1);
 }
 
+.restaurant-details-page--drinkhub-pecs .menu-card-image-wrapper {
+  background: #fff;
+}
+
+.restaurant-details-page--drinkhub-pecs .menu-img,
+.restaurant-details-page--drinkhub-pecs .product-modal-img {
+  object-fit: contain;
+  background: #fff;
+}
+
+.restaurant-details-page--drinkhub-pecs .menu-card:hover .menu-img {
+  transform: none;
+}
+
 .menu-card-overlay {
   position: absolute;
   top: 0;

@@ -84,6 +84,20 @@ const getRestaurantSoonStatusLabel = (openingTime, closingTime, isOpen) => {
   return `Lassan nyitunk (${minutesUntilChange} perc múlva)`
 }
 
+const normalizeRestaurantName = (name) => {
+  if (!name) return ''
+  return String(name)
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .trim()
+}
+
+const isDrinkHubPecsRestaurantName = (name) => {
+  const normalizedName = normalizeRestaurantName(name)
+  return normalizedName === 'drinkhub pecs'
+}
+
 const CATEGORY_ORDER = [
   'Sós palacsinta',
   'Édes palacsinta',
@@ -199,6 +213,8 @@ export default function RestaurantDetails({ favorites = [], pendingFavoriteIds, 
   const soonStatusLabel = restaurant
     ? getRestaurantSoonStatusLabel(restaurant.openingTime, restaurant.closingTime, restaurant.isOpen)
     : null
+
+  const isDrinkHubPecs = isDrinkHubPecsRestaurantName(restaurant?.name)
 
   const goToPrevItem = () => {
     if (menuItems.length <= 1) return
@@ -829,7 +845,7 @@ export default function RestaurantDetails({ favorites = [], pendingFavoriteIds, 
           </div>
         </div>
       )}
-      <div className="restaurant-details-page container">
+      <div className={`restaurant-details-page container ${isDrinkHubPecs ? 'restaurant-details-page--drinkhub-pecs' : ''}`}>
       
       <div className="restaurant-details-header">
         <img src={restaurant.img} alt={restaurant.name} className="restaurant-details-img" />
