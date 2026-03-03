@@ -8,6 +8,7 @@ import { usePageTitle } from '../utils/usePageTitle'
 import { showToast } from '../utils/toast'
 import { API_BASE } from '../utils/api'
 import { scheduleTokenExpiryCheck } from '../utils/auth'
+import { sendWelcomeEmail } from '../services/emailService'
 
 export default function Login() {
   usePageTitle('QuickBite - Bejelentkezés')
@@ -136,9 +137,14 @@ export default function Login() {
         }))
         window.dispatchEvent(new Event('userLoggedIn'))
         scheduleTokenExpiryCheck()
+
+        const emailResult = await sendWelcomeEmail(registerEmail, registerFullName)
+        const successMessage = emailResult.success
+          ? 'Sikeres regisztráció! Üdvözlő email elküldve.'
+          : 'Sikeres regisztráció!'
+        showToast.success(successMessage)
       }
 
-      showToast.success('Sikeres regisztráció!')
       setTimeout(() => {
         navigate('/profilom')
       }, 1000)

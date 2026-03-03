@@ -9,6 +9,7 @@
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.13.4",
     "bootstrap-icons": "^1.13.1",
+    "emailjs-com": "^3.2.0",
     "leaflet": "^1.9.4",
     "libphonenumber-js": "1.11.11",
     "react": "^19.0.0-rc.1",
