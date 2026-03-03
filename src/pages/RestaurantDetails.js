@@ -137,6 +137,7 @@ const CATEGORY_ORDER = [
   'Ásványvíz',
   'Víz',
   'Sör',
+  'Sörök',
   'Bor',
   'Egyéb'
 ]
@@ -172,6 +173,9 @@ export default function RestaurantDetails({ favorites = [], pendingFavoriteIds, 
   const [hoverRating, setHoverRating] = useState(0)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [isSubmittingRating, setIsSubmittingRating] = useState(false)
+
+  const [showAgeModal, setShowAgeModal] = useState(false);
+  const [pendingCartAction, setPendingCartAction] = useState(null);
 
   const openItemModal = (itemIndex) => {
     if (typeof itemIndex !== 'number') return
@@ -461,6 +465,55 @@ export default function RestaurantDetails({ favorites = [], pendingFavoriteIds, 
     ? pendingFavoriteIds?.has(String(restaurant.id))
     : false
 
+  const alkoholosKategoriak = [
+    'Alkoholos ital',
+    'Alkoholos italok',
+    'Sör',
+    'Bor',
+    'Rövidital',
+    'Rövid ital',
+    'Röviditalok',
+    'Whiskey',
+    'Vodka',
+    'Vermut',
+    'Tequila',
+    'Rum',
+    'Likőr',
+    'Gin',
+    'Energiaitalok',
+    'Koktélok',
+    'Koktél'
+  ];
+
+  const isAlkoholosTermek = (item) => {
+    if (!item || !item.category) return false;
+    return alkoholosKategoriak.map(k => k.toLowerCase()).includes(item.category.toLowerCase());
+  };
+
+  const handleAddToCart = (menuItem, quantity = 1, sourceElement = null) => {
+    if (isAlkoholosTermek(menuItem)) {
+      setPendingCartAction({ menuItem, quantity, sourceElement });
+      setShowAgeModal(true);
+      return;
+    }
+    addToCart(menuItem, quantity, sourceElement);
+    setShowItemModal(false);
+  };
+
+  const handleConfirmAge = () => {
+    if (pendingCartAction) {
+      addToCart(pendingCartAction.menuItem, pendingCartAction.quantity, pendingCartAction.sourceElement);
+      setShowItemModal(false);
+    }
+    setShowAgeModal(false);
+    setPendingCartAction(null);
+  };
+
+  const handleCancelAgeModal = () => {
+    setShowAgeModal(false);
+    setPendingCartAction(null);
+  };
+
   if (isLoading) {
     return (
       <>
@@ -562,9 +615,64 @@ export default function RestaurantDetails({ favorites = [], pendingFavoriteIds, 
                       Nincs megadott leírás.
                     </p>
                   )}
+                  {/* 18+ badge for alcoholic drinks - CENTERED BELOW price & desc */}
+                  {(() => {
+                    const alkoholosKategoriak = [
+                      'Alkoholos ital',
+                      'Alkoholos italok',
+                      'Sör',
+                      'Bor',
+                      'Rövidital',
+                      'Rövid ital',
+                      'Röviditalok',
+                      'Whiskey',
+                      'Vodka',
+                      'Vermut',
+                      'Tequila',
+                      'Rum',
+                      'Likőr',
+                      'Gin',
+                      'Energiaitalok',
+                      'Koktélok',
+                      'Koktél'
+                    ];
+                    if (selectedItem.category && alkoholosKategoriak.map(k => k.toLowerCase()).includes(selectedItem.category.toLowerCase())) {
+                      return (
+                        <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '10px' }}>
+                          <button
+                            type="button"
+                            className="alkoholos-badge-modal"
+                            style={{
+                              background: '#d7263d', // piros
+                              color: '#fff8e1', // fehér/beige
+                              fontWeight: 'bold',
+                              border: 'none',
+                              borderRadius: '12px',
+                              padding: '1rem 1.5rem',
+                              fontSize: '1rem',
+                              cursor: 'default',
+                              boxShadow: '0 4px 12px rgba(215,38,61,0.12)',
+                              outline: 'none',
+                              pointerEvents: 'none',
+                              textTransform: 'uppercase',
+                              letterSpacing: '1px',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              gap: '0.5rem',
+                            }}
+                            disabled
+                            aria-disabled="true"
+                          >
+                            Figyelem! 18+
+                          </button>
+                        </div>
+                      );
+                    }
+                    return null;
+                  })()}
                 </div>
               </div>
-
               {restaurant.isOpen && (
                 <div className="product-modal-qty">
                   <span className="product-modal-qty-label">Mennyiség</span>
@@ -600,8 +708,7 @@ export default function RestaurantDetails({ favorites = [], pendingFavoriteIds, 
                     className="modal-btn modal-btn-confirm"
                     onClick={(e) => {
                       const imageElement = document.getElementById('product-modal-img-animated')
-                      addToCart(selectedItem, selectedQuantity, imageElement || e.currentTarget)
-                      setTimeout(() => closeItemModal(), 100)
+                      handleAddToCart(selectedItem, selectedQuantity, imageElement || e.currentTarget)
                     }}
                   >
                     Kosárba teszem
@@ -613,6 +720,45 @@ export default function RestaurantDetails({ favorites = [], pendingFavoriteIds, 
                   <span>Jelenleg zárva vagyunk</span>
                 </span>
               )}
+            </div>
+          </div>
+        </div>
+      )}
+      {showAgeModal && (
+        <div className="modal-overlay" onClick={handleCancelAgeModal}>
+          <div className="modal-content" onClick={e => e.stopPropagation()} style={{maxWidth: 480, fontFamily: 'inherit'}}>
+            <div className="modal-header">
+              <h2 style={{fontFamily: 'inherit'}}>Figyelem! 18+ termék</h2>
+              <button className="modal-close" onClick={handleCancelAgeModal} aria-label="Bezárás">✕</button>
+            </div>
+            <div className="modal-body" style={{textAlign: 'center', fontFamily: 'inherit'}}>
+              <div style={{margin: '2rem 0 1.5rem 0'}}>
+                <span style={{
+                  background: '#d7263d',
+                  color: '#fff8e1',
+                  fontWeight: 'bold',
+                  borderRadius: '14px',
+                  padding: '1.1rem 2.2rem',
+                  fontSize: '1.25rem',
+                  display: 'inline-block',
+                  marginBottom: '1.2rem',
+                  letterSpacing: '1px',
+                  textTransform: 'uppercase',
+                  fontFamily: 'inherit',
+                  boxShadow: '0 4px 16px rgba(215,38,61,0.13)'
+                }}>Figyelem! 18+</span>
+                <p style={{margin: '0.7rem 0 0.7rem 0', fontSize: '1.13rem', fontFamily: 'inherit', lineHeight: 1.6}}>
+                  Ez egy 18 éven felülieknek szóló termék.<br/>
+                  Kérjük, csak akkor rendeld meg, ha elmúltál 18 éves,<br/>
+                  és az átvételkor is csak 18 éven felüli személy veheti át.<br/>
+                  A futár jogosult személyazonosságot igazoló okmányt kérni.<br/>
+                  <b>Ha nem tudod igazolni életkorodat, a terméket nem adhatja át!</b>
+                </p>
+              </div>
+              <div style={{display: 'flex', justifyContent: 'center', gap: '1.2rem', marginTop: '1.5rem'}}>
+                <button className="modal-btn modal-btn-cancel" onClick={handleCancelAgeModal} style={{minWidth: 100}}>Mégse</button>
+                <button className="modal-btn modal-btn-confirm" style={{minWidth: 100}} onClick={handleConfirmAge} autoFocus>OK</button>
+              </div>
             </div>
           </div>
         </div>
@@ -767,31 +913,77 @@ export default function RestaurantDetails({ favorites = [], pendingFavoriteIds, 
             <div className="menu-category-section" key={category}>
               <h3 className="category-title">{category}</h3>
               <div className={`menu-grid menu-grid--${categoryIdx % 2 === 0 ? 'alternate' : 'standard'}`}>
-                {items.map((item, idx) => (
-                  <div
-                    className={`menu-card menu-card--${idx % 3 === 0 ? 'featured' : idx % 3 === 1 ? 'medium' : 'compact'}`}
-                    key={`${category}-${idx}`}
-                  >
-                    <div className="menu-card-image-wrapper">
-                      <img src={item.img} alt={item.name} className="menu-img" />
-                      <div className="menu-card-overlay">
-                        <button 
-                          className="btn btn-primary btn-overlay"
-                          onClick={() => openItemModal(menuItems.indexOf(item))}
-                        >
-                          + Részletek
-                        </button>
+                {items.map((item, idx) => {
+                  const alkoholosKategoriak = [
+                    'Alkoholos ital',
+                    'Alkoholos italok',
+                    'Sör',
+                    'Bor',
+                    'Rövidital',
+                    'Rövid ital',
+                    'Röviditalok',
+                    'Whiskey',
+                    'Vodka',
+                    'Vermut',
+                    'Tequila',
+                    'Rum',
+                    'Likőr',
+                    'Gin',
+                    'Energiaitalok',
+                    'Koktélok',
+                    'Koktél'
+                  ];
+                  const isAlkoholos = alkoholosKategoriak.map(k => k.toLowerCase()).includes((category || '').toLowerCase());
+                  return (
+                    <div
+                      className={`menu-card menu-card--${idx % 3 === 0 ? 'featured' : idx % 3 === 1 ? 'medium' : 'compact'}`}
+                      key={`${category}-${idx}`}
+                    >
+                      <div className="menu-card-image-wrapper" style={{position: 'relative'}}>
+                        <img src={item.img} alt={item.name} className="menu-img" />
+                        {/* 18+ badge for alcoholic drinks in card */}
+                        {isAlkoholos && (
+                          <span
+                            className="alkoholos-badge-card"
+                            style={{
+                              position: 'absolute',
+                              right: '8px',
+                              bottom: '8px',
+                              background: '#d7263d',
+                              color: '#fff8e1',
+                              fontWeight: 'bold',
+                              borderRadius: '8px',
+                              padding: '4px 10px',
+                              fontSize: '0.95rem',
+                              zIndex: 2,
+                              boxShadow: '0 2px 6px rgba(215,38,61,0.12)',
+                              pointerEvents: 'none',
+                              textTransform: 'uppercase',
+                              letterSpacing: '1px',
+                            }}
+                          >
+                            18+
+                          </span>
+                        )}
+                        <div className="menu-card-overlay">
+                          <button 
+                            className="btn btn-primary btn-overlay"
+                            onClick={() => openItemModal(menuItems.indexOf(item))}
+                          >
+                            + Részletek
+                          </button>
+                        </div>
+                      </div>
+                      <div className="menu-info">
+                        <div className="menu-header">
+                          <h3>{item.name}</h3>
+                          <span className="menu-price">{item.price} Ft</span>
+                        </div>
+                        {item.desc && <p className="menu-desc">{item.desc}</p>}
                       </div>
                     </div>
-                    <div className="menu-info">
-                      <div className="menu-header">
-                        <h3>{item.name}</h3>
-                        <span className="menu-price">{item.price} Ft</span>
-                      </div>
-                      {item.desc && <p className="menu-desc">{item.desc}</p>}
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           ))}
