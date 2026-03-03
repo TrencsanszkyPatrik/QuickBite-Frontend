@@ -466,9 +466,11 @@ export default function RestaurantDetails({ favorites = [], pendingFavoriteIds, 
     : false
 
   const alkoholosKategoriak = [
+    'Alkohol',
     'Alkoholos ital',
     'Alkoholos italok',
     'Sör',
+    'Sörök',
     'Bor',
     'Rövidital',
     'Rövid ital',
@@ -480,14 +482,92 @@ export default function RestaurantDetails({ favorites = [], pendingFavoriteIds, 
     'Rum',
     'Likőr',
     'Gin',
+    'Energiaital',
     'Energiaitalok',
     'Koktélok',
     'Koktél'
   ];
 
+  const normalizeForCompare = (value) =>
+    String(value || '')
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .trim();
+
   const isAlkoholosTermek = (item) => {
-    if (!item || !item.category) return false;
-    return alkoholosKategoriak.map(k => k.toLowerCase()).includes(item.category.toLowerCase());
+    if (!item) return false;
+
+    const normalizedCategory = normalizeForCompare(item.category);
+    const kategoriabolAlkoholos =
+      !!normalizedCategory &&
+      alkoholosKategoriak
+        .map((k) => normalizeForCompare(k))
+        .includes(normalizedCategory);
+
+    if (kategoriabolAlkoholos) return true;
+
+    const restaurantName = normalizeForCompare(restaurant?.name);
+    const itemName = normalizeForCompare(item.name);
+    const isZipsBrewhouse = restaurantName.includes('zip') && restaurantName.includes('brewhouse');
+    const zips18PlusSorok = ['ipa', 'kezmuves sor', 'stout'];
+    const isTuzhelyKavezoBisztro =
+      restaurantName.includes('tuzhely') &&
+      restaurantName.includes('kavezo') &&
+      restaurantName.includes('bisztro');
+    const isHajnaliWokBao =
+      restaurantName.includes('hajnali') &&
+      restaurantName.includes('wok') &&
+      restaurantName.includes('bao');
+    const isSaboresPerdidos =
+      restaurantName.includes('sabores') &&
+      restaurantName.includes('perdidos');
+    const isLaStradaItaliana =
+      restaurantName.includes('la strada') &&
+      restaurantName.includes('italiana');
+    const isNeoDog =
+      restaurantName.includes('neo') &&
+      restaurantName.includes('dog');
+    const isItalKategoriaban = ['ital', 'italok'].includes(normalizedCategory);
+    const isUditoKategoriaban = ['udito', 'uditok'].includes(normalizedCategory);
+    const tuzhely18PlusItalok = ['aperol spritz', 'bloody mary', 'craft sorok', 'craft sor', 'mimosa'];
+    const hajnali18PlusItalok = [
+      'lychee martini',
+      'sake flight',
+      'shochu',
+      'soju',
+      'makgeolli'
+    ];
+
+    if (isZipsBrewhouse) {
+      return zips18PlusSorok.some((beerName) => itemName.includes(beerName));
+    }
+
+    if (isTuzhelyKavezoBisztro && isItalKategoriaban) {
+      return tuzhely18PlusItalok.some((drinkName) => itemName.includes(drinkName));
+    }
+
+    if (isHajnaliWokBao && isItalKategoriaban) {
+      return hajnali18PlusItalok.some((drinkName) => itemName.includes(drinkName));
+    }
+
+    if (isSaboresPerdidos && itemName.includes('paloma picante')) {
+      return true;
+    }
+
+    if (isLaStradaItaliana) {
+      return (
+        itemName.includes('campari soda') ||
+        itemName.includes('aperol spitz') ||
+        itemName.includes('aperol spritz')
+      );
+    }
+
+    if (isNeoDog && isUditoKategoriaban && itemName.includes('source code')) {
+      return true;
+    }
+
+    return false;
   };
 
   const handleAddToCart = (menuItem, quantity = 1, sourceElement = null) => {
@@ -617,26 +697,7 @@ export default function RestaurantDetails({ favorites = [], pendingFavoriteIds, 
                   )}
                   {/* 18+ badge for alcoholic drinks - CENTERED BELOW price & desc */}
                   {(() => {
-                    const alkoholosKategoriak = [
-                      'Alkoholos ital',
-                      'Alkoholos italok',
-                      'Sör',
-                      'Bor',
-                      'Rövidital',
-                      'Rövid ital',
-                      'Röviditalok',
-                      'Whiskey',
-                      'Vodka',
-                      'Vermut',
-                      'Tequila',
-                      'Rum',
-                      'Likőr',
-                      'Gin',
-                      'Energiaitalok',
-                      'Koktélok',
-                      'Koktél'
-                    ];
-                    if (selectedItem.category && alkoholosKategoriak.map(k => k.toLowerCase()).includes(selectedItem.category.toLowerCase())) {
+                    if (isAlkoholosTermek(selectedItem)) {
                       return (
                         <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '10px' }}>
                           <button
@@ -914,26 +975,7 @@ export default function RestaurantDetails({ favorites = [], pendingFavoriteIds, 
               <h3 className="category-title">{category}</h3>
               <div className={`menu-grid menu-grid--${categoryIdx % 2 === 0 ? 'alternate' : 'standard'}`}>
                 {items.map((item, idx) => {
-                  const alkoholosKategoriak = [
-                    'Alkoholos ital',
-                    'Alkoholos italok',
-                    'Sör',
-                    'Bor',
-                    'Rövidital',
-                    'Rövid ital',
-                    'Röviditalok',
-                    'Whiskey',
-                    'Vodka',
-                    'Vermut',
-                    'Tequila',
-                    'Rum',
-                    'Likőr',
-                    'Gin',
-                    'Energiaitalok',
-                    'Koktélok',
-                    'Koktél'
-                  ];
-                  const isAlkoholos = alkoholosKategoriak.map(k => k.toLowerCase()).includes((category || '').toLowerCase());
+                  const isAlkoholos = isAlkoholosTermek(item);
                   return (
                     <div
                       className={`menu-card menu-card--${idx % 3 === 0 ? 'featured' : idx % 3 === 1 ? 'medium' : 'compact'}`}
