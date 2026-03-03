@@ -99,6 +99,13 @@ const isDrinkHubPecsRestaurantName = (name) => {
 }
 
 const CATEGORY_ORDER = [
+  'Shake',
+  'Smoothie',
+  'Luxury Roll',
+  'Premium Roll',
+  'Csokis/Kekszes Roll',
+  'Gyümölcsös Roll',
+  'Zero Roll',
   'Sós palacsinta',
   'Édes palacsinta',
   'Gofri',
