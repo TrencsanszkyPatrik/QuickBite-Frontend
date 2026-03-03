@@ -236,15 +236,19 @@ export default function RestaurantDetails({ favorites = [], pendingFavoriteIds, 
     const existingItemIndex = currentCart.findIndex(
       (item) => item.name === menuItem.name && item.restaurantId === restaurant.id
     )
+    const is18PlusTermek = isAlkoholosTermek(menuItem)
 
     if (existingItemIndex > -1) {
       currentCart[existingItemIndex].quantity += Math.max(1, Number(quantity) || 1)
+      currentCart[existingItemIndex].is18Plus =
+        Boolean(currentCart[existingItemIndex].is18Plus) || is18PlusTermek
     } else {
       const cartItem = {
         ...menuItem,
         restaurantId: restaurant.id,
         restaurantName: restaurant.name,
         restaurantFreeDelivery: restaurant.free_delivery || false,
+        is18Plus: is18PlusTermek,
         quantity: Math.max(1, Number(quantity) || 1)
       }
       currentCart.push(cartItem)
@@ -268,6 +272,7 @@ export default function RestaurantDetails({ favorites = [], pendingFavoriteIds, 
       restaurantId: restaurant.id,
       restaurantName: restaurant.name,
       restaurantFreeDelivery: restaurant.free_delivery || false,
+      is18Plus: isAlkoholosTermek(pendingItem),
       quantity: Math.max(1, Number(pendingQuantity) || 1)
     }
     

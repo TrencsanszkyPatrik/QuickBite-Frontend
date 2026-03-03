@@ -1050,7 +1050,10 @@ export default function Cart() {
                         className="cart-item-image"
                       />
                       <div className="cart-item-details">
-                        <h3>{item.name}</h3>
+                        <h3>
+                          {item.name}
+                          {item.is18Plus && <span className="cart-item-18plus-badge">18+</span>}
+                        </h3>
                         {item.desc && <p className="item-description">{item.desc}</p>}
                         <p className="item-price">{item.price.toLocaleString()} Ft</p>
                       </div>
