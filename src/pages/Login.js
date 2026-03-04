@@ -227,7 +227,7 @@ export default function Login() {
                     aria-pressed={showLoginPassword}
                     disabled={isLoading}
                   >
-                    <i className="bi bi-eye" aria-hidden="true"></i>
+                    <i className={`bi ${showLoginPassword ? 'bi-eye-slash' : 'bi-eye'}`} aria-hidden="true"></i>
                   </button>
                 )}
               </div>
@@ -288,7 +288,7 @@ export default function Login() {
                     aria-pressed={showRegisterPassword}
                     disabled={isLoading}
                   >
-                    <i className="bi bi-eye" aria-hidden="true"></i>
+                    <i className={`bi ${showRegisterPassword ? 'bi-eye-slash' : 'bi-eye'}`} aria-hidden="true"></i>
                   </button>
                 )}
               </div>
@@ -315,7 +315,7 @@ export default function Login() {
                     aria-pressed={showRegisterConfirmPassword}
                     disabled={isLoading}
                   >
-                    <i className="bi bi-eye" aria-hidden="true"></i>
+                    <i className={`bi ${showRegisterConfirmPassword ? 'bi-eye-slash' : 'bi-eye'}`} aria-hidden="true"></i>
                   </button>
                 )}
               </div>

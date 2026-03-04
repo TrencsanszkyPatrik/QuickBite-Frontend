@@ -578,3 +578,38 @@
   color: var(--text-light);
   font-style: italic;
 }
+.password-input-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.password-input-wrapper input {
+  padding-right: 48px;
+}
+
+.toggle-password-visibility {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  border: none;
+  background: transparent;
+  color: var(--primary);
+  cursor: pointer;
+  padding: 0 12px;
+  border-radius: 0 12px 12px 0;
+  font-size: 16px;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.toggle-password-visibility:hover:not(:disabled) {
+  background: rgba(105, 117, 101, 0.12);
+}
+
+.toggle-password-visibility:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
