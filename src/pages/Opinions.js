@@ -90,6 +90,10 @@ export default function Opinions() {
         headers: { 'Content-Type': 'application/json' }
       })
       const addedReview = response.data
+      // Ensure createdAt is set for display
+      if (!addedReview.createdAt) {
+        addedReview.createdAt = new Date().toISOString()
+      }
       setReviews([addedReview, ...reviews])
       setNewText('')
       setNewStars(5)
