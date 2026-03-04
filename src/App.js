@@ -19,9 +19,10 @@ import Profile from './pages/Profile'
 import OrdersPage from './pages/OrdersPage'
 import OrderDetailsPage from './pages/OrderDetailsPage'
 import DataProtection from './pages/footerpages/DataProtection'
-import Cookies from './pages/footerpages/Cookies'
+import CookiesPage from './pages/footerpages/Cookies'
 import { API_BASE, getAuthHeaders } from './utils/api'
 import { showToast } from './utils/toast'
+import { getAuthToken } from './utils/storage'
 
 export default function App() {
   const [opinions, setOpinions] = useState([])
@@ -45,7 +46,6 @@ export default function App() {
         const data = JSON.parse(text)
         setOpinions(Array.isArray(data) ? data : [])
       } catch (err) {
-        console.error('Hiba a vélemények betöltésekor:', err)
         setOpinions([])
       }
     }
@@ -64,7 +64,7 @@ export default function App() {
   })
 
   const loadFavorites = async () => {
-    const token = localStorage.getItem('quickbite_token')
+    const token = getAuthToken()
     if (!token) {
       setFavorites([])
       return
@@ -78,7 +78,6 @@ export default function App() {
       const mapped = Array.isArray(data) ? data.map(mapFavorite) : []
       setFavorites(mapped)
     } catch (err) {
-      console.error('Nem sikerult betolteni a kedvenceket:', err)
       setFavorites([])
     }
   }
@@ -112,7 +111,7 @@ export default function App() {
 
   const handleToggleFavorite = async (restaurant) => {
     if (!restaurant || !restaurant.id) return
-    const token = localStorage.getItem('quickbite_token')
+    const token = getAuthToken()
     if (!token) {
       showToast.error('Kedvencekhez bejelentkezes szukseges.')
       return
@@ -152,7 +151,6 @@ export default function App() {
         setFavorites((prev) => [...prev, next])
       }
     } catch (err) {
-      console.error('Kedvenc frissites sikertelen:', err)
       showToast.error('Kedvenc frissitese sikertelen.')
     } finally {
       setFavoritePending(id, false)
@@ -177,7 +175,7 @@ export default function App() {
         <Route path="/rolunk" element={<AboutUs />} />
         <Route path="/aszf" element={<Aszf />} />
         <Route path="/kapcsolat" element={<Contact />} />
-        <Route path="/sütik" element={<Cookies />} />
+        <Route path="/sütik" element={<CookiesPage />} />
         <Route
           path="/ettermek"
           element={

@@ -36,7 +36,6 @@ export default function Cousines({ selectedCuisineId, onSelectCuisine = () => {}
 
         setCategories(mapped)
       } catch (err) {
-        console.error(err)
         setError('Hiba történt a kategóriák betöltése közben.')
       } finally {
         setIsLoading(false)

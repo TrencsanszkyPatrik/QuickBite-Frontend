@@ -72,7 +72,6 @@ export default function HomePage({ favorites = [], pendingFavoriteIds, onToggleF
                 }))
                 setRestaurants(mapped)
             } catch (err) {
-                console.error('Hiba az éttermek betöltésekor:', err)
             } finally {
                 setIsLoading(false)
             }

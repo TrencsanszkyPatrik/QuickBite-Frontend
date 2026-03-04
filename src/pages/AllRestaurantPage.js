@@ -72,7 +72,6 @@ export default function AllRestaurantPage({ favorites = [], pendingFavoriteIds, 
         const data = response.data || []
         setCategories(data)
       } catch (err) {
-        console.error('Hiba történt a kategóriák betöltése közben:', err)
       } finally {
         setIsLoadingCategories(false)
       }
@@ -98,7 +97,6 @@ export default function AllRestaurantPage({ favorites = [], pendingFavoriteIds, 
         }))
         setAllRestaurants(mapped)
       } catch (err) {
-        console.error('Hiba történt az éttermek betöltése közben:', err)
       } finally {
         setIsLoadingRestaurants(false)
       }

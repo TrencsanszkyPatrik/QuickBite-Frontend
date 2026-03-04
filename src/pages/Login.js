@@ -9,6 +9,7 @@ import { showToast } from '../utils/toast'
 import { API_BASE } from '../utils/api'
 import { scheduleTokenExpiryCheck } from '../utils/auth'
 import { sendWelcomeEmail } from '../services/emailService'
+import { setAuth } from '../utils/storage'
 
 export default function Login() {
   usePageTitle('QuickBite - Bejelentkezés')
@@ -55,12 +56,11 @@ export default function Login() {
 
       const data = response.data
       if (data.token) {
-        localStorage.setItem('quickbite_token', data.token)
-        localStorage.setItem('quickbite_user', JSON.stringify({
+        setAuth(data.token, {
           id: data.userId,
           email: loginEmail,
           name: data.name || loginEmail
-        }))
+        })
         window.dispatchEvent(new Event('userLoggedIn'))
         scheduleTokenExpiryCheck()
       }
@@ -70,7 +70,6 @@ export default function Login() {
         navigate('/profilom')
       }, 1000)
     } catch (error) {
-      console.error('Bejelentkezési hiba:', error)
       const message = error?.response?.data?.message || error?.message || 'Bejelentkezés sikertelen. Kérjük, ellenőrizze az adatokat!'
       showToast.error(message)
     } finally {
@@ -129,12 +128,11 @@ export default function Login() {
 
       const data = response.data
       if (data.token) {
-        localStorage.setItem('quickbite_token', data.token)
-        localStorage.setItem('quickbite_user', JSON.stringify({
+        setAuth(data.token, {
           id: data.userId,
           email: registerEmail,
           name: registerFullName
-        }))
+        })
         window.dispatchEvent(new Event('userLoggedIn'))
         scheduleTokenExpiryCheck()
 
@@ -149,7 +147,6 @@ export default function Login() {
         navigate('/profilom')
       }, 1000)
     } catch (error) {
-      console.error('Regisztrációs hiba:', error)
       const message = error?.response?.data?.message || error?.message || 'Regisztráció sikertelen. Kérjük, próbálja újra!'
       showToast.error(message)
     } finally {

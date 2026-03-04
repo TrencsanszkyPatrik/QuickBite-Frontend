@@ -15,12 +15,8 @@ import { API_BASE, getAuthHeaders } from '../utils/api'
 import '../styles/profile.css'
 import '../styles/modal.css'
 import { AsYouType, parsePhoneNumberFromString, validatePhoneNumberLength } from 'libphonenumber-js'
-
-const FALLBACK_PHONE_CODE_OPTIONS = [
-  { value: '+36', label: 'HU +36', countryCodes: ['HU'], defaultCountry: 'HU' }
-]
-
-const DEFAULT_PHONE_CODE = FALLBACK_PHONE_CODE_OPTIONS[0].value
+import { getPhoneConfig, parsePhoneValue, formatPhoneLocal, buildPhoneValue, isValidPhoneNumber, findCountryCodeFromDigits, handlePhoneCodeTypeAhead, resetPhoneCodeTypeAhead, FALLBACK_PHONE_CODE_OPTIONS, DEFAULT_PHONE_CODE, CARD_NAME_LETTERS_REGEX } from '../utils/phoneValidation'
+import { getAuthToken, getAuthUser, setAuthUser, clearAuth } from '../utils/storage'
 
 export default function Profile({ favorites = [] }) {
   usePageTitle('QuickBite - Profilom')
@@ -42,122 +38,56 @@ export default function Profile({ favorites = [] }) {
     avatarUrl: ''
   })
 
-  const getPhoneConfig = (countryCode) => {
-    const selectedOption =
-      phoneCodeOptions.find((option) => option.value === countryCode) ||
-      phoneCodeOptions[0] ||
-      FALLBACK_PHONE_CODE_OPTIONS[0]
-
-    const defaultCountry = selectedOption.defaultCountry || selectedOption.countryCodes?.[0]
-
-    if (selectedOption.value === '+36') {
-      return {
-        ...selectedOption,
-        defaultCountry,
-        localMinLength: 9,
-        localMaxLength: 9
-      }
-    }
-
-    if (defaultCountry) {
-      if (!phoneLengthBoundsCacheRef.current[defaultCountry]) {
-        let minLength = 6
-        let maxLength = 12
-
-        for (let len = 1; len <= 15; len += 1) {
-          const sample = '9'.repeat(len)
-          const lengthCheck = validatePhoneNumberLength(sample, defaultCountry)
-
-          if (lengthCheck !== 'TOO_SHORT' && minLength === 6) {
-            minLength = len
-          }
-
-          if (lengthCheck === 'TOO_LONG') {
-            maxLength = len - 1
-            break
-          }
-
-          if (len === 15) {
-            maxLength = len
-          }
-        }
-
-        if (maxLength < minLength) {
-          maxLength = minLength
-        }
-
-        phoneLengthBoundsCacheRef.current[defaultCountry] = { minLength, maxLength }
-      }
-
-      const bounds = phoneLengthBoundsCacheRef.current[defaultCountry]
-      return {
-        ...selectedOption,
-        defaultCountry,
-        localMinLength: bounds.minLength,
-        localMaxLength: bounds.maxLength
-      }
-    }
-
-    const dialCodeDigitsLength = selectedOption.value.replace(/\D/g, '').length
-    const localMaxLength = Math.max(6, 15 - dialCodeDigitsLength)
-
-    return {
-      ...selectedOption,
-      defaultCountry,
-      localMinLength: 6,
-      localMaxLength
-    }
+  const getPhoneConfigUtil = (countryCode) => {
+    return getPhoneConfig(phoneCodeOptions, phoneLengthBoundsCacheRef, countryCode)
   }
 
-  const resetPhoneCodeTypeAhead = () => {
-    phoneCodeTypeBufferRef.current = ''
-    if (phoneCodeTypeTimeoutRef.current) {
-      clearTimeout(phoneCodeTypeTimeoutRef.current)
-      phoneCodeTypeTimeoutRef.current = null
-    }
+  const parsePhoneValueUtil = (value, fallbackCountryCode = DEFAULT_PHONE_CODE, allowCountryCodeDetection = false) => {
+    return parsePhoneValue(phoneCodeOptions, value, fallbackCountryCode, allowCountryCodeDetection)
+  }
+
+  const formatPhoneLocalUtil = (localDigits, countryCode) => {
+    return formatPhoneLocal(localDigits, countryCode, phoneCodeOptions)
+  }
+
+  const buildPhoneValueUtil = (countryCode, localDigits) => {
+    return buildPhoneValue(countryCode, localDigits, phoneCodeOptions)
+  }
+
+  const isValidPhoneNumberUtil = (value) => {
+    return isValidPhoneNumber(phoneCodeOptions, selectedPhoneCountryCode, phoneLengthBoundsCacheRef, value)
+  }
+
+  const findCountryCodeFromDigitsUtil = (digits) => {
+    return findCountryCodeFromDigits(phoneCodeOptions, digits)
+  }
+
+  const resetPhoneCodeTypeAheadUtil = () => {
+    resetPhoneCodeTypeAhead(phoneCodeTypeBufferRef, phoneCodeTypeTimeoutRef)
   }
 
   const closePhoneCodeList = () => {
     setIsPhoneCodeListOpen(false)
-    resetPhoneCodeTypeAhead()
+    resetPhoneCodeTypeAheadUtil()
   }
 
   const applyPhoneCountryCode = (countryCode) => {
-    const parsedPhone = parsePhoneValue(editForm.phone, selectedPhoneCountryCode)
-    const nextValue = buildPhoneValue(countryCode, parsedPhone.localDigits)
+    const parsedPhone = parsePhoneValueUtil(editForm.phone, selectedPhoneCountryCode)
+    const nextValue = buildPhoneValueUtil(countryCode, parsedPhone.localDigits)
     setSelectedPhoneCountryCode(countryCode)
     setEditForm((f) => ({ ...f, phone: nextValue }))
   }
 
-  const handlePhoneCodeTypeAhead = (character) => {
-    const normalized = character.toLowerCase()
-    const nextBuffer = `${phoneCodeTypeBufferRef.current}${normalized}`
-
-    phoneCodeTypeBufferRef.current = nextBuffer
-    if (phoneCodeTypeTimeoutRef.current) {
-      clearTimeout(phoneCodeTypeTimeoutRef.current)
-    }
-    phoneCodeTypeTimeoutRef.current = setTimeout(() => {
-      phoneCodeTypeBufferRef.current = ''
-      phoneCodeTypeTimeoutRef.current = null
-    }, 700)
-
-    const matchedOption = phoneCodeOptions.find((option) => {
-      const label = option.label.toLowerCase()
-      const dial = option.value.toLowerCase()
-      return label.startsWith(nextBuffer) || dial.startsWith(nextBuffer)
-    })
-
-    if (!matchedOption) return
-
-    applyPhoneCountryCode(matchedOption.value)
-
-    requestAnimationFrame(() => {
-      const el = phoneCodeOptionRefs.current[matchedOption.value]
-      if (el) {
-        el.scrollIntoView({ block: 'nearest' })
-      }
-    })
+  const handlePhoneCodeTypeAheadUtil = (character) => {
+    handlePhoneCodeTypeAhead(
+      phoneCodeOptions,
+      phoneCodeTypeBufferRef,
+      phoneCodeTypeTimeoutRef,
+      phoneCodeOptionRefs,
+      phoneCodeTypeBufferRef.current,
+      character,
+      (matchedOption) => applyPhoneCountryCode(matchedOption.value)
+    )
   }
 
   const handlePhoneCodeTriggerKeyDown = (e) => {
@@ -171,118 +101,8 @@ export default function Profile({ favorites = [] }) {
       if (!isPhoneCodeListOpen) {
         setIsPhoneCodeListOpen(true)
       }
-      handlePhoneCodeTypeAhead(e.key)
+      handlePhoneCodeTypeAheadUtil(e.key)
     }
-  }
-
-  const findCountryCodeFromDigits = (digits) => {
-    const sortedByLength = [...phoneCodeOptions]
-      .map((option) => option.value.replace('+', ''))
-      .sort((a, b) => b.length - a.length)
-
-    for (const code of sortedByLength) {
-      if (digits.startsWith(code)) {
-        return `+${code}`
-      }
-    }
-
-    return null
-  }
-
-  const parsePhoneValue = (value, fallbackCountryCode = DEFAULT_PHONE_CODE, allowCountryCodeDetection = false) => {
-    const raw = typeof value === 'string' ? value.trim() : ''
-    let countryCode = fallbackCountryCode
-    let digits = raw.replace(/\D/g, '')
-
-    if (allowCountryCodeDetection) {
-      const plusMatch = raw.match(/^\s*(\+\d{1,3})/)
-      if (plusMatch && phoneCodeOptions.some((option) => option.value === plusMatch[1])) {
-        countryCode = plusMatch[1]
-        const countryDigits = countryCode.replace('+', '')
-        if (digits.startsWith(countryDigits)) {
-          digits = digits.slice(countryDigits.length)
-        }
-      } else if (digits.startsWith('00')) {
-        const withoutPrefix = digits.slice(2)
-        const detectedCode = findCountryCodeFromDigits(withoutPrefix)
-        if (detectedCode) {
-          countryCode = detectedCode
-          digits = withoutPrefix.slice(detectedCode.replace('+', '').length)
-        }
-      }
-    }
-
-    const selectedCountryDigits = countryCode.replace('+', '')
-    if (raw.startsWith(countryCode) && digits.startsWith(selectedCountryDigits)) {
-      digits = digits.slice(selectedCountryDigits.length)
-    } else if (raw.startsWith(`00${selectedCountryDigits}`) && digits.startsWith(`00${selectedCountryDigits}`)) {
-      digits = digits.slice(2 + selectedCountryDigits.length)
-    }
-
-    if (countryCode === '+36' && digits.startsWith('06')) {
-      digits = digits.slice(2)
-    } else if (countryCode === '+36' && digits.startsWith('0')) {
-      digits = digits.slice(1)
-    }
-
-    const config = getPhoneConfig(countryCode)
-    const localDigits = digits.slice(0, config.localMaxLength)
-
-    return { countryCode, localDigits }
-  }
-
-  const formatPhoneLocal = (localDigits, countryCode) => {
-    if (!localDigits) return ''
-
-    if (countryCode === '+36') {
-      const part1 = localDigits.slice(0, 2)
-      const part2 = localDigits.slice(2, 5)
-      const part3 = localDigits.slice(5, 9)
-      return [part1, part2, part3].filter(Boolean).join(' ')
-    }
-
-    const phoneConfig = getPhoneConfig(countryCode)
-    if (phoneConfig.defaultCountry) {
-      const nationalFormatter = new AsYouType(phoneConfig.defaultCountry)
-      return nationalFormatter.input(localDigits)
-    }
-
-    const formatter = new AsYouType()
-    const formatted = formatter.input(`${countryCode}${localDigits}`)
-    const escapedCountryCode = countryCode.replace('+', '\\+')
-    return formatted.replace(new RegExp(`^${escapedCountryCode}\\s*`), '').trim()
-  }
-
-  const buildPhoneValue = (countryCode, localDigits) => {
-    const formattedLocal = formatPhoneLocal(localDigits, countryCode)
-    return formattedLocal ? `${countryCode} ${formattedLocal}` : ''
-  }
-
-  const isValidPhoneNumber = (value) => {
-    if (!value) return false
-    if (selectedPhoneCountryCode === '+36') {
-      const normalized = value.replace(/^\+36\s*/, '').trim()
-      return /^\d{2}\s\d{3}\s\d{4}$/.test(normalized)
-    }
-
-    const { localDigits } = parsePhoneValue(value, selectedPhoneCountryCode)
-    if (!localDigits) return false
-
-    const phoneConfig = getPhoneConfig(selectedPhoneCountryCode)
-    if (phoneConfig.defaultCountry) {
-      if (validatePhoneNumberLength(localDigits, phoneConfig.defaultCountry)) {
-        return false
-      }
-
-      const nationalPhoneNumber = parsePhoneNumberFromString(localDigits, phoneConfig.defaultCountry)
-      return Boolean(
-        nationalPhoneNumber?.isValid() &&
-        `+${nationalPhoneNumber.countryCallingCode}` === selectedPhoneCountryCode
-      )
-    }
-
-    const phoneNumber = parsePhoneNumberFromString(`${selectedPhoneCountryCode}${localDigits}`)
-    return Boolean(phoneNumber?.isValid())
   }
 
   const loadProfile = async () => {
@@ -343,7 +163,6 @@ export default function Profile({ favorites = [] }) {
           return
         }
       } catch (error) {
-        console.error('Országkódok API betöltése sikertelen, fallback lista marad:', error)
       }
 
       setPhoneCodeOptions(FALLBACK_PHONE_CODE_OPTIONS)
@@ -359,8 +178,8 @@ export default function Profile({ favorites = [] }) {
   }, [phoneCodeOptions, selectedPhoneCountryCode])
 
   useEffect(() => {
-    const token = localStorage.getItem('quickbite_token')
-    const userData = localStorage.getItem('quickbite_user')
+    const token = getAuthToken()
+    const userData = getAuthUser()
     if (!token || !userData) {
       showToast.error('Kérjük, jelentkezz be!')
       navigate('/bejelentkezes')
@@ -375,9 +194,9 @@ export default function Profile({ favorites = [] }) {
 
         let normalizedPhone = data.phone || ''
         if (data.phone) {
-          const parsedPhone = parsePhoneValue(data.phone, selectedPhoneCountryCode, true)
+          const parsedPhone = parsePhoneValueUtil(data.phone, selectedPhoneCountryCode, true)
           setSelectedPhoneCountryCode(parsedPhone.countryCode)
-          normalizedPhone = buildPhoneValue(parsedPhone.countryCode, parsedPhone.localDigits)
+          normalizedPhone = buildPhoneValueUtil(parsedPhone.countryCode, parsedPhone.localDigits)
         }
 
         setEditForm({
@@ -386,7 +205,6 @@ export default function Profile({ favorites = [] }) {
           avatarUrl: data.avatarUrl || ''
         })
       } catch (err) {
-        console.error(err)
         showToast.error('Profil betöltése sikertelen. Próbáld újra!')
         navigate('/bejelentkezes')
       } finally {
@@ -422,13 +240,13 @@ export default function Profile({ favorites = [] }) {
 
   useEffect(() => {
     return () => {
-      resetPhoneCodeTypeAhead()
+      resetPhoneCodeTypeAheadUtil()
     }
   }, [])
 
   const handleSave = async (e) => {
     e.preventDefault()
-    if (editForm.phone && !isValidPhoneNumber(editForm.phone)) {
+    if (editForm.phone && !isValidPhoneNumberUtil(editForm.phone)) {
       showToast.error('Kérjük, érvényes telefonszámot adj meg a kiválasztott országkódhoz!')
       return
     }
@@ -445,18 +263,14 @@ export default function Profile({ favorites = [] }) {
       )
       const data = res.data
       setProfile(data)
-      const stored = localStorage.getItem('quickbite_user')
-      if (stored) {
-        try {
-          const user = JSON.parse(stored)
-          user.name = data.name
-          localStorage.setItem('quickbite_user', JSON.stringify(user))
-          window.dispatchEvent(new Event('userLoggedIn'))
-        } catch (_) {}
+      const user = getAuthUser()
+      if (user) {
+        const updatedUser = { ...user, name: data.name }
+        setAuthUser(updatedUser)
+        window.dispatchEvent(new Event('userLoggedIn'))
       }
       showToast.success('Profil mentve!')
     } catch (err) {
-      console.error(err)
       showToast.error('Mentés sikertelen. Próbáld újra!')
     } finally {
       setIsSaving(false)
@@ -464,8 +278,7 @@ export default function Profile({ favorites = [] }) {
   }
 
   const handleLogout = () => {
-    localStorage.removeItem('quickbite_token')
-    localStorage.removeItem('quickbite_user')
+    clearAuth()
     window.dispatchEvent(new Event('userLoggedOut'))
     showToast.success('Sikeres kijelentkezés!')
     setTimeout(() => navigate('/'), 1000)
@@ -524,12 +337,12 @@ export default function Profile({ favorites = [] }) {
               <div className="profile-form-group full-width">
                 <label htmlFor="profile-phone">Telefonszám</label>
                 {(() => {
-                  const parsedPhone = parsePhoneValue(editForm.phone, selectedPhoneCountryCode)
-                  const phoneConfig = getPhoneConfig(parsedPhone.countryCode)
+                  const parsedPhone = parsePhoneValueUtil(editForm.phone, selectedPhoneCountryCode)
+                  const phoneConfig = getPhoneConfigUtil(parsedPhone.countryCode)
                   const phonePlaceholder =
                     parsedPhone.countryCode === '+36'
                       ? '30 123 4567'
-                      : formatPhoneLocal('9'.repeat(phoneConfig.localMaxLength), parsedPhone.countryCode)
+                      : formatPhoneLocalUtil('9'.repeat(phoneConfig.localMaxLength), parsedPhone.countryCode)
                   const phoneInputMaxLength = phonePlaceholder.length
 
                   return (
@@ -544,7 +357,7 @@ export default function Profile({ favorites = [] }) {
                           onClick={() => setIsPhoneCodeListOpen((prev) => !prev)}
                           onKeyDown={handlePhoneCodeTriggerKeyDown}
                         >
-                          {getPhoneConfig(selectedPhoneCountryCode).label}
+                          {getPhoneConfigUtil(selectedPhoneCountryCode).label}
                         </button>
 
                         {isPhoneCodeListOpen && (
@@ -576,13 +389,13 @@ export default function Profile({ favorites = [] }) {
                         id="profile-phone"
                         type="tel"
                         inputMode="numeric"
-                        value={formatPhoneLocal(parsedPhone.localDigits, parsedPhone.countryCode)}
+                        value={formatPhoneLocalUtil(parsedPhone.localDigits, parsedPhone.countryCode)}
                         maxLength={phoneInputMaxLength}
                         onChange={(e) => {
                           const numericOnly = e.target.value.replace(/\D/g, '')
                           const maxLength = phoneConfig.localMaxLength
                           const localDigits = numericOnly.slice(0, maxLength)
-                          const nextValue = buildPhoneValue(parsedPhone.countryCode, localDigits)
+                          const nextValue = buildPhoneValueUtil(parsedPhone.countryCode, localDigits)
                           setEditForm((f) => ({ ...f, phone: nextValue }))
                         }}
                         placeholder={phonePlaceholder}

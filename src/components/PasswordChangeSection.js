@@ -56,7 +56,6 @@ export default function PasswordChangeSection() {
       setShowNewPasswordConfirm(false)
       setShowForm(false)
     } catch (err) {
-      console.error(err)
       showToast.error('Jelszó megváltoztatása sikertelen.')
     } finally {
       setIsLoading(false)

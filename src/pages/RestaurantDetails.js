@@ -9,6 +9,7 @@ import { usePageTitle } from '../utils/usePageTitle'
 import { API_BASE, getAuthHeaders } from '../utils/api'
 import { showToast } from '../utils/toast'
 import { animateAddToCart } from '../utils/cartAnimation'
+import { getCart, setCart, getAuthToken } from '../utils/storage'
 
 const parseTimeToMinutes = (timeValue) => {
   if (!timeValue) return null
@@ -236,18 +237,8 @@ export default function RestaurantDetails({ favorites = [], pendingFavoriteIds, 
   }
 
   const addToCart = (menuItem, quantity = 1, sourceElement = null) => {
-    const savedCart = localStorage.getItem('quickbite_cart')
-    let currentCart = []
+    const currentCart = getCart()
     
-    try {
-      if (savedCart) {
-        currentCart = JSON.parse(savedCart)
-      }
-    } catch (error) {
-      console.error('Hiba a kosár betöltése közben:', error)
-      currentCart = []
-    }
-
     if (currentCart.length > 0 && currentCart[0].restaurantId !== restaurant.id) {
       setOldRestaurantName(currentCart[0].restaurantName)
       setPendingItem(menuItem)
@@ -277,7 +268,7 @@ export default function RestaurantDetails({ favorites = [], pendingFavoriteIds, 
       currentCart.push(cartItem)
     }
 
-    localStorage.setItem('quickbite_cart', JSON.stringify(currentCart))
+    setCart(currentCart)
     
     window.dispatchEvent(new Event('cartUpdated'))
     
@@ -299,7 +290,7 @@ export default function RestaurantDetails({ favorites = [], pendingFavoriteIds, 
       quantity: Math.max(1, Number(pendingQuantity) || 1)
     }
     
-    localStorage.setItem('quickbite_cart', JSON.stringify([cartItem]))
+    setCart([cartItem])
     window.dispatchEvent(new Event('cartUpdated'))
     showToast.success(`${pendingItem.name} hozzáadva a kosárhoz!`)
     
@@ -317,7 +308,7 @@ export default function RestaurantDetails({ favorites = [], pendingFavoriteIds, 
   }
 
   useEffect(() => {
-    const token = localStorage.getItem('quickbite_token')
+    const token = getAuthToken()
     setIsLoggedIn(!!token)
   }, [])
 
@@ -364,7 +355,6 @@ export default function RestaurantDetails({ favorites = [], pendingFavoriteIds, 
         // Értékelések betöltése
         loadReviews()
       } catch (err) {
-        console.error(err)
         setError(err?.message || 'Hiba történt az adatok betöltése közben.')
       } finally {
         setIsLoading(false)
@@ -379,7 +369,7 @@ export default function RestaurantDetails({ favorites = [], pendingFavoriteIds, 
       setReviewData(reviewsRes.data)
       
       // Felhasználó saját értékelésének betöltése ha be van jelentkezve
-      const token = localStorage.getItem('quickbite_token')
+      const token = getAuthToken()
       if (token) {
         try {
           const userReviewRes = await axios.get(
@@ -393,7 +383,6 @@ export default function RestaurantDetails({ favorites = [], pendingFavoriteIds, 
         }
       }
     } catch (err) {
-      console.error('Értékelések betöltése sikertelen:', err)
     }
   }
 
@@ -422,7 +411,6 @@ export default function RestaurantDetails({ favorites = [], pendingFavoriteIds, 
       // Értékelések újratöltése
       loadReviews()
     } catch (err) {
-      console.error('Értékelés hiba:', err)
       showToast.error('Hiba az értékelés küldésekor')
     } finally {
       setIsSubmittingRating(false)

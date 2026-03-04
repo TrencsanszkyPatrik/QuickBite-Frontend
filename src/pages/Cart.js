@@ -9,39 +9,13 @@ import { usePageTitle } from '../utils/usePageTitle'
 import { API_BASE, getAuthHeaders } from '../utils/api'
 import { showToast } from '../utils/toast'
 import { Link } from 'react-router-dom'
-import { AsYouType, parsePhoneNumberFromString, validatePhoneNumberLength } from 'libphonenumber-js'
 import { sendOrderConfirmationEmail } from '../services/emailService'
+import { getPhoneConfig, parsePhoneValue, formatPhoneLocal, buildPhoneValue, isValidPhoneNumber, findCountryCodeFromDigits, handlePhoneCodeTypeAhead, resetPhoneCodeTypeAhead, FALLBACK_PHONE_CODE_OPTIONS, DEFAULT_PHONE_CODE, CARD_NAME_LETTERS_REGEX } from '../utils/phoneValidation'
+import { getCart, setCart, getAuthToken, getAuthUser } from '../utils/storage'
+import { isAlkoholosTermek } from '../utils/alcoholValidation'
+import { formatCardNumber, isValidCardNumber, isValidExpiry, isValidCvv, isValidCardName } from '../utils/cardValidation'
 
-const FALLBACK_PHONE_CODE_OPTIONS = [
-  { value: '+36', label: 'HU +36', countryCodes: ['HU'], defaultCountry: 'HU' }
-]
-
-const CARD_NAME_LETTERS_REGEX = /^[A-Za-zÁÉÍÓÖŐÚÜŰáéíóöőúüű]+(?:\s+[A-Za-zÁÉÍÓÖŐÚÜŰáéíóöőúüű]+)+$/
 const CARD_NAME_FILTER_REGEX = /[^A-Za-zÁÉÍÓÖŐÚÜŰáéíóöőúüű\s]/g
-const ALKOHOLOS_KATEGORIAK = [
-  'Alkohol',
-  'Alkoholos ital',
-  'Alkoholos italok',
-  'Sör',
-  'Sörök',
-  'Bor',
-  'Rövidital',
-  'Rövid ital',
-  'Röviditalok',
-  'Whiskey',
-  'Vodka',
-  'Vermut',
-  'Tequila',
-  'Rum',
-  'Likőr',
-  'Gin',
-  'Energiaital',
-  'Energiaitalok',
-  'Koktélok',
-  'Koktél'
-]
-
-const DEFAULT_PHONE_CODE = FALLBACK_PHONE_CODE_OPTIONS[0].value
 
 export default function Cart() {
   usePageTitle('QuickBite - Kosár')
@@ -92,122 +66,48 @@ export default function Cart() {
     cardName: ''
   })
 
-  const getPhoneConfig = (countryCode) => {
-    const selectedOption =
-      phoneCodeOptions.find((option) => option.value === countryCode) ||
-      phoneCodeOptions[0] ||
-      FALLBACK_PHONE_CODE_OPTIONS[0]
-
-    const defaultCountry = selectedOption.defaultCountry || selectedOption.countryCodes?.[0]
-
-    if (selectedOption.value === '+36') {
-      return {
-        ...selectedOption,
-        defaultCountry,
-        localMinLength: 9,
-        localMaxLength: 9
-      }
-    }
-
-    if (defaultCountry) {
-      if (!phoneLengthBoundsCacheRef.current[defaultCountry]) {
-        let minLength = 6
-        let maxLength = 12
-
-        for (let len = 1; len <= 15; len += 1) {
-          const sample = '9'.repeat(len)
-          const lengthCheck = validatePhoneNumberLength(sample, defaultCountry)
-
-          if (lengthCheck !== 'TOO_SHORT' && minLength === 6) {
-            minLength = len
-          }
-
-          if (lengthCheck === 'TOO_LONG') {
-            maxLength = len - 1
-            break
-          }
-
-          if (len === 15) {
-            maxLength = len
-          }
-        }
-
-        if (maxLength < minLength) {
-          maxLength = minLength
-        }
-
-        phoneLengthBoundsCacheRef.current[defaultCountry] = { minLength, maxLength }
-      }
-
-      const bounds = phoneLengthBoundsCacheRef.current[defaultCountry]
-      return {
-        ...selectedOption,
-        defaultCountry,
-        localMinLength: bounds.minLength,
-        localMaxLength: bounds.maxLength
-      }
-    }
-
-    const dialCodeDigitsLength = selectedOption.value.replace(/\D/g, '').length
-    const localMaxLength = Math.max(6, 15 - dialCodeDigitsLength)
-
-    return {
-      ...selectedOption,
-      defaultCountry,
-      localMinLength: 6,
-      localMaxLength
-    }
+  const getPhoneConfigUtil = (countryCode) => {
+    return getPhoneConfig(phoneCodeOptions, phoneLengthBoundsCacheRef, countryCode)
   }
 
-  const resetPhoneCodeTypeAhead = () => {
-    phoneCodeTypeBufferRef.current = ''
-    if (phoneCodeTypeTimeoutRef.current) {
-      clearTimeout(phoneCodeTypeTimeoutRef.current)
-      phoneCodeTypeTimeoutRef.current = null
-    }
+  const resetPhoneCodeTypeAheadUtil = () => {
+    resetPhoneCodeTypeAhead(phoneCodeTypeBufferRef, phoneCodeTypeTimeoutRef)
   }
 
   const closePhoneCodeList = () => {
     setIsPhoneCodeListOpen(false)
-    resetPhoneCodeTypeAhead()
+    resetPhoneCodeTypeAheadUtil()
+  }
+
+  const parsePhoneValueUtil = (value, fallbackCountryCode = DEFAULT_PHONE_CODE, allowCountryCodeDetection = false) => {
+    return parsePhoneValue(phoneCodeOptions, value, fallbackCountryCode, allowCountryCodeDetection)
+  }
+
+  const formatPhoneLocalUtil = (localDigits, countryCode) => {
+    return formatPhoneLocal(localDigits, countryCode, phoneCodeOptions)
+  }
+
+  const buildPhoneValueUtil = (countryCode, localDigits) => {
+    return buildPhoneValue(countryCode, localDigits, phoneCodeOptions)
   }
 
   const applyPhoneCountryCode = (countryCode) => {
-    const parsedPhone = parsePhoneValue(deliveryAddress.phone, selectedPhoneCountryCode)
-    const nextValue = buildPhoneValue(countryCode, parsedPhone.localDigits)
+    const parsedPhone = parsePhoneValueUtil(deliveryAddress.phone, selectedPhoneCountryCode)
+    const nextValue = buildPhoneValueUtil(countryCode, parsedPhone.localDigits)
     setSelectedPhoneCountryCode(countryCode)
     setDeliveryAddress((prev) => ({ ...prev, phone: nextValue }))
   }
 
-  const handlePhoneCodeTypeAhead = (character) => {
-    const normalized = character.toLowerCase()
-    const nextBuffer = `${phoneCodeTypeBufferRef.current}${normalized}`
-
-    phoneCodeTypeBufferRef.current = nextBuffer
-    if (phoneCodeTypeTimeoutRef.current) {
-      clearTimeout(phoneCodeTypeTimeoutRef.current)
-    }
-    phoneCodeTypeTimeoutRef.current = setTimeout(() => {
-      phoneCodeTypeBufferRef.current = ''
-      phoneCodeTypeTimeoutRef.current = null
-    }, 700)
-
-    const matchedOption = phoneCodeOptions.find((option) => {
-      const label = option.label.toLowerCase()
-      const dial = option.value.toLowerCase()
-      return label.startsWith(nextBuffer) || dial.startsWith(nextBuffer)
-    })
-
-    if (!matchedOption) return
-
-    applyPhoneCountryCode(matchedOption.value)
-
-    requestAnimationFrame(() => {
-      const el = phoneCodeOptionRefs.current[matchedOption.value]
-      if (el) {
-        el.scrollIntoView({ block: 'nearest' })
-      }
-    })
+  const handlePhoneCodeTypeAheadUtil = (character) => {
+    handlePhoneCodeTypeAhead(
+      phoneCodeOptions,
+      phoneCodeTypeBufferRef,
+      phoneCodeTypeTimeoutRef,
+      phoneCodeOptionRefs,
+      phoneCodeTypeBufferRef.current,
+      character,
+      (matchedOption) => applyPhoneCountryCode(matchedOption.value)
+    )
   }
 
   const handlePhoneCodeTriggerKeyDown = (e) => {
@@ -221,228 +121,16 @@ export default function Cart() {
       if (!isPhoneCodeListOpen) {
         setIsPhoneCodeListOpen(true)
       }
-      handlePhoneCodeTypeAhead(e.key)
+      handlePhoneCodeTypeAheadUtil(e.key)
     }
   }
 
-  const findCountryCodeFromDigits = (digits) => {
-    const sortedByLength = [...phoneCodeOptions]
-      .map((option) => option.value.replace('+', ''))
-      .sort((a, b) => b.length - a.length)
-
-    for (const code of sortedByLength) {
-      if (digits.startsWith(code)) {
-        return `+${code}`
-      }
-    }
-
-    return null
+  const findCountryCodeFromDigitsUtil = (digits) => {
+    return findCountryCodeFromDigits(phoneCodeOptions, digits)
   }
 
-  const parsePhoneValue = (value, fallbackCountryCode = DEFAULT_PHONE_CODE, allowCountryCodeDetection = false) => {
-    const raw = typeof value === 'string' ? value.trim() : ''
-    let countryCode = fallbackCountryCode
-    let digits = raw.replace(/\D/g, '')
-
-    if (allowCountryCodeDetection) {
-      const plusMatch = raw.match(/^\s*(\+\d{1,3})/)
-      if (plusMatch && phoneCodeOptions.some((option) => option.value === plusMatch[1])) {
-        countryCode = plusMatch[1]
-        const countryDigits = countryCode.replace('+', '')
-        if (digits.startsWith(countryDigits)) {
-          digits = digits.slice(countryDigits.length)
-        }
-      } else if (digits.startsWith('00')) {
-        const withoutPrefix = digits.slice(2)
-        const detectedCode = findCountryCodeFromDigits(withoutPrefix)
-        if (detectedCode) {
-          countryCode = detectedCode
-          digits = withoutPrefix.slice(detectedCode.replace('+', '').length)
-        }
-      }
-    }
-
-    const selectedCountryDigits = countryCode.replace('+', '')
-    if (raw.startsWith(countryCode) && digits.startsWith(selectedCountryDigits)) {
-      digits = digits.slice(selectedCountryDigits.length)
-    } else if (raw.startsWith(`00${selectedCountryDigits}`) && digits.startsWith(`00${selectedCountryDigits}`)) {
-      digits = digits.slice(2 + selectedCountryDigits.length)
-    }
-
-    if (countryCode === '+36' && digits.startsWith('06')) {
-      digits = digits.slice(2)
-    } else if (countryCode === '+36' && digits.startsWith('0')) {
-      digits = digits.slice(1)
-    }
-
-    const config = getPhoneConfig(countryCode)
-    const localDigits = digits.slice(0, config.localMaxLength)
-
-    return { countryCode, localDigits }
-  }
-
-  const formatPhoneLocal = (localDigits, countryCode) => {
-    if (!localDigits) return ''
-
-    if (countryCode === '+36') {
-      const part1 = localDigits.slice(0, 2)
-      const part2 = localDigits.slice(2, 5)
-      const part3 = localDigits.slice(5, 9)
-      return [part1, part2, part3].filter(Boolean).join(' ')
-    }
-
-    const phoneConfig = getPhoneConfig(countryCode)
-    if (phoneConfig.defaultCountry) {
-      const nationalFormatter = new AsYouType(phoneConfig.defaultCountry)
-      return nationalFormatter.input(localDigits)
-    }
-
-    const formatter = new AsYouType()
-    const formatted = formatter.input(`${countryCode}${localDigits}`)
-    const escapedCountryCode = countryCode.replace('+', '\\+')
-    return formatted.replace(new RegExp(`^${escapedCountryCode}\\s*`), '').trim()
-  }
-
-  const buildPhoneValue = (countryCode, localDigits) => {
-    const formattedLocal = formatPhoneLocal(localDigits, countryCode)
-    return formattedLocal ? `${countryCode} ${formattedLocal}` : ''
-  }
-
-  const normalizeForCompare = (value) =>
-    String(value || '')
-      .toLowerCase()
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .trim()
-
-  const isAlkoholosTermekCart = (item, restaurantNameInput) => {
-    if (!item) return false
-
-    const normalizedCategory = normalizeForCompare(item.category)
-    const categoryMatch =
-      !!normalizedCategory &&
-      ALKOHOLOS_KATEGORIAK.map((k) => normalizeForCompare(k)).includes(normalizedCategory)
-
-    if (categoryMatch) return true
-
-    const restaurantName = normalizeForCompare(restaurantNameInput)
-    const itemName = normalizeForCompare(item.name)
-    const isZipsBrewhouse = restaurantName.includes('zip') && restaurantName.includes('brewhouse')
-    const isTuzhelyKavezoBisztro =
-      restaurantName.includes('tuzhely') &&
-      restaurantName.includes('kavezo') &&
-      restaurantName.includes('bisztro')
-    const isHajnaliWokBao =
-      restaurantName.includes('hajnali') &&
-      restaurantName.includes('wok') &&
-      restaurantName.includes('bao')
-    const isSaboresPerdidos =
-      restaurantName.includes('sabores') &&
-      restaurantName.includes('perdidos')
-    const isLaStradaItaliana =
-      restaurantName.includes('la strada') &&
-      restaurantName.includes('italiana')
-    const isNeoDog =
-      restaurantName.includes('neo') &&
-      restaurantName.includes('dog')
-    const isItalKategoriaban = ['ital', 'italok'].includes(normalizedCategory)
-    const isUditoKategoriaban = ['udito', 'uditok'].includes(normalizedCategory)
-
-    if (isZipsBrewhouse) {
-      return ['ipa', 'kezmuves sor', 'stout'].some((drinkName) => itemName.includes(drinkName))
-    }
-
-    if (isTuzhelyKavezoBisztro && isItalKategoriaban) {
-      return ['aperol spritz', 'bloody mary', 'craft sorok', 'craft sor', 'mimosa']
-        .some((drinkName) => itemName.includes(drinkName))
-    }
-
-    if (isHajnaliWokBao && isItalKategoriaban) {
-      return ['lychee martini', 'sake flight', 'shochu', 'soju', 'makgeolli']
-        .some((drinkName) => itemName.includes(drinkName))
-    }
-
-    if (isSaboresPerdidos && itemName.includes('paloma picante')) return true
-
-    if (isLaStradaItaliana) {
-      return (
-        itemName.includes('campari soda') ||
-        itemName.includes('aperol spitz') ||
-        itemName.includes('aperol spritz')
-      )
-    }
-
-    if (isNeoDog && isUditoKategoriaban && itemName.includes('source code')) return true
-
-    return false
-  }
-
-  const isValidPhoneNumber = (value) => {
-    if (!value) return false
-    if (selectedPhoneCountryCode === '+36') {
-      const normalized = value.replace(/^\+36\s*/, '').trim()
-      return /^\d{2}\s\d{3}\s\d{4}$/.test(normalized)
-    }
-
-    const { localDigits } = parsePhoneValue(value, selectedPhoneCountryCode)
-    if (!localDigits) return false
-
-    const phoneConfig = getPhoneConfig(selectedPhoneCountryCode)
-    if (phoneConfig.defaultCountry) {
-      if (validatePhoneNumberLength(localDigits, phoneConfig.defaultCountry)) {
-        return false
-      }
-
-      const nationalPhoneNumber = parsePhoneNumberFromString(localDigits, phoneConfig.defaultCountry)
-      return Boolean(
-        nationalPhoneNumber?.isValid() &&
-        `+${nationalPhoneNumber.countryCallingCode}` === selectedPhoneCountryCode
-      )
-    }
-
-    const phoneNumber = parsePhoneNumberFromString(`${selectedPhoneCountryCode}${localDigits}`)
-    return Boolean(phoneNumber?.isValid())
-  }
-
-  const formatCardNumber = (value) => {
-    const digits = value.replace(/\D/g, '').slice(0, 16)
-    return digits.replace(/(\d{4})(?=\d)/g, '$1 ').trim()
-  }
-
-  const isValidCardNumber = (value) => {
-    if (!value) return false
-    const cleaned = value.replace(/\D/g, '')
-    return /^\d{16}$/.test(cleaned)
-  }
-
-  const isValidExpiry = (value) => {
-    if (!value) return false
-    const trimmed = value.trim()
-    const match = trimmed.match(/^(\d{2})\/(\d{2})$/)
-    if (!match) return false
-
-    const month = Number(match[1])
-    let year = Number(match[2])
-    if (Number.isNaN(month) || Number.isNaN(year) || month < 1 || month > 12) return false
-
-    const now = new Date()
-    const currentYear = now.getFullYear() % 100
-    const currentMonth = now.getMonth() + 1
-
-    if (year < currentYear) return false
-    if (year === currentYear && month < currentMonth) return false
-    return true
-  }
-
-  const isValidCvv = (value) => {
-    if (!value) return false
-    return /^\d{3}$/.test(value.trim())
-  }
-
-  const isValidCardName = (value) => {
-    if (!value) return false
-    const trimmed = value.trim()
-    return trimmed.length >= 5 && CARD_NAME_LETTERS_REGEX.test(trimmed)
+  const isValidPhoneNumberUtil = (value) => {
+    return isValidPhoneNumber(phoneCodeOptions, selectedPhoneCountryCode, phoneLengthBoundsCacheRef, value)
   }
 
   useEffect(() => {
@@ -489,7 +177,6 @@ export default function Cart() {
           return
         }
       } catch (error) {
-        console.error('Országkódok API betöltése sikertelen, fallback lista marad:', error)
       }
 
       setPhoneCodeOptions(FALLBACK_PHONE_CODE_OPTIONS)
@@ -505,8 +192,8 @@ export default function Cart() {
   }, [phoneCodeOptions, selectedPhoneCountryCode])
 
   useEffect(() => {
-    const token = localStorage.getItem('quickbite_token')
-    const userData = localStorage.getItem('quickbite_user')
+    const token = getAuthToken()
+    const userData = getAuthUser()
     
     if (token && userData) {
       setIsLoggedIn(true)
@@ -542,22 +229,15 @@ export default function Cart() {
 
   useEffect(() => {
     return () => {
-      resetPhoneCodeTypeAhead()
+      resetPhoneCodeTypeAheadUtil()
     }
   }, [])
 
   // populate delivery email from stored user info if available
   useEffect(() => {
-    const stored = localStorage.getItem('quickbite_user')
-    if (stored) {
-      try {
-        const u = JSON.parse(stored)
-        if (u.email) {
-          setDeliveryAddress(prev => ({ ...prev, email: u.email || prev.email }))
-        }
-      } catch (e) {
-        // ignore parse errors
-      }
+    const user = getAuthUser()
+    if (user?.email) {
+      setDeliveryAddress(prev => ({ ...prev, email: user.email || prev.email }))
     }
   }, [])
 
@@ -579,11 +259,11 @@ export default function Cart() {
         }))
 
         if (data.phone) {
-          const parsedPhone = parsePhoneValue(data.phone, selectedPhoneCountryCode, true)
+          const parsedPhone = parsePhoneValueUtil(data.phone, selectedPhoneCountryCode, true)
           setSelectedPhoneCountryCode(parsedPhone.countryCode)
           setDeliveryAddress(prev => ({
             ...prev,
-            phone: buildPhoneValue(parsedPhone.countryCode, parsedPhone.localDigits)
+            phone: buildPhoneValueUtil(parsedPhone.countryCode, parsedPhone.localDigits)
           }))
         }
         
@@ -609,23 +289,18 @@ export default function Cart() {
         }
       }
     } catch (error) {
-      console.error('Profil betöltése sikertelen:', error)
     }
   }
 
   useEffect(() => {
-    const savedCart = localStorage.getItem('quickbite_cart')
-    if (savedCart) {
-      try {
-        setCartItems(JSON.parse(savedCart))
-      } catch (error) {
-        console.error('Hiba a kosár betöltése közben:', error)
-      }
+    const savedCart = getCart()
+    if (savedCart && Array.isArray(savedCart)) {
+      setCartItems(savedCart)
     }
   }, [])
 
   useEffect(() => {
-    localStorage.setItem('quickbite_cart', JSON.stringify(cartItems))
+    setCart(cartItems)
     window.dispatchEvent(new Event('cartUpdated'))
     if (cartItems.length > 0 && cartItems[0].restaurantId) {
       loadSuggestedItems(cartItems[0].restaurantId)
@@ -680,8 +355,6 @@ export default function Cart() {
       )
 
       const data = response.data
-      console.log('Kupon válasz:', data)
-
       const isValid = data.isValid ?? data.IsValid
       const message = data.message ?? data.Message
       const discountAmount = data.discountAmount ?? data.DiscountAmount ?? 0
@@ -698,7 +371,6 @@ export default function Cart() {
         setAppliedCoupon(null)
       }
     } catch (error) {
-      console.error('Kupon validálási hiba:', error)
       setCouponError('Hiba történt a kupon validálása során')
       setAppliedCoupon(null)
     } finally {
@@ -753,7 +425,7 @@ export default function Cart() {
   const handleCheckout = (e) => {
     e.preventDefault()
 
-    const { localDigits: phoneLocalDigits } = parsePhoneValue(deliveryAddress.phone, selectedPhoneCountryCode)
+    const { localDigits: phoneLocalDigits } = parsePhoneValueUtil(deliveryAddress.phone, selectedPhoneCountryCode)
     
     if (cartItems.length === 0) {
       alert('A kosár üres!')
@@ -771,7 +443,7 @@ export default function Cart() {
       return
     }
 
-    if (!isValidPhoneNumber(deliveryAddress.phone)) {
+    if (!isValidPhoneNumberUtil(deliveryAddress.phone)) {
       showToast.error('Érvénytelen telefonszám. Kérlek ellenőrizd a kiválasztott országkódnak megfelelő formátumot!')
       return
     }
@@ -843,7 +515,6 @@ export default function Cart() {
           return
         }
       } catch (error) {
-        console.error('Hiba a kupon felhasználása során:', error)
         setCouponError('Hiba történt a kupon alkalmazása során')
         setIsPlacingOrder(false)
         return
@@ -890,10 +561,8 @@ export default function Cart() {
 
         let email = (deliveryAddress.email || '').trim()
         if (!email) {
-          email = (userProfile && userProfile.email) ||
-            (localStorage.getItem('quickbite_user') &&
-              JSON.parse(localStorage.getItem('quickbite_user')).email) ||
-            ''
+          const user = getAuthUser()
+          email = (userProfile && userProfile.email) || (user?.email) || ''
         }
         email = (email || '').trim()
         const toName = deliveryAddress.fullName || (userProfile && userProfile.name) || ''
@@ -909,9 +578,8 @@ export default function Cart() {
         const totalCost = calculateTotal()
 
         if (!email) {
-          console.warn('Order placed without a valid email address, skipping confirmation mail')
+          // Email not available for order confirmation
         } else {
-          console.log('Order confirmation will be sent to:', email)
           const emailResult = await sendOrderConfirmationEmail(
             email,
             toName,
@@ -921,14 +589,11 @@ export default function Cart() {
             totalCost
           )
           if (!emailResult.success) {
-            console.warn('Order confirmation email failed:', emailResult.message)
           }
         }
       } catch (emailError) {
-        console.error('Visszaigazoló email küldése sikertelen:', emailError)
       }
       } catch (error) {
-        console.error('Hiba a rendelés mentésekor:', error)
         alert('A rendelés leadása sikertelen volt. Próbáld újra!')
         return
       }
@@ -1031,13 +696,12 @@ export default function Cart() {
           .slice(0, 6)
           .map((item) => ({
             ...item,
-            is18Plus: isAlkoholosTermekCart(item, restaurantNameForRules)
+            is18Plus: isAlkoholosTermek(item, restaurantNameForRules)
           }))
 
         setSuggestedItems(suggestionsWithFlags)
       }
     } catch (error) {
-      console.error('Javasolt ételek betöltése sikertelen:', error)
     } finally {
       setIsLoadingSuggestions(false)
     }
@@ -1055,7 +719,7 @@ export default function Cart() {
         desc: item.description,
         img: item.image_url || '/img/EtelKepek/default.png',
         category: item.category,
-        is18Plus: Boolean(item.is18Plus) || isAlkoholosTermekCart(item, restaurantNameForRules),
+        is18Plus: Boolean(item.is18Plus) || isAlkoholosTermek(item, restaurantNameForRules),
         quantity: 1,
         restaurantId: item.restaurantId,
         restaurantName: baseRestaurantItem.restaurantName,
@@ -1068,7 +732,7 @@ export default function Cart() {
 
   const handleSuggestedAddClick = (item) => {
     const restaurantNameForRules = cartItems[0]?.restaurantName || ''
-    const is18PlusItem = Boolean(item.is18Plus) || isAlkoholosTermekCart(item, restaurantNameForRules)
+    const is18PlusItem = Boolean(item.is18Plus) || isAlkoholosTermek(item, restaurantNameForRules)
 
     if (is18PlusItem) {
       setPendingSuggestedItem(item)
@@ -1527,12 +1191,12 @@ export default function Cart() {
                     <label htmlFor="phone">Telefonszám *</label>
                     <div className="phone-input-row">
                       {(() => {
-                        const parsedPhone = parsePhoneValue(deliveryAddress.phone, selectedPhoneCountryCode)
-                        const phoneConfig = getPhoneConfig(parsedPhone.countryCode)
+                        const parsedPhone = parsePhoneValueUtil(deliveryAddress.phone, selectedPhoneCountryCode)
+                        const phoneConfig = getPhoneConfigUtil(parsedPhone.countryCode)
                         const phonePlaceholder =
                           parsedPhone.countryCode === '+36'
                             ? '30 123 4567'
-                            : formatPhoneLocal('9'.repeat(phoneConfig.localMaxLength), parsedPhone.countryCode)
+                            : formatPhoneLocalUtil('9'.repeat(phoneConfig.localMaxLength), parsedPhone.countryCode)
                         const phoneInputMaxLength = phonePlaceholder.length
                         return (
                           <>
@@ -1546,7 +1210,7 @@ export default function Cart() {
                           onClick={() => setIsPhoneCodeListOpen((prev) => !prev)}
                           onKeyDown={handlePhoneCodeTriggerKeyDown}
                         >
-                          {getPhoneConfig(selectedPhoneCountryCode).label}
+                          {getPhoneConfigUtil(selectedPhoneCountryCode).label}
                         </button>
 
                         {isPhoneCodeListOpen && (
@@ -1577,13 +1241,13 @@ export default function Cart() {
                         type="tel"
                         id="phone"
                         inputMode="numeric"
-                        value={formatPhoneLocal(parsedPhone.localDigits, parsedPhone.countryCode)}
+                        value={formatPhoneLocalUtil(parsedPhone.localDigits, parsedPhone.countryCode)}
                         maxLength={phoneInputMaxLength}
                         onChange={(e) => {
                           const numericOnly = e.target.value.replace(/\D/g, '')
                           const maxLength = phoneConfig.localMaxLength
                           const localDigits = numericOnly.slice(0, maxLength)
-                          const nextValue = buildPhoneValue(parsedPhone.countryCode, localDigits)
+                          const nextValue = buildPhoneValueUtil(parsedPhone.countryCode, localDigits)
                           setDeliveryAddress({ ...deliveryAddress, phone: nextValue })
                         }}
                         placeholder={phonePlaceholder}

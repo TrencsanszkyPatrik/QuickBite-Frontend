@@ -8,6 +8,7 @@ import '../styles/opinions.css'
 import { showToast } from '../utils/toast'
 import { usePageTitle } from '../utils/usePageTitle'
 import { API_BASE } from '../utils/api'
+import { getAuth } from '../utils/storage'
 
 export default function Opinions() {
   usePageTitle('QuickBite - Vásárlói vélemények')
@@ -21,15 +22,7 @@ export default function Opinions() {
   const [sortBy, setSortBy] = useState('newest')
 
   const auth = useMemo(() => {
-    const token = localStorage.getItem('quickbite_token')
-    const userRaw = localStorage.getItem('quickbite_user')
-    let user = null
-    try {
-      user = userRaw ? JSON.parse(userRaw) : null
-    } catch {
-      user = null
-    }
-
+    const { token, user } = getAuth()
     const email = user?.email || ''
     const fallbackUsername = email && email.includes('@') ? email.split('@')[0] : ''
     const displayName = user?.name || email || ''
@@ -54,7 +47,6 @@ export default function Opinions() {
       setError(null)
     } catch (err) {
       setError(err?.message || 'Nem sikerült betölteni a véleményeket')
-      console.error('Hiba a vélemények betöltésekor:', err)
     } finally {
       setLoading(false)
     }
@@ -99,7 +91,6 @@ export default function Opinions() {
       setNewStars(5)
       showToast.success('Vélemény sikeresen hozzáadva!')
     } catch (err) {
-      console.error('Hiba:', err)
       showToast.error('Hiba a vélemény hozzáadásakor')
     }
   }

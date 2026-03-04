@@ -150,7 +150,6 @@ export default function RestaurantMap() {
         }))
         setRestaurants(mapped)
       } catch (err) {
-        console.error(err)
       }
     }
     fetchRestaurants()
@@ -176,25 +175,19 @@ export default function RestaurantMap() {
 
     try {
       const url = `https://api.geoapify.com/v1/geocode/search?text=${encodeURIComponent(searchAddress)}&apiKey=${GEOAPIFY_API_KEY}`
-      console.log('Keresés URL:', url)
       
       const response = await fetch(url)
       const data = await response.json()
-      console.log('Geoapify válasz:', data)
       
       if (data.features && data.features.length > 0) {
         const result = data.features[0]
         const { lat, lon } = result.properties
         
-        console.log('Talált pozíció:', lat, lon)
         setSearchPosition([lat, lon])
         mapInstance.setView([lat, lon], 14)
-        console.log('Térkép mozgatva')
       } else {
-        console.warn('Nincs találat a kereséshez')
       }
     } catch (err) {
-      console.error('Keresési hiba:', err)
     }
   }
 

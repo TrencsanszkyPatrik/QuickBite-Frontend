@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { API_BASE, getAuthHeaders } from '../utils/api'
 import { showToast } from '../utils/toast'
+import { clearAuth } from '../utils/storage'
 
 export default function DeleteAccountSection() {
   const navigate = useNavigate()
@@ -31,13 +32,10 @@ export default function DeleteAccountSection() {
         showToast.error(data.message || 'Fiók törlése sikertelen.')
         return
       }
-      localStorage.removeItem('quickbite_token')
-      localStorage.removeItem('quickbite_user')
-      window.dispatchEvent(new Event('userLoggedOut'))
+      clearAuth()
       showToast.success('A fiókod törölve lett. Viszlát!')
       setTimeout(() => navigate('/'), 1500)
     } catch (err) {
-      console.error(err)
       showToast.error('Fiók törlése sikertelen.')
     } finally {
       setIsLoading(false)

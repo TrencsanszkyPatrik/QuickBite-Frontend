@@ -2,9 +2,10 @@
 // this module is intentionally small and dependencies-free so
 // it can be used from components and from api interceptors.
 
+import { clearAuth, getAuthToken } from './storage'
+
 export function logout() {
-  localStorage.removeItem('quickbite_token')
-  localStorage.removeItem('quickbite_user')
+  clearAuth()
   window.dispatchEvent(new Event('userLoggedOut'))
 }
 
@@ -27,7 +28,7 @@ export function isTokenExpired(token) {
 // logout is triggered immediately.  Returns a function that can be used
 // to cancel the timeout.
 export function scheduleTokenExpiryCheck() {
-  const token = localStorage.getItem('quickbite_token')
+  const token = getAuthToken()
   if (!token) return () => {}
 
   let timeoutId = null

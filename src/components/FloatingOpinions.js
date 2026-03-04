@@ -11,7 +11,7 @@ export default function FloatingOpinions() {
     fetch(`${API_BASE}/QuickbiteReviews`)
       .then((response) => response.json())
       .then((data) => setOpinions(data))
-      .catch((error) => console.error('Error fetching opinions:', error))
+      .catch(() => {})
   }, [])
 
   useEffect(() => {

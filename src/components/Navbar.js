@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import '../styles/navbar.css'
 import { isTokenExpired, scheduleTokenExpiryCheck, logout } from '../utils/auth'
+import { getCart, getAuthUser, getAuthToken } from '../utils/storage'
 
 export default function Navbar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
@@ -30,9 +31,8 @@ export default function Navbar() {
 
   const updateCartCount = () => {
     try {
-      const savedCart = localStorage.getItem('quickbite_cart')
-      if (savedCart) {
-        const cart = JSON.parse(savedCart)
+      const cart = getCart()
+      if (Array.isArray(cart) && cart.length > 0) {
         const totalItems = cart.reduce((sum, item) => sum + (item.quantity || 1), 0)
         setCartItemsCount(totalItems)
         setCartItems(cart)
@@ -41,7 +41,6 @@ export default function Navbar() {
         setCartItems([])
       }
     } catch (error) {
-      console.error('Hiba a kosár számának betöltése közben:', error)
       setCartItemsCount(0)
       setCartItems([])
     }
@@ -53,10 +52,9 @@ export default function Navbar() {
 
   useEffect(() => {
     const checkAuth = () => {
-      const token = localStorage.getItem('quickbite_token')
-      const user = localStorage.getItem('quickbite_user')
-
-      // log out immediately if the stored token has already expired
+      const token = getAuthToken()
+      const user = getAuthUser()
+      
       if (token && isTokenExpired(token)) {
         logout()
         return
@@ -64,12 +62,7 @@ export default function Navbar() {
 
       if (token && user) {
         setIsLoggedIn(true)
-        try {
-          const userData = JSON.parse(user)
-          setUserName(userData.name || userData.email || 'Felhasználó')
-        } catch (e) {
-          setUserName('Felhasználó')
-        }
+        setUserName(user.name || user.email || 'Felhasználó')
       } else {
         setIsLoggedIn(false)
         setUserName('')

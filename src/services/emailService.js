@@ -1,4 +1,5 @@
 import emailjs from 'emailjs-com'
+import { getAuthUser } from '../utils/storage'
 
 const EMAILJS_PUBLIC_KEY = 'xIIuSPofD_wOgzita'
 const SERVICE_ID = 'service_hqux1dh'
@@ -47,14 +48,9 @@ export const sendOrderConfirmationEmail = async (
   const name = (toName || '').trim()
 
   if (!email) {
-    const stored = localStorage.getItem('quickbite_user')
-    if (stored) {
-      try {
-        const u = JSON.parse(stored)
-        if (u.email) {
-          email = (u.email || '').trim()
-        }
-      } catch {}
+    const user = getAuthUser()
+    if (user?.email) {
+      email = (user.email || '').trim()
     }
   }
 
@@ -79,19 +75,11 @@ export const sendOrderConfirmationEmail = async (
       total_cost: totalCost != null ? String(totalCost) : '0'
     }
 
-    console.log('sendOrderConfirmationEmail params:', templateParams)
-
     const result = await emailjs.send(SERVICE_ID, ORDER_TEMPLATE_ID, templateParams)
     return { success: true, message: 'Rendelés visszaigazoló email elküldve.', result }
   } catch (err) {
-    console.error('Order email send error:', err)
-    console.log('Failed templateParams:', {
-      to_email: email,
-      user_email: email,
-      recipient: email
-    })
     if (err && err.body) {
-      console.error('EmailJS response body:', err.body)
+      // Email service error occurred
     }
     return { success: false, message: 'Rendelés visszaigazolás email küldése sikertelen.' }
   }

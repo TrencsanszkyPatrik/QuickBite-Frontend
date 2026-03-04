@@ -11,7 +11,6 @@ export default function FavoritesPage({ favorites = [], pendingFavoriteIds, onTo
   usePageTitle('QuickBite - Kedvencek')
   const navigate = useNavigate()
 
-
   return (
     <>
       <Navbar />
@@ -85,4 +84,3 @@ export default function FavoritesPage({ favorites = [], pendingFavoriteIds, onTo
     </>
   )
 }
-

@@ -92,7 +92,6 @@ export default function AddressSection({ addresses, onUpdate }) {
       setForm(emptyForm())
       setEditingId(null)
     } catch (err) {
-      console.error(err)
       showToast.error('Cím mentése sikertelen.')
     } finally {
       setBusyId(null)

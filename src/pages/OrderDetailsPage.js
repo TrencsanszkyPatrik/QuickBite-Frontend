@@ -7,23 +7,10 @@ import SpinnerOverlay from '../components/SpinnerOverlay'
 import { usePageTitle } from '../utils/usePageTitle'
 import { API_BASE, getAuthHeaders } from '../utils/api'
 import { showToast } from '../utils/toast'
+import { parseApiDateTime } from '../utils/dateTime'
+import { setCart, getAuthToken } from '../utils/storage'
 import '../styles/OrdersPage.css'
 import '../styles/modal.css'
-
-const parseApiDateTime = (value) => {
-  if (!value) return null
-  if (value instanceof Date) return value
-
-  const str = String(value)
-  const hasTimezone = /([zZ]|[+-]\d{2}:?\d{2})$/.test(str)
-  const normalized = hasTimezone ? str : `${str}Z`
-
-  const parsed = new Date(normalized)
-  if (Number.isNaN(parsed.getTime())) {
-    return new Date(str)
-  }
-  return parsed
-}
 
 export default function OrderDetailsPage() {
   const { id } = useParams()
@@ -78,7 +65,7 @@ export default function OrderDetailsPage() {
       restaurantFreeDelivery: false
     }))
 
-    localStorage.setItem('quickbite_cart', JSON.stringify(cartItems))
+    setCart(cartItems)
     window.dispatchEvent(new Event('cartUpdated'))
     
     showToast.success('Rendelés betöltve a kosárba! 🛒')
@@ -89,7 +76,7 @@ export default function OrderDetailsPage() {
   }
 
   useEffect(() => {
-    const token = localStorage.getItem('quickbite_token')
+    const token = getAuthToken()
     if (!token) {
       navigate('/bejelentkezes')
       return

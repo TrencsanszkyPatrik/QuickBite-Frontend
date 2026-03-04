@@ -1,14 +1,7 @@
-// Animáció amikor egy étel hozzáadódik a kosárhoz
 export const animateAddToCart = (sourceElement, itemImage) => {
-  console.log('animateAddToCart called', { sourceElement, itemImage })
-  
-  // Megkeressük a kosár gombot a navbar-ban
   const cartButton = document.querySelector('.cart-btn') || document.querySelector('a[href="/kosar"]')
   
-  console.log('Cart button found:', cartButton)
-  
   if (!cartButton || !sourceElement) {
-    console.log('Missing element:', { cartButton, sourceElement })
     return
   }
 
@@ -33,12 +26,6 @@ export const animateAddToCart = (sourceElement, itemImage) => {
   flyingItem.style.top = `${sourceRect.top + sourceRect.height / 2 - 60}px` 
   flyingItem.style.zIndex = '9999'
   flyingItem.style.pointerEvents = 'none'
-  
-  console.log('Flying item created at:', { 
-    left: flyingItem.style.left, 
-    top: flyingItem.style.top 
-  })
-
   document.body.appendChild(flyingItem)
 
   requestAnimationFrame(() => {
@@ -48,14 +35,10 @@ export const animateAddToCart = (sourceElement, itemImage) => {
       
       const translateX = targetX - (sourceRect.left + sourceRect.width / 2)
       const translateY = targetY - (sourceRect.top + sourceRect.height / 2)
-      
-      console.log('Animating to:', { targetX, targetY, translateX, translateY })
-
       flyingItem.style.transform = `translate(${translateX}px, ${translateY}px) scale(0.2)`
       flyingItem.style.opacity = '0'
 
       setTimeout(() => {
-        console.log('Animation complete, removing element')
         flyingItem.remove()
         
         if (cartButton) {

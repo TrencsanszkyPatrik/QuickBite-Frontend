@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { clearAuth, getAuthToken } from './storage'
 
 export const API_BASE = 'https://quickbite-backend-production-6372.up.railway.app/api'
 
@@ -19,8 +20,7 @@ axios.defaults.headers.common['Content-Type'] = 'application/json'
 // response interceptor handles 401 (session expiration) by clearing auth data
 const handleUnauthorized = (error) => {
   if (error.response && error.response.status === 401) {
-    localStorage.removeItem('quickbite_token')
-    localStorage.removeItem('quickbite_user')
+    clearAuth()
     window.dispatchEvent(new Event('userLoggedOut'))
   }
   return Promise.reject(error)
@@ -30,7 +30,7 @@ api.interceptors.response.use(response => response, handleUnauthorized)
 axios.interceptors.response.use(response => response, handleUnauthorized)
 
 export function getAuthHeaders() {
-  const token = localStorage.getItem('quickbite_token')
+  const token = getAuthToken()
   return {
     'Content-Type': 'application/json',
     ...(token ? { Authorization: `Bearer ${token}` } : {})

@@ -44,7 +44,6 @@ export default function AddressAutocomplete({ value, onChange, onAddressSelect, 
       const data = await response.json()
       setSuggestions(data.results || [])
     } catch (error) {
-      console.error('Address autocomplete error:', error)
       setSuggestions([])
     } finally {
       setIsLoading(false)

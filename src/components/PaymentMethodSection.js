@@ -116,7 +116,6 @@ export default function PaymentMethodSection({ paymentMethods, onUpdate }) {
       setForm(emptyForm())
       setEditingId(null)
     } catch (err) {
-      console.error(err)
       showToast.error('Fizetési mód mentése sikertelen.')
     } finally {
       setBusyId(null)
