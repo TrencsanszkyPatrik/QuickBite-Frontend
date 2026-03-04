@@ -66,6 +66,8 @@ export default function Cart() {
   const [showClearCartModal, setShowClearCartModal] = useState(false)
   const [showCheckoutConfirmModal, setShowCheckoutConfirmModal] = useState(false)
   const [showOrderSuccessModal, setShowOrderSuccessModal] = useState(false)
+  const [showAgeModal, setShowAgeModal] = useState(false)
+  const [pendingSuggestedItem, setPendingSuggestedItem] = useState(null)
   const [isPlacingOrder, setIsPlacingOrder] = useState(false)
   const [selectedPhoneCountryCode, setSelectedPhoneCountryCode] = useState(DEFAULT_PHONE_CODE)
   const [isPhoneCodeListOpen, setIsPhoneCodeListOpen] = useState(false)
@@ -1042,21 +1044,52 @@ export default function Cart() {
   }
 
   const addSuggestedToCart = (item) => {
+    setCartItems((prevCartItems) => {
+      const restaurantNameForRules = prevCartItems[0]?.restaurantName || ''
+      const baseRestaurantItem = prevCartItems[0] || {}
+
+      const newItem = {
+        id: item.id,
+        name: item.name,
+        price: item.price,
+        desc: item.description,
+        img: item.image_url || '/img/EtelKepek/default.png',
+        category: item.category,
+        is18Plus: Boolean(item.is18Plus) || isAlkoholosTermekCart(item, restaurantNameForRules),
+        quantity: 1,
+        restaurantId: item.restaurantId,
+        restaurantName: baseRestaurantItem.restaurantName,
+        restaurantFreeDelivery: baseRestaurantItem.restaurantFreeDelivery
+      }
+
+      return [...prevCartItems, newItem]
+    })
+  }
+
+  const handleSuggestedAddClick = (item) => {
     const restaurantNameForRules = cartItems[0]?.restaurantName || ''
-    const newItem = {
-      id: item.id,
-      name: item.name,
-      price: item.price,
-      desc: item.description,
-      img: item.image_url || '/img/EtelKepek/default.png',
-      category: item.category,
-      is18Plus: Boolean(item.is18Plus) || isAlkoholosTermekCart(item, restaurantNameForRules),
-      quantity: 1,
-      restaurantId: item.restaurantId,
-      restaurantName: cartItems[0]?.restaurantName,
-      restaurantFreeDelivery: cartItems[0]?.restaurantFreeDelivery
+    const is18PlusItem = Boolean(item.is18Plus) || isAlkoholosTermekCart(item, restaurantNameForRules)
+
+    if (is18PlusItem) {
+      setPendingSuggestedItem(item)
+      setShowAgeModal(true)
+      return
     }
-    setCartItems([...cartItems, newItem])
+
+    addSuggestedToCart(item)
+  }
+
+  const handleConfirmAge = () => {
+    if (pendingSuggestedItem) {
+      addSuggestedToCart(pendingSuggestedItem)
+    }
+    setShowAgeModal(false)
+    setPendingSuggestedItem(null)
+  }
+
+  const handleCancelAgeModal = () => {
+    setShowAgeModal(false)
+    setPendingSuggestedItem(null)
   }
 
   const restaurantId = cartItems.length > 0 ? cartItems[0].restaurantId : null
@@ -1181,6 +1214,45 @@ export default function Cart() {
           </div>
         </div>
       )}
+      {showAgeModal && (
+        <div className="modal-overlay" onClick={handleCancelAgeModal}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: 480, fontFamily: 'inherit' }}>
+            <div className="modal-header">
+              <h2 style={{ fontFamily: 'inherit' }}>Figyelem! 18+ termék</h2>
+              <button className="modal-close" onClick={handleCancelAgeModal} aria-label="Bezárás">✕</button>
+            </div>
+            <div className="modal-body" style={{ textAlign: 'center', fontFamily: 'inherit' }}>
+              <div style={{ margin: '2rem 0 1.5rem 0' }}>
+                <span style={{
+                  background: '#d7263d',
+                  color: '#fff8e1',
+                  fontWeight: 'bold',
+                  borderRadius: '14px',
+                  padding: '1.1rem 2.2rem',
+                  fontSize: '1.25rem',
+                  display: 'inline-block',
+                  marginBottom: '1.2rem',
+                  letterSpacing: '1px',
+                  textTransform: 'uppercase',
+                  fontFamily: 'inherit',
+                  boxShadow: '0 4px 16px rgba(215,38,61,0.13)'
+                }}>Figyelem! 18+</span>
+                <p style={{ margin: '0.7rem 0 0.7rem 0', fontSize: '1.13rem', fontFamily: 'inherit', lineHeight: 1.6 }}>
+                  Ez egy 18 éven felülieknek szóló termék.<br />
+                  Kérjük, csak akkor rendeld meg, ha elmúltál 18 éves,<br />
+                  és az átvételkor is csak 18 éven felüli személy veheti át.<br />
+                  A futár jogosult személyazonosságot igazoló okmányt kérni.<br />
+                  <b>Ha nem tudod igazolni életkorodat, a terméket nem adhatja át!</b>
+                </p>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'center', gap: '1.2rem', marginTop: '1.5rem' }}>
+                <button className="modal-btn modal-btn-cancel" onClick={handleCancelAgeModal} style={{ minWidth: 100 }}>Mégse</button>
+                <button className="modal-btn modal-btn-confirm" style={{ minWidth: 100 }} onClick={handleConfirmAge} autoFocus>OK</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       <main className="cart-page">
         <div className="cart-container">
           <div className="cart-header">
@@ -1280,7 +1352,7 @@ export default function Cart() {
                               <span className="suggested-item-price">{item.price.toLocaleString()} Ft</span>
                               <button 
                                 className="suggested-add-btn"
-                                onClick={() => addSuggestedToCart(item)}
+                                onClick={() => handleSuggestedAddClick(item)}
                                 title="Hozzáadás a kosárhoz"
                               >
                                 <i className="bi bi-plus-lg"></i> Kosárba
