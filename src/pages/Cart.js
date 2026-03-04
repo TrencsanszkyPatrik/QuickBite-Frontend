@@ -10,6 +10,7 @@ import { API_BASE, getAuthHeaders } from '../utils/api'
 import { showToast } from '../utils/toast'
 import { Link } from 'react-router-dom'
 import { AsYouType, parsePhoneNumberFromString, validatePhoneNumberLength } from 'libphonenumber-js'
+import { sendOrderConfirmationEmail } from '../services/emailService'
 
 const FALLBACK_PHONE_CODE_OPTIONS = [
   { value: '+36', label: 'HU +36', countryCodes: ['HU'], defaultCountry: 'HU' }
@@ -79,6 +80,7 @@ export default function Cart() {
     city: '',
     zip: '',
     phone: '',
+    email: '',
     instructions: ''
   })
   const [cardDetails, setCardDetails] = useState({
@@ -542,6 +544,21 @@ export default function Cart() {
     }
   }, [])
 
+  // populate delivery email from stored user info if available
+  useEffect(() => {
+    const stored = localStorage.getItem('quickbite_user')
+    if (stored) {
+      try {
+        const u = JSON.parse(stored)
+        if (u.email) {
+          setDeliveryAddress(prev => ({ ...prev, email: u.email || prev.email }))
+        }
+      } catch (e) {
+        // ignore parse errors
+      }
+    }
+  }, [])
+
   const loadUserProfile = async () => {
     try {
       const res = await axios.get(`${API_BASE}/Profile/me`, { headers: getAuthHeaders() })
@@ -555,7 +572,8 @@ export default function Cart() {
         setDeliveryAddress(prev => ({
           ...prev,
           fullName: data.name || prev.fullName,
-          phone: data.phone || prev.phone
+          phone: data.phone || prev.phone,
+          email: data.email || prev.email
         }))
 
         if (data.phone) {
@@ -746,6 +764,11 @@ export default function Cart() {
       return
     }
 
+    if (!deliveryAddress.email || !deliveryAddress.email.includes('@')) {
+      alert('Kérjük, adj meg egy érvényes email címet a visszaigazoláshoz!')
+      return
+    }
+
     if (!isValidPhoneNumber(deliveryAddress.phone)) {
       showToast.error('Érvénytelen telefonszám. Kérlek ellenőrizd a kiválasztott országkódnak megfelelő formátumot!')
       return
@@ -841,6 +864,7 @@ export default function Cart() {
             city: deliveryAddress.city,
             zip: deliveryAddress.zip,
             phone: deliveryAddress.phone,
+            email: deliveryAddress.email || null,
             instructions: deliveryAddress.instructions || null
           },
           paymentMethod: paymentMethod,
@@ -854,9 +878,53 @@ export default function Cart() {
           restaurantId: cartItems[0]?.restaurantId,
           restaurantName: cartItems[0]?.restaurantName || ''
         }
-        await axios.post(`${API_BASE}/Orders`, orderPayload, {
+        const orderResp = await axios.post(`${API_BASE}/Orders`, orderPayload, {
           headers: getAuthHeaders()
         })
+
+      try {
+        const created = orderResp.data || {}
+        const orderId = created.id || created.orderId || ''
+
+        let email = (deliveryAddress.email || '').trim()
+        if (!email) {
+          email = (userProfile && userProfile.email) ||
+            (localStorage.getItem('quickbite_user') &&
+              JSON.parse(localStorage.getItem('quickbite_user')).email) ||
+            ''
+        }
+        email = (email || '').trim()
+        const toName = deliveryAddress.fullName || (userProfile && userProfile.name) || ''
+
+        const itemsHtml = cartItems
+          .map(
+            (i) =>
+              `<div>${i.quantity}x ${i.name} - ${i.price.toLocaleString()} Ft</div>`
+          )
+          .join('')
+
+        const shippingCost = calculateDeliveryFee()
+        const totalCost = calculateTotal()
+
+        if (!email) {
+          console.warn('Order placed without a valid email address, skipping confirmation mail')
+        } else {
+          console.log('Order confirmation will be sent to:', email)
+          const emailResult = await sendOrderConfirmationEmail(
+            email,
+            toName,
+            orderId,
+            itemsHtml,
+            shippingCost,
+            totalCost
+          )
+          if (!emailResult.success) {
+            console.warn('Order confirmation email failed:', emailResult.message)
+          }
+        }
+      } catch (emailError) {
+        console.error('Visszaigazoló email küldése sikertelen:', emailError)
+      }
       } catch (error) {
         console.error('Hiba a rendelés mentésekor:', error)
         alert('A rendelés leadása sikertelen volt. Próbáld újra!')
@@ -1453,6 +1521,20 @@ export default function Cart() {
                         )
                       })()}
                     </div>
+                  </div>
+
+                  {/* email captured for confirmation, especially for guests */}
+                  <div className="form-group">
+                    <label htmlFor="email">Email{!isLoggedIn ? ' *' : ''}</label>
+                    <input
+                      type="email"
+                      id="email"
+                      value={deliveryAddress.email}
+                      onChange={(e) => setDeliveryAddress({...deliveryAddress, email: e.target.value})}
+                      placeholder="valami@pelda.hu"
+                      required={!isLoggedIn}
+                      disabled={isLoggedIn}
+                    />
                   </div>
 
                   {(!isLoggedIn || !userProfile?.addresses || userProfile.addresses.length === 0 || useNewAddress) && (
