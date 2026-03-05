@@ -102,6 +102,7 @@ export default function RestaurantCardList({
       <div className="restaurant-cards-grid">
         {visibleRestaurants.map((r) => {
           const isClosed = r.isOpen === false
+          const categoryName = r.cuisine || r.category || r.category_name
 
           return (
           <div
@@ -143,7 +144,9 @@ export default function RestaurantCardList({
             <img src={r.img} alt={r.name} className="restaurant-img" />
             <div className="restaurant-info">
               <h3 className="restaurant-name">{r.name}</h3>
-              <span className="restaurant-cuisine">{r.cuisine}</span>
+              {categoryName && (
+                <span className="restaurant-cuisine">{categoryName}</span>
+              )}
               {restaurantRatings[r.id] !== undefined && restaurantRatings[r.id] > 0 && (
                 <div className="restaurant-rating-card">
                   <div className="rating-stars-small">
