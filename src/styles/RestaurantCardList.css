@@ -82,9 +82,21 @@
 }
 
 .restaurant-cuisine {
-  color: var(--secondary);
-  font-size: 0.98rem;
-  font-weight: 500;
+  color: var(--primary-dark);
+  font-size: 0.82rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  padding: 0.34rem 0.7rem 0.34rem 0.62rem;
+  border-radius: 10px;
+  border: 1px solid rgba(139, 122, 107, 0.4);
+  border-left: 4px solid var(--secondary);
+  background: linear-gradient(120deg, rgba(232, 217, 200, 0.92) 0%, rgba(245, 237, 224, 0.9) 55%, rgba(236, 223, 204, 0.88) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    0 1px 4px rgba(24, 28, 20, 0.08);
+  letter-spacing: 0.2px;
 }
 
 .restaurant-rating-card {
