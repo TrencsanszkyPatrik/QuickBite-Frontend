@@ -1,15 +1,15 @@
 :root {
-    --primary: #3C3D37;           /* Sötétszürke/zöldes - fő szín */
-    --primary-dark: #181C14;      /* Legsötétebb zöldes/fekete */
-    --secondary: #697565;         /* Középszürke/zöldes - másodlagos szín */
-    --text: #181C14;              /* Sötét szöveg */
-    --text-light: #697565;        /* Világosabb szöveg */
-    --accent: #8B7A6B;           /* Meleg barnás/bézs akcentus szín */
-    --bg: #ECDFCC;                /* Bézs/krém háttér */
-    --bg-light: #F5EDE0;          /* Világosabb háttér */
-    --bg-warm: #E8D9C8;           /* Melegebb háttér árnyalat */
-    --border: #697565;            /* Border szín */
-    --border-light: rgba(139, 122, 107, 0.3); /* Világosabb border */
+    --primary: #3C3D37;           
+    --primary-dark: #181C14;      
+    --secondary: #697565;         
+    --text: #181C14;             
+    --text-light: #697565; 
+    --accent: #8B7A6B;       
+    --bg: #ECDFCC;              
+    --bg-light: #F5EDE0;  
+    --bg-warm: #E8D9C8;          
+    --border: #697565;            
+    --border-light: rgba(139, 122, 107, 0.3); 
     --success: #697565;
     --glass-bg: rgba(236, 223, 204, 0.9);
     --glass-border: rgba(105, 117, 101, 0.3);
@@ -209,7 +209,6 @@ html, body {
     font-family: inherit;
 }
 
-/* Windows/Edge beépített "szem" ikon elrejtése a password mezőben */
 .form-group-login input[type="password"]::-ms-reveal,
 .form-group-login input[type="password"]::-ms-clear {
     display: none;
@@ -221,7 +220,7 @@ html, body {
 }
 
 .password-input-wrapper input {
-    padding-right: 48px; /* hely az ikon gombnak */
+    padding-right: 48px;
 }
 
 .toggle-password-visibility {

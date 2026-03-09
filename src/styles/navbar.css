@@ -1,15 +1,14 @@
 :root {
-    --primary: #3C3D37;           /* Sötétszürke/zöldes - fő szín */
-    --primary-dark: #181C14;      /* Legsötétebb zöldes/fekete */
-    --secondary: #697565;         /* Középszürke/zöldes - másodlagos szín */
-    --text: #181C14;              /* Sötét szöveg */
-    --text-light: #697565;        /* Világosabb szöveg */
-    --accent: #8B7A6B;           /* Meleg barnás/bézs akcentus szín */
-    --bg: #ECDFCC;                /* Bézs/krém háttér */
-    --bg-light: #F5EDE0;          /* Világosabb háttér */
-    --bg-warm: #E8D9C8;           /* Melegebb háttér árnyalat */
-    --border: #697565;            /* Border szín */
-    --border-light: rgba(139, 122, 107, 0.3); /* Világosabb border */
+    --primary: #3C3D37;           
+    --primary-dark: #181C14;      
+    --secondary: #697565;         
+    --text-light: #697565;      
+    --accent: #8B7A6B;      
+    --bg: #ECDFCC;              
+    --bg-light: #F5EDE0;          
+    --bg-warm: #E8D9C8;           
+    --border: #697565;            
+    --border-light: rgba(139, 122, 107, 0.3);
     --success: #697565;
     --glass-bg: rgba(236, 223, 204, 0.9);
     --glass-border: rgba(105, 117, 101, 0.3);
@@ -21,8 +20,8 @@ header {
     box-shadow: 0 2px 8px rgba(24, 28, 20, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.4);
     position: sticky;
     top: 0;
-    z-index: 2000; /* legyen a Leaflet rétegek fölött */
-    isolation: isolate; /* külön rétegezési kontextus a biztonság kedvéért */
+    z-index: 2000; 
+    isolation: isolate;
     border-bottom: 1px solid rgba(139, 122, 107, 0.25);
 }
 
@@ -227,7 +226,6 @@ header {
     flex-wrap: nowrap;
 }
 
-/* Cart Button Badge */
 .cart-btn {
     position: relative;
 }
@@ -250,12 +248,10 @@ header {
     border: 2px solid var(--bg);
 }
 
-/* Mini Cart Preview */
 .cart-wrapper {
     position: relative;
 }
 
-/* Kitölti a szóközt az gomb és a preview között, hogy az onMouseLeave ne váltódjon ki */
 .cart-wrapper::after {
     content: '';
     position: absolute;
@@ -418,15 +414,12 @@ header {
     box-shadow: 0 4px 12px rgba(60, 61, 55, 0.3);
 }
 
-
-/* Auth (Bejelentkezés/Profilom) jobbra igazítása desktopon */
 @media (min-width: 769px) {
     .header-actions .auth-link {
         margin-left: auto;
     }
 }
 
-/* Button styles már az index.css-ben vannak */
 
 .dropdown {
     position: relative;
@@ -476,7 +469,6 @@ header {
     color: var(--bg);
 }
 
-/* Link styles inside header */
 .header-actions a {
     font-weight: 500;
     color: var(--primary);
@@ -486,7 +478,6 @@ header {
     color: var(--primary-dark);
 }
 
-/* Hamburger Button */
 .hamburger-btn {
     display: none;
     flex-direction: column;
@@ -510,7 +501,6 @@ header {
     background: var(--primary-dark);
 }
 
-/* Mobile Menu */
 .mobile-menu {
     display: none;
     position: fixed;
@@ -593,12 +583,10 @@ header {
     margin-left: auto;
 }
 
-/* Desktop menu - rejtsd el mobilon */
 .desktop-menu {
     display: flex;
 }
 
-/* Tablet breakpoint */
 @media (max-width: 1024px) {
     .header-content {
         padding: 0.75rem 1.25rem;
@@ -626,7 +614,6 @@ header {
     }
 }
 
-/* Mobile breakpoint */
 @media (max-width: 768px) {
     .header-content {
         padding: 0.75rem 1.25rem;
@@ -647,17 +634,14 @@ header {
         font-size: 2.4rem;
     }
 
-    /* Desktop menü elrejtése */
     .desktop-menu {
         display: none !important;
     }
 
-    /* Hamburger gomb megjelenítése */
     .hamburger-btn {
         display: flex;
     }
 
-    /* Mobil menü megjelenítése */
     .mobile-menu {
         display: block;
     }
@@ -677,7 +661,6 @@ header {
     }
 }
 
-/* Very small screens */
 @media (max-width: 480px) {
     .header-content {
         padding: 0.5rem 1rem;

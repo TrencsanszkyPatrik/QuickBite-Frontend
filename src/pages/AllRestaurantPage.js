@@ -108,11 +108,9 @@ export default function AllRestaurantPage({ favorites = [], pendingFavoriteIds, 
 
   useEffect(() => {
     // URL paraméterek kezelése a főoldali keresőből:
-    // /ettermek?cim=miskolc&konyha=olasz
     // Ha "konyha" van megadva (pl. "olasz"), akkor ugyanaz történjen,
     // mintha az "Olasz" kategória gombra kattintott volna a user:
     // -> beállítjuk a megfelelő kategória ID-t.
-    //
     // Ha csak "cim" van (pl. "miskolc"), akkor azt írjuk be a keresőmezőbe.
 
     if (hasAppliedUrlFilters.current) return
@@ -139,7 +137,7 @@ export default function AllRestaurantPage({ favorites = [], pendingFavoriteIds, 
       }
     }
 
-    // 2) Ha nem találtunk ilyen kategóriát, de van cím -> szabad szöveges keresésre használjuk
+    // 2) Ha a kategória nem található, de van megadott cím, akkor szabad szöveges keresésként kezeljük
     if (address && !hasAppliedUrlFilters.current) {
       setSearchQuery(address)
       hasAppliedUrlFilters.current = true

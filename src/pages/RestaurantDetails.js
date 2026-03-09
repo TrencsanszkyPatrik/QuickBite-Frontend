@@ -458,7 +458,7 @@ export default function RestaurantDetails({ favorites = [], pendingFavoriteIds, 
         )
       }
     } else {
-      // Statikus csillagok megjelenítéshez
+      
       const fullStars = Math.floor(rating)
       const hasHalfStar = rating % 1 >= 0.5
       
@@ -609,7 +609,7 @@ export default function RestaurantDetails({ favorites = [], pendingFavoriteIds, 
                       Nincs megadott leírás.
                     </p>
                   )}
-                  {/* 18+ badge for alcoholic drinks - CENTERED BELOW price & desc */}
+                  {/* // 18+ jelzés alkoholos italokhoz */}
                   {(() => {
                     if (isAlkoholosTermek(selectedItem)) {
                       return (
@@ -618,8 +618,8 @@ export default function RestaurantDetails({ favorites = [], pendingFavoriteIds, 
                             type="button"
                             className="alkoholos-badge-modal"
                             style={{
-                              background: '#d7263d', // piros
-                              color: '#fff8e1', // fehér/beige
+                              background: '#d7263d',
+                              color: '#fff8e1',
                               fontWeight: 'bold',
                               border: 'none',
                               borderRadius: '12px',
@@ -897,7 +897,7 @@ export default function RestaurantDetails({ favorites = [], pendingFavoriteIds, 
                     >
                       <div className="menu-card-image-wrapper" style={{position: 'relative'}}>
                         <img src={item.img} alt={item.name} className="menu-img" />
-                        {/* 18+ badge for alcoholic drinks in card */}
+                        {/* 18+ jelzés alkoholos italokhoz a kártyán */}
                         {isAlkoholos && (
                           <span
                             className="alkoholos-badge-card"

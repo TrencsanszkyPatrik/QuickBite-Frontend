@@ -82,7 +82,7 @@ export default function Opinions() {
         headers: { 'Content-Type': 'application/json' }
       })
       const addedReview = response.data
-      // Ensure createdAt is set for display
+     
       if (!addedReview.createdAt) {
         addedReview.createdAt = new Date().toISOString()
       }
@@ -105,7 +105,7 @@ export default function Opinions() {
   }
 
   const getAvatarColor = (username) => {
-    // Natural earthy colors matching the site theme
+    // Természetes földszínek, amelyek illeszkednek a weboldal témájához
     const colors = ['#3C3D37', '#697565', '#8B7A6B', '#A89477', '#D4A373', '#E8D9C8', '#B8956A', '#9B8B7E']
     const charCode = username.charCodeAt(0)
     return colors[charCode % colors.length]
@@ -118,7 +118,7 @@ export default function Opinions() {
       result = result.filter(r => r.stars === filterStars)
     }
     
-    // Sort
+    // Rendezés a kiválasztott szempont szerint
     if (sortBy === 'newest') {
       result = [...result].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
     } else if (sortBy === 'oldest') {
@@ -150,7 +150,7 @@ export default function Opinions() {
         </div>
 
         <div className="opinions-wrapper">
-          {/* Stats Section */}
+          {/* Statisztika szekció */}
           <div className="opinions-stats">
             <div className="stat-card">
               <div className="stat-value">{reviews.length}</div>
@@ -233,7 +233,7 @@ export default function Opinions() {
               </div>
             )}
 
-            {/* Filters and Sort */}
+            {/* Szűrők és rendezés */}
             <div className="reviews-controls">
               <div className="filter-group">
                 <label>Szűrés csillagok alapján:</label>
@@ -272,7 +272,7 @@ export default function Opinions() {
               </div>
             </div>
 
-            {/* Reviews List */}
+            {/* Vélemények listája */}
             {loading ? (
               <div className="loading-state">
                 <div className="spinner"></div>

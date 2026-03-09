@@ -1,4 +1,3 @@
-/* Étterem kártyák modern, letisztult stílusa */
 .restaurant-list-section {
   margin-top: 2rem;
   margin-bottom: 2rem;
@@ -182,7 +181,6 @@
   }
 }
 
-/* Status Badge */
 .status-badge {
   display: flex;
   align-items: center;
