@@ -1,16 +1,14 @@
-
-/* Button styles már az index.css-ben vannak */
+/*A gombok stílusai már az index.css-ben megtalálhatók */
 .section-title.gradient-title{
     margin-top: 0.5rem;
 }
-/* Container */
+
 .container {
     max-width: 1500px;
     margin: 0 auto;
     padding: 4rem 2rem;
 }
 
-/* Map Section */
 .map-section {
     background: linear-gradient(135deg, var(--bg) 0%, var(--bg-warm) 100%);
     border-radius: 20px;
@@ -34,7 +32,7 @@
     width: 100%;
 }
 
-/* Benefits */
+
 .benefits {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -87,7 +85,6 @@
     font-size: 0.9rem;
 }
 
-/* About Section */
 .about-section {
     padding: 6rem 2rem;
     background: linear-gradient(180deg, var(--bg) 0%, var(--bg-warm) 100%);

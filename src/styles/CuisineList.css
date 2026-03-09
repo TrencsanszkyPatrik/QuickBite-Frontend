@@ -9,7 +9,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 1.5rem;
-  justify-content: center; /* hogy középen maradjanak akkor is, ha kevés van */
+  justify-content: center; 
 }
 
 .cuisine-card {
@@ -24,7 +24,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 200px;           /* fix szélesség, nem fog szétcsúszni */
+  width: 200px;
 }
 
 .cuisine-card.selected {
@@ -55,7 +55,6 @@
   font-size: 0.9rem;
 }
 
-/* MODÁLIS ÉTLAP ablak stílus */
 .restaurant-menu-modal {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;

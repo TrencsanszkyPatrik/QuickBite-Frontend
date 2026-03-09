@@ -72,7 +72,6 @@
     margin: 0 auto;
 }
 
-/* Popup stilizálás */
 .restaurant-map-popup {
     min-width: 280px;
     max-width: 320px;
@@ -103,7 +102,7 @@
     font-size: 12px;
     color: #666;
     line-height: 1.3;
-    max-height: 2.6em; /* limit description height */
+    max-height: 2.6em;
     overflow: hidden;
 }
 
@@ -165,7 +164,6 @@
     opacity: 0.9;
 }
 
-/* Leaflet popup felülírások */
 .leaflet-popup-content-wrapper {
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);

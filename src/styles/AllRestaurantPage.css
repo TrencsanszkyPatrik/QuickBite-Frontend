@@ -29,7 +29,6 @@
   flex-direction: column;
   gap: 1.5rem;
   margin-top: 2rem;
-  /* Meleg, barnás "glass" kártya – illik a bézs háttérhez */
   background: linear-gradient(
     145deg,
     rgba(224, 205, 184, 0.78) 0%,
@@ -197,8 +196,8 @@
   overflow-x: auto;
   overflow-y: hidden;
   white-space: nowrap;
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE 10+ */
+  scrollbar-width: none;
+  -ms-overflow-style: none; 
   flex: 1 1 auto;
   padding-bottom: 4px;
 }

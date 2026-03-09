@@ -184,7 +184,7 @@ export default function Navbar() {
           <div className="logo"> <span id='quick'> Quick</span><span id='bite' >Bite</span></div>
         </Link>
         
-        {/* Hamburger menü gomb (mobil) */}
+        
         <button 
           className="hamburger-btn"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -195,7 +195,7 @@ export default function Navbar() {
           <span></span>
         </button>
 
-        {/* Desktop menü */}
+        
         <div className="header-actions desktop-menu">
           <Link to="/ettermek">Éttermeink</Link>
           {isLoggedIn && <Link to="/kedvencek">Kedvencek</Link>}
@@ -230,7 +230,7 @@ export default function Navbar() {
               </button>
             </Link>
             
-            {/* Mini Cart Preview */}
+            
             {isCartPreviewOpen && cartItems.length > 0 && (
               <div className="mini-cart-preview">
                 <div className="mini-cart-header">
@@ -275,7 +275,7 @@ export default function Navbar() {
           )}
         </div>
 
-        {/* Mobil menü */}
+    
         <div 
           ref={mobileMenuRef}
           className={`mobile-menu ${isMobileMenuOpen ? 'mobile-menu-open' : ''}`}

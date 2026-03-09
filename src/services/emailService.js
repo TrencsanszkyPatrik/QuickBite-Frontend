@@ -79,7 +79,7 @@ export const sendOrderConfirmationEmail = async (
     return { success: true, message: 'Rendelés visszaigazoló email elküldve.', result }
   } catch (err) {
     if (err && err.body) {
-      // Email service error occurred
+      // Hiba történt az email szolgáltatásban
     }
     return { success: false, message: 'Rendelés visszaigazolás email küldése sikertelen.' }
   }

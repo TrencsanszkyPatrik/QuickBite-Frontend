@@ -1,4 +1,3 @@
-/* Cookie Banner Styles */
 .cookie-banner {
   position: fixed;
   bottom: 0;
@@ -94,7 +93,6 @@
   transform: translateY(-2px);
 }
 
-/* Responsive */
 @media (max-width: 768px) {
   .cookie-content {
     flex-direction: column;

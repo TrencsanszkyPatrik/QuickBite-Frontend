@@ -1,5 +1,3 @@
-/* Homepage specific styles */
-
 .hero {
     background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 50%, var(--secondary) 100%);
     color: var(--bg);
@@ -157,9 +155,6 @@
     animation-fill-mode: both;
 }
 
-
-
-/* FloatingOpinions styles */
 .floating-opinion {
     min-width: 320px;
     max-width: 1000px;
@@ -326,14 +321,12 @@
     }
 }
 
-/* Container */
 .container {
     max-width: 1500px;
     margin: 0 auto;
     padding: 4rem 2rem;
 }
 
-/* Map Section */
 .map-section {
     background: white;
     border-radius: 20px;
@@ -356,7 +349,6 @@
     width: 100%;
 }
 
-/* Benefits */
 .benefits-home {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -433,8 +425,6 @@
     font-size: 1rem;
     text-align: center;
 }
-
-/* Cuisines - section-title már az index.css-ben van */
 
 .cuisines-grid {
     margin-top: 55rem;
@@ -519,8 +509,6 @@
     }
 }
 
-
-/* Animációk */
 @keyframes slideInFromTop {
     0% {
         transform: translateY(-100px);

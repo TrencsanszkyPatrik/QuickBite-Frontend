@@ -1,12 +1,9 @@
-/* Opinions Page - Modern Design */
-
 .opinions-page {
   min-height: calc(100vh - 200px);
   background: linear-gradient(135deg, var(--bg-light) 0%, var(--bg-warm) 50%, var(--bg) 100%);
   padding-bottom: 3rem;
 }
 
-/* Header Banner */
 .opinions-header { background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 50%, var(--secondary) 100%);
    
   color: white;
@@ -28,14 +25,12 @@
   margin: 0;
 }
 
-/* Wrapper */
 .opinions-wrapper {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 1rem;
 }
 
-/* Stats Section */
 .opinions-stats {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -101,7 +96,6 @@
   gap: 2rem;
 }
 
-/* New Review Card */
 .new-review-card {
   background: var(--glass-bg);
   border: 1px solid var(--glass-border);
@@ -256,7 +250,6 @@
   width: 100%;
 }
 
-/* Login Prompt */
 .login-prompt {
   background: var(--glass-bg);
   border: 1px solid var(--glass-border);
@@ -298,7 +291,6 @@
   box-shadow: 0 4px 12px rgba(60, 61, 55, 0.3);
 }
 
-/* Controls */
 .reviews-controls {
   background: var(--glass-bg);
   border: 1px solid var(--glass-border);
@@ -372,7 +364,6 @@
   border-color: var(--primary);
 }
 
-/* Loading State */
 .loading-state {
   text-align: center;
   padding: 3rem;
@@ -392,7 +383,6 @@
   to { transform: rotate(360deg); }
 }
 
-/* Error State */
 .error-state {
   text-align: center;
   padding: 3rem;
@@ -407,7 +397,6 @@
   margin-bottom: 1rem;
 }
 
-/* Empty State */
 .empty-state {
   text-align: center;
   padding: 3rem;
@@ -423,7 +412,6 @@
   margin-bottom: 1rem;
 }
 
-/* Reviews Grid */
 .reviews-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
@@ -548,7 +536,6 @@
   color: var(--text-light);
 }
 
-/* Edit Mode */
 .edit-mode {
   display: flex;
   flex-direction: column;
@@ -618,7 +605,6 @@
   background: #7f8c8d;
 }
 
-/* Responsive */
 @media (max-width: 768px) {
   .opinions-header-content h1 {
     font-size: 2rem;
