@@ -72,8 +72,6 @@ export default function Navbar() {
     checkAuth()
     updateCartCount()
 
-    // any time someone logs in (even from another tab) make sure we
-    // schedule the expiration watcher
     const handleLoginEvent = () => {
       checkAuth()
       scheduleTokenExpiryCheck()
@@ -89,7 +87,7 @@ export default function Navbar() {
     window.addEventListener('userLoggedOut', checkAuth)
     window.addEventListener('cartUpdated', updateCartCount)
 
-    // schedule expiry when the component mounts
+    // Az időzített lejáratot a komponens betöltődésekor ütemezzük be
     const cancelExpiry = scheduleTokenExpiryCheck()
 
     const cartInterval = setInterval(updateCartCount, 1000)

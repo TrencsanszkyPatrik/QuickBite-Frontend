@@ -233,7 +233,6 @@ export default function Cart() {
     }
   }, [])
 
-  // populate delivery email from stored user info if available
   useEffect(() => {
     const user = getAuthUser()
     if (user?.email) {
@@ -578,7 +577,7 @@ export default function Cart() {
         const totalCost = calculateTotal()
 
         if (!email) {
-          // Email not available for order confirmation
+          // Az email nem érhető el a rendelés visszaigazolásához
         } else {
           const emailResult = await sendOrderConfirmationEmail(
             email,
@@ -1259,7 +1258,7 @@ export default function Cart() {
                     </div>
                   </div>
 
-                  {/* email captured for confirmation, especially for guests */}
+                  
                   <div className="form-group">
                     <label htmlFor="email">Email{!isLoggedIn ? ' *' : ''}</label>
                     <input

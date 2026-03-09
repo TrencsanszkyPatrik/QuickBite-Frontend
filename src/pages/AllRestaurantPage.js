@@ -154,7 +154,7 @@ export default function AllRestaurantPage({ favorites = [], pendingFavoriteIds, 
     const suggestions = new Set()
     const query = searchQuery.toLowerCase()
 
-    // Étterem adatok alapján
+    
     allRestaurants.forEach(restaurant => {
       if (restaurant.name.toLowerCase().includes(query)) {
         suggestions.add(`Étterem: ${restaurant.name}`)
