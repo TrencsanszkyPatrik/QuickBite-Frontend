@@ -107,12 +107,7 @@ export default function AllRestaurantPage({ favorites = [], pendingFavoriteIds, 
   }, [])
 
   useEffect(() => {
-    // URL paraméterek kezelése a főoldali keresőből:
-    // Ha "konyha" van megadva (pl. "olasz"), akkor ugyanaz történjen,
-    // mintha az "Olasz" kategória gombra kattintott volna a user:
-    // -> beállítjuk a megfelelő kategória ID-t.
-    // Ha csak "cim" van (pl. "miskolc"), akkor azt írjuk be a keresőmezőbe.
-
+    
     if (hasAppliedUrlFilters.current) return
 
     const params = new URLSearchParams(location.search)
@@ -122,7 +117,6 @@ export default function AllRestaurantPage({ favorites = [], pendingFavoriteIds, 
     const cuisine = rawCuisine.trim()
     const address = rawAddress.trim()
 
-    // 1) Konyha paraméter -> kategória gomb kiválasztása (pl. "Olasz")
     if (cuisine && categories.length > 0) {
       const lowerCuisine = cuisine.toLowerCase()
 
@@ -136,8 +130,6 @@ export default function AllRestaurantPage({ favorites = [], pendingFavoriteIds, 
         return
       }
     }
-
-    // 2) Ha a kategória nem található, de van megadott cím, akkor szabad szöveges keresésként kezeljük
     if (address && !hasAppliedUrlFilters.current) {
       setSearchQuery(address)
       hasAppliedUrlFilters.current = true

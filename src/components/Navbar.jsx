@@ -87,7 +87,6 @@ export default function Navbar() {
     window.addEventListener('userLoggedOut', checkAuth)
     window.addEventListener('cartUpdated', updateCartCount)
 
-    // Az időzített lejáratot a komponens betöltődésekor ütemezzük be
     const cancelExpiry = scheduleTokenExpiryCheck()
 
     const cartInterval = setInterval(updateCartCount, 1000)
@@ -99,14 +98,6 @@ export default function Navbar() {
       window.removeEventListener('cartUpdated', updateCartCount)
       clearInterval(cartInterval)
       cancelExpiry()
-    }
-
-    return () => {
-      window.removeEventListener('storage', handleStorageChange)
-      window.removeEventListener('userLoggedIn', checkAuth)
-      window.removeEventListener('userLoggedOut', checkAuth)
-      window.removeEventListener('cartUpdated', updateCartCount)
-      clearInterval(cartInterval)
     }
   }, [])
 

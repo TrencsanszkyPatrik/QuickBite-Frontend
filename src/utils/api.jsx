@@ -14,7 +14,6 @@ export const api = axios.create({
 axios.defaults.baseURL = API_BASE
 axios.defaults.headers.common['Content-Type'] = 'application/json'
 
-// A response interceptor kezeli a 401-es hibát (munkamenet lejárta) azzal, hogy törli az autentikációs adatokat
 const handleUnauthorized = (error) => {
   if (error.response && error.response.status === 401) {
     clearAuth()

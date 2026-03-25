@@ -12,16 +12,13 @@ export function isTokenExpired(token) {
     if (parts.length !== 3) return true
     const payload = JSON.parse(atob(parts[1]))
     if (!payload.exp) return true
-    // Az exp másodpercben van megadva
     return Date.now() / 1000 >= payload.exp
   } catch {
     return true
   }
 }
 
-// Egy egyszeri ellenőrzés, amely automatikusan kijelentkezteti a felhasználót,
-// amikor a JWT `exp` ideje lejár. Ha a token már lejárt, a kijelentkeztetés azonnal megtörténik.
-// Visszaad egy függvényt, amellyel a timeout törölhető.
+
 export function scheduleTokenExpiryCheck() {
   const token = getAuthToken()
   if (!token) return () => {}

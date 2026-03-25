@@ -24,7 +24,6 @@ export default function RestaurantCardList({
   const [restaurantRatings, setRestaurantRatings] = useState({})
 
   useEffect(() => {
-    // Minden étterem értékelésének betöltése
     const loadRatings = async () => {
       const ratings = {}
       await Promise.all(

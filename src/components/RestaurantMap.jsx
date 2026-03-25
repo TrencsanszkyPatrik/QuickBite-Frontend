@@ -8,7 +8,6 @@ import '../styles/homepage.css'
 import '../styles/restaurant-map.css'
 import { API_BASE, GEOAPIFY_API_KEY } from '../utils/api'
 
-// Belső komponens a useMap hook kezeléséhez
 function MapContent({ restaurants, navigate, setMapInstance, searchPosition }) {
   const map = useMap()
 

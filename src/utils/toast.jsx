@@ -1,4 +1,3 @@
-// Toast helper függvények a könnyű használathoz
 import { toast } from 'react-toastify';
 
 export const showToast = {
