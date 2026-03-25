@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { clearAuth, getAuthToken } from './storage'
 
-export const API_BASE = 'https://quickbite-backend-production-6372.up.railway.app/api'
+export const API_BASE = 'http://localhost:5158/api'
 
 export const GEOAPIFY_API_KEY = '27e1a15b9929418dbca154ae5fe8af4a'
 

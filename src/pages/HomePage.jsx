@@ -10,7 +10,7 @@ import '../styles/CuisineList.css'
 import RestaurantCardList from '../components/RestaurantCardList';
 import Benefits from '../components/Benefits';
 import Cousines from '../components/Cousines';
-import BackToTopButton from '../components/BackToTopButton.js';
+import BackToTopButton from '../components/BackToTopButton.jsx';
 import FloatingOpinions from '../components/FloatingOpinions';
 import SpinnerOverlay from '../components/SpinnerOverlay';
 import { usePageTitle } from '../utils/usePageTitle';
